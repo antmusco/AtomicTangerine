@@ -1,4 +1,8 @@
-appengine-skeleton
-=============================
+# Atomic Comics
+### CSE 308 - Software Engineering 
 
-This is a generated application from the appengine-skeleton archetype.
+##### Authors:
+* Lead Programmer - Neal Beeken
+* Project Manager - Anthony Musco
+* Data Designer - Gustavo Poscidonio
+* Lead Designer - Yuanyuan Peng
