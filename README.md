@@ -1,8 +1,4 @@
-# Atomic Tangerine
-### CSE 308 - Software Engineering 
+appengine-skeleton
+=============================
 
-##### Authors:
-* Lead Programmer - Neal Beeken
-* Project Manager - Anthony Musco
-* Data Designer - Gustavo Poscidonio
-* Lead Designer - Yuanyuan Peng
+This is a generated application from the appengine-skeleton archetype.

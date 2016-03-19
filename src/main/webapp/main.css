@@ -1,0 +1,58 @@
+@import url(https://fonts.googleapis.com/css?family=Bangers);
+body {
+    background-color: whitesmoke;
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+#header {
+    background: url('img/ac_banner_red.png');
+    width: auto;
+    height: 100px;
+}
+
+footer {
+    background: url('img/ac_banner_red_no_border.png');
+    background-repeat: repeat;
+}
+
+#logo {
+    margin-left: 200px;
+}
+
+#login {
+    float: right;
+    margin-right: 200px;
+}
+
+.view {
+    margin-top: 50px;
+    /*text-align: center;*/
+}
+
+#comic,
+#comments {
+    padding-left: 25%;
+    padding-right: 25%;
+}
+
+.nav-button{
+    margin-top: 25%;
+}
+
+.page-footer{
+    font-family: Bangers;
+    color: cadetblue;
+}
+
+.icon-flip {
+transform: scaleX(-1);
+-moz-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+-ms-transform: scaleX(-1);
+}

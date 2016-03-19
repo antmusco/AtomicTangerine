@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Atomic Comics</title>
+
+    <!-- Dependencies -->
+    <!-- Compiled and minified CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.4/angular-material.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+    <!-- Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="script.js"></script>
+
+    <link rel="shortcut icon" href="img/ac_logo.png" />
+    <link type="text/css" rel="stylesheet" href="main.css" />
+
+</head>
+
+<body>
+
+    <div class="nav" id="header">
+        <a href="index.html">
+            <img id="logo" src="img/ac_title_red.png" width="150px" height="150px" />
+        </a>
+        <a href="login.html">
+            <img id="login" src="img/ac_blue.png" width="150px" height="150px" />
+        </a>
+    </div>
+
+    <div class="view">
+        <div class="row">
+            <div class="col s1 nav-button">
+                <a class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="bottom" data-delay="50" data-tooltip="Previous" onclick="goToPrev()"><i class="material-icons icon-flip">navigate_next</i></a>
+            </div>
+            <div id="comic">
+                <div class="col">
+                    <div class="card hoverable">
+                        <div class="card-image">
+                            <img id="theComic" class="responsive-img" src="img/comic2.png">
+                        </div>
+                        <div class="card-content">
+                            <p>Comic Title</p>
+                            <hr>
+                            <div class="chip">
+                                <img src="img/bun.jpg" alt="Contact Person"> Bunny Rabbit
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col s1 right nav-button">
+                <a class="btn-floating btn-large waves-effect waves-light red tooltipped" data-position="bottom" data-delay="50" data-tooltip="Next" onclick="goToNext()"><i class="material-icons ">navigate_next</i></a>
+            </div>
+        </div>
+        <div id="comments">
+            <div class="col s6 m7">
+                <div class="card center-align hoverable">
+                    <span class="card-title">Comments</span>
+                    <div class="card-content left-align">
+                        <p>Lorem ipsum dolor sit amet, in vis vitae reformidans, aliquip oporteat ex vis, mel eu veri facilisi. Nam lorem congue id, ea mel dolorem facilis aliquando, inermis disputando eloquentiam sed id. His ut probo malorum, pri nostro ceteros scripserit in. Ei ignota perfecto vim.
+                        </p>
+                        <br>
+                        <p>
+                            Malorum torquatos cum cu. Sonet graecis postulant te vel. Sed sumo etiam in, dolore laoreet ad mei. Ex ferri exerci consul duo, mei augue appareat platonem at, ex erat tantas mel. Quod libris ne qui. Summo delenit ius ea, cu duo ferri vulputate.
+                        </p>
+                        <br>
+                        <p>
+                            Qui no erant primis, virtute vulputate vituperata sea an. Cu cum dicunt rationibus voluptatum. Illum quaeque rationibus et est, ea illum ullamcorper sea. Has te clita alterum. Delicata honestatis eum no.
+                        </p>
+                        <br>
+                        <p>
+                            Ius meis veniam maluisset te, albucius sensibus ei pro. Nonumy accumsan nominati mea in. Cu nam vivendum menandri, vix no congue homero. Munere necessitatibus an mei, in has partem molestie, moderatius argumentum eos et. Assum tamquam accumsan qui no, virtute reprehendunt sea in. Mea facilis convenire forensibus ea.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+<footer class="page-footer">
+    <div class="container">
+        <div class="row">
+            <div class="col l6 s12">
+                <h5 class="white-text">Atomic Comics</h5>
+                <p class="grey-text text-lighten-4">Atomic Comics is a CSE 308 project bringing you comical content from around the World. Here you can view and enjoy comics from Political cartoons to the Silly meme. Enjoy!</p>
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Social Media</h5>
+                <ul>
+                    <li><a class="grey-text text-lighten-3" href="https://twitter.com/AtomicBunnies">Twitter</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Facebook</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Tumblr</a></li>
+                    <li><a class="grey-text text-lighten-3" href="#!">Reddit</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer-copyright">
+        <div class="container">
+            2016
+            <a class="grey-text text-lighten-4 right" href="#!">Careers</a>
+        </div>
+    </div>
+</footer>
+
+</html>
