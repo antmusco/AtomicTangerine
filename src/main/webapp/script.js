@@ -27,3 +27,4 @@ function goToNext() {
         $(this).attr("src", imgs[Math.abs(cur % 3)]);
     });
 }
+
