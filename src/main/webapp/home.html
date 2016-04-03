@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="atomicApp">
 <head lang="en">
     <meta charset="UTF-8">
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
     <title>Atomic Comics</title>
     <!-- Angular Material Dependencies -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-aria.min.js"></script>
 
@@ -12,13 +14,20 @@
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.css">
     <!-- Angular Material Javascript now available via Google CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.5/angular-material.min.js"></script>
+
+    <script src="app.js"></script>
+    <script src="controllers/nav.js"></script>
+    <script src="controllers/main.js"></script>
+    <script src="controllers/create.js"></script>
+    <script src="controllers/profile.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <header>
-    <nav class="nav" ng-include="'views/nav.html'"></nav>
+    <nav class="nav" ng-include="'views/nav.html'" ng-controller="navCtrl"></nav>
 </header>
 <body>
-    <div class="page">
         <main class="main" ng-view></main>
-    </div>
 </body>
 </html>

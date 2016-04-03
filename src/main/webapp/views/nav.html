@@ -1,5 +1,22 @@
-  <div class="branding"><a ng-href="#/">Atomic Comics</a></div>
-  <ul>
-    <li><a ng-hide="currentUser" ng-href="#/login">Login</a></li>
-    <li><a ng-hide="currentUser" ng-href="#/register">Register</a></li>
-  </ul>
+<div layout="column" layout-fill ng-controller="navCtrl">
+
+  <md-toolbar layout="row" md-scroll-shrink ng-if="true">
+    <div class="md-toolbar-tools">
+      <span>{{title}}</span>
+      <span flex></span>
+      <md-button class="md-raised" href="{{ loginUrl }}">
+        Login / SignUp
+      </md-button>
+    </div>
+  </md-toolbar>
+  <div layout="column" layout-fill>
+    <md-toolbar layout="row">
+      <div class="md-toolbar-tools">
+        <a ng-href="#/main"><span flex>Read</span></a>
+        <a ng-href="#/create"><span flex>Create</span></a>
+        <a ng-href="#/profile"><span flex>Profile</span></a>
+      </div>
+    </md-toolbar>
+  </div>
+</div>
+
