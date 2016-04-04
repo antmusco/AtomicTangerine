@@ -1,7 +1,7 @@
 <div layout="column" layout-fill ng-controller="navCtrl">
 
   <md-toolbar layout="row" md-scroll-shrink ng-if="true">
-    <div class="md-toolbar-tools">
+    <div id="titleBar" class="md-toolbar-tools">
       <span>{{title}}</span>
       <span flex></span>
       <md-button class="md-raised" href="{{ loginUrl }}">
@@ -11,10 +11,10 @@
   </md-toolbar>
   <div layout="column" layout-fill>
     <md-toolbar layout="row">
-      <div class="md-toolbar-tools">
-        <a ng-href="#/main"><span flex>Read</span></a>
-        <a ng-href="#/create"><span flex>Create</span></a>
-        <a ng-href="#/profile"><span flex>Profile</span></a>
+      <div class="md-toolbar-tools nav-points">
+        <a ng-href="#/main" flex><span>Read</span></a>
+        <a ng-href="#/create" flex><span>Create</span></a>
+        <a ng-href="#/profile" flex><span>Profile</span></a>
       </div>
     </md-toolbar>
   </div>

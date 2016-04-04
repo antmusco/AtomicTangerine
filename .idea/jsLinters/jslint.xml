@@ -3,6 +3,6 @@
   <component name="JSLintConfiguration" json="true">
     <option indent="4" />
     <option maxerr="50" />
-    <option predef="$, jQuery, alert, angular" />
+    <option predef="$, jQuery, alert, angular, $rootScope, app" />
   </component>
 </project>

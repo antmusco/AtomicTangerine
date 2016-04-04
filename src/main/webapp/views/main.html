@@ -2,4 +2,34 @@
 
     {{ message }}
 
+    <md-content class="md-padding" layout-xs="column" layout="row" layout-align="center">
+        <div flex-xs flex-gt-xs="50" layout="column">
+            <md-card style="max-width: 500px;">
+                <img style="max-width: 500px;max-height: 500px;" ng-src="{{imagePath}}" class="md-card-image" alt="Washed Out">
+                <md-card-title>
+                    <md-card-title-text>
+                        <span class="md-headline">Atomic Bunny Comic!</span>
+                    </md-card-title-text>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="start center">
+                    <md-card-icon-actions>
+                        <md-button class="md-icon-button" aria-label="Favorite">
+                            <md-icon class="material-icons">favorite_border</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" aria-label="Share">
+                            <md-icon class="material-icons">share</md-icon>
+                        </md-button>
+                    </md-card-icon-actions>
+                </md-card-actions>
+                <md-card-content>
+                    <p>
+                        Phyllis Peng starts her career in Art here on Atomic Comics.
+                        The enterprise online comics creator tool everyone's talking about is where Phyllis got started.
+                        On here you can too!
+                    </p>
+                </md-card-content>
+            </md-card>
+        </div>
+    </md-content>
+
 </div>
