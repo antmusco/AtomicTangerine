@@ -1,6 +1,8 @@
 package atomic.user;
 
 import atomic.crud.CrudServlet;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -15,9 +17,10 @@ public class UserCrudServlet extends CrudServlet {
      * For now, the json format should be as follows:
      *
      * {
-     *     "request"  : "create",
-     *     "gmail"    : "google@gmail.com",
-     *     "username" : "gman1995"
+     *     "request"   : "create",
+     *     "gmail"     : "google@gmail.com",
+     *     "username"  : "gman1995",
+     *     "expPoints" : 456,
      * }
      *
      * @param json
@@ -40,7 +43,34 @@ public class UserCrudServlet extends CrudServlet {
 
     @Override
     protected JsonElement retrieve(JsonElement json) {
-        return null;
+
+        // Initialize response.
+        JsonObject response = new JsonObject();
+
+        // Grab the UserService.
+        UserService service = UserServiceFactory.getUserService();
+
+        // If the u
+        if(service.getCurrentUser() == null) {
+
+            response.add("USER", null);
+
+        } else {
+
+            String gmail = service.getCurrentUser().getEmail();
+
+            // @TODO retrieve user from datastore using email address.
+
+            // Construct the user
+            User user = new User();
+            user.setGmail(gmail);
+
+            response.add("USER", user.toJsonObject());
+
+        }
+
+        return response;
+
     }
 
     @Override

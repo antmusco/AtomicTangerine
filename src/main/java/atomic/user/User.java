@@ -2,8 +2,8 @@ package atomic.user;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import java.time.LocalDateTime;
-import atomic.comic.Comic;
+
+import java.util.Date;
 import com.google.gson.JsonElement;
 
 import java.util.LinkedList;
@@ -17,12 +17,12 @@ import java.util.List;
  */
 public class User {
 
-    private String        gmail;
-    private String        username;
-    private double        expPoints;
-    private LocalDateTime dateJoined;
-    private Preferences   preferences;
-    private List<Long>    createdComics;
+    private String      gmail;
+    private String      username;
+    private double      expPoints;
+    private Date        dateJoined;
+    private Preferences preferences;
+    private List<Long>  createdComics;
 
     /**
      * Enumeration used for defining the JSON structure of this Java Object. Essentially, this enumeration maps the
@@ -105,7 +105,7 @@ public class User {
         }
 
         if(obj.has(JsonFormat.DATE_JOINED.toString())) {
-            dateJoined = LocalDateTime.parse(obj.get(JsonFormat.DATE_JOINED.toString()).getAsString());
+            dateJoined = new Date(obj.get(JsonFormat.DATE_JOINED.toString()).getAsLong());
         }
 
         if(obj.has(JsonFormat.PREFERENCES.toString())) {
@@ -128,6 +128,7 @@ public class User {
 
     public JsonObject toJsonObject() {
 
+        // Create a new JsonObject.
         JsonObject obj = new JsonObject();
 
         // Add all the straightforward values.
@@ -139,10 +140,13 @@ public class User {
         // The preferences property will be a JsonObject in itself.
         obj.add(JsonFormat.PREFERENCES.toString(), preferences.toJsonObject());
 
-        // The createdComics property will be a
+        // The createdComics property will be a JsonArray of Comic ID's.
         JsonArray comicsList = new JsonArray();
         for(Long c : createdComics) comicsList.add(c);
         obj.add(JsonFormat.CREATED_COMICS.toString(), comicsList);
+
+        // Return the JsonObject.
+        return obj;
 
     }
 
@@ -170,11 +174,11 @@ public class User {
         this.expPoints = expPoints;
     }
 
-    public LocalDateTime getDateJoined() {
+    public Date getDateJoined() {
         return dateJoined;
     }
 
-    public void setDateJoined(LocalDateTime dateJoined) {
+    public void setDateJoined(Date dateJoined) {
         this.dateJoined = dateJoined;
     }
 

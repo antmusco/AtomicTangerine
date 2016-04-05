@@ -1,7 +1,8 @@
 package atomic.user;
 
 import atomic.comic.Comic;
-import com.google.appengine.repackaged.com.google.gson.JsonElement;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Preferences {
 
     public JsonElement toJsonObject() {
 
-
+        return new JsonObject();
 
     }
 }
