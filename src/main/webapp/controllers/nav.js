@@ -17,11 +17,4 @@ app.controller('navCtrl', ['$rootScope', '$scope', function ($scope, $rootScope)
         $navPoints.attach($scope, angular.element(ev.target), { center: true });
     }
     $scope.title = "Atomic Comics!";
-    if ($rootScope.userExists) {
-        $scope.link = $rootScope.logoutUrl;
-        $scope.btnTxt = "Hey you!"
-    }else{
-        $scope.link = $rootScope.loginUrl;
-        $scope.btnTxt = "Login!"
-    }
 }]);

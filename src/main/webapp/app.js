@@ -28,27 +28,27 @@ app.run(function ($http, $rootScope) {
     $rootScope.err = '';
     $http.get("/login")
         .then(function success(resp) {
-            if (resp.hasOwnProperty("LOGIN")) {
-                $rootScope.loginUrl = resp.LOGIN;
-                $rootScope.userExists = false;
+            if (resp.data.hasOwnProperty("LOGIN")) {
+                $rootScope.link = resp.data.LOGIN;
+                $rootScope.acctBtnTxt = "Login!";
             } else if (resp.hasOwnProperty("LOGOUT")) {
-                $rootScope.logoutUrl = resp.LOGOUT;
-                $rootScope.userExists = true;
+                $rootScope.link = resp.data.LOGOUT;
+                $rootScope.acctBtnTxt = "Logout!";
             } else {
-                $rootScope.err += 'Bad Login: ' + resp + '\n';
+                $rootScope.err += 'Bad Login: ' + resp.toString() + '\n';
             }
         }, function error(resp) {
-            $rootScope.err += 'No Login: ' + resp + '\n';
+            $rootScope.err += 'No Login: ' + resp.toString() + '\n';
         });
 
     $http.get("/user")
         .then(function success(resp) {
-            if (resp.userInfo.hasOwnProperty('infoNeeded')) {
-                $rootScope.user = resp.USER;
+            if (resp.data.hasOwnProperty('infoNeeded')) {
+                $rootScope.user = resp.data.USER;
             } else {
-                $rootScope.user = resp.USER;
+                $rootScope.user = resp.data.USER;
             }
         }, function error(resp) {
-            $rootScope.err += 'No user: ' + resp + '\n';
+            $rootScope.err += 'No user: ' + resp.toString() + '\n';
         });
 });
