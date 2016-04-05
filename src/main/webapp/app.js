@@ -23,19 +23,32 @@ app.config(['$routeProvider', '$mdThemingProvider', function ($routeProvider, $m
         .accentPalette('orange');
 }]);
 
-app.run(function ($http) {
+app.run(function ($http, $rootScope) {
     'use strict';
-    $http.get("/user")
+    $rootScope.err = '';
+    $http.get("/login")
         .then(function success(resp) {
-            if(resp.userInfo.hasOwnProperty('user')){
-                $rootScope.user = resp.userInfo.user;
-                $rootScope.logoutUrl = resp.userInfo.logoutUrl;
-                $rootScope.loginUrl = '';
+            if (resp.hasOwnProperty("LOGIN")) {
+                $rootScope.loginUrl = resp.LOGIN;
+                $rootScope.userExists = false;
+            } else if (resp.hasOwnProperty("LOGOUT")) {
+                $rootScope.logoutUrl = resp.LOGOUT;
+                $rootScope.userExists = true;
             } else {
-                $rootScope.loginUrl = resp.userInfo.loginUrl;
+                $rootScope.err += 'Bad Login: ' + resp + '\n';
             }
         }, function error(resp) {
-            $rootScope.user = null;
-            $rootScope.loginResp = resp;
+            $rootScope.err += 'No Login: ' + resp + '\n';
+        });
+
+    $http.get("/user")
+        .then(function success(resp) {
+            if (resp.userInfo.hasOwnProperty('infoNeeded')) {
+                $rootScope.user = resp.USER;
+            } else {
+                $rootScope.user = resp.USER;
+            }
+        }, function error(resp) {
+            $rootScope.err += 'No user: ' + resp + '\n';
         });
 });

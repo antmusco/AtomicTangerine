@@ -11,11 +11,17 @@ app.factory('$navPoints', function($mdInkRipple) {
 });
 
 
-app.controller('navCtrl', ['$scope', function ($scope) {
+app.controller('navCtrl', ['$rootScope', '$scope', function ($scope, $rootScope) {
     'use strict';
     $scope.onClick = function (ev) {
         $navPoints.attach($scope, angular.element(ev.target), { center: true });
     }
     $scope.title = "Atomic Comics!";
-    $scope.loginUrl = "";
+    if ($rootScope.userExists) {
+        $scope.link = $rootScope.logoutUrl;
+        $scope.btnTxt = "Hey you!"
+    }else{
+        $scope.link = $rootScope.loginUrl;
+        $scope.btnTxt = "Login!"
+    }
 }]);
