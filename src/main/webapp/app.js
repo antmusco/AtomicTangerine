@@ -31,7 +31,7 @@ app.run(function ($http, $rootScope) {
             if (resp.data.hasOwnProperty("LOGIN")) {
                 $rootScope.link = resp.data.LOGIN;
                 $rootScope.acctBtnTxt = "Login!";
-            } else if (resp.hasOwnProperty("LOGOUT")) {
+            } else if (resp.data.hasOwnProperty("LOGOUT")) {
                 $rootScope.link = resp.data.LOGOUT;
                 $rootScope.acctBtnTxt = "Logout!";
             } else {

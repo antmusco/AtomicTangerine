@@ -133,17 +133,23 @@ public class User {
 
         // Add all the straightforward values.
         obj.addProperty(JsonFormat.GMAIL.toString(), gmail);
-        obj.addProperty(JsonFormat.USERNAME.toString(), username);
+
+        if(username != null)
+            obj.addProperty(JsonFormat.USERNAME.toString(), username);
+
         obj.addProperty(JsonFormat.EXP_POINTS.toString(), expPoints);
-        obj.addProperty(JsonFormat.DATE_JOINED.toString(), dateJoined.toString());
+
+        if(dateJoined != null)
+            obj.addProperty(JsonFormat.DATE_JOINED.toString(), dateJoined.toString());
 
         // The preferences property will be a JsonObject in itself.
-        obj.add(JsonFormat.PREFERENCES.toString(), preferences.toJsonObject());
+        if(preferences != null)
+            obj.add(JsonFormat.PREFERENCES.toString(), preferences.toJsonObject());
 
         // The createdComics property will be a JsonArray of Comic ID's.
         JsonArray comicsList = new JsonArray();
-        for(Long c : createdComics) comicsList.add(c);
-        obj.add(JsonFormat.CREATED_COMICS.toString(), comicsList);
+        for (Long c : createdComics) comicsList.add(c);
+            obj.add(JsonFormat.CREATED_COMICS.toString(), comicsList);
 
         // Return the JsonObject.
         return obj;

@@ -41,6 +41,11 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
+    /**
+     * Retrieves the data associated with the user currently logged in to Gmail.
+     * @param json
+     * @return
+     */
     @Override
     protected JsonElement retrieve(JsonElement json) {
 

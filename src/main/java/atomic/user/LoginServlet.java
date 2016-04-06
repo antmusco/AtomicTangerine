@@ -30,12 +30,14 @@ public class LoginServlet extends CrudServlet {
         // If the user is not logged in, return login url.
         if(service.getCurrentUser() == null) {
 
-            response.addProperty("LOGIN", service.createLoginURL("/main"));
+            String loginLink = service.createLoginURL("/");
+            response.addProperty("LOGIN", loginLink);
 
         // Otherwise, return logout url.
         } else {
 
-            response.addProperty("LOGOUT", service.createLogoutURL("/main"));
+            String logoutLink = service.createLogoutURL("/");
+            response.addProperty("LOGOUT", logoutLink);
 
         }
 
