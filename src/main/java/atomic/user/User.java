@@ -81,10 +81,20 @@ public class User extends DatastoreEntity{
     /**
      * Default constructor used to instantiate a user.
      */
-    public User() {
+    public User(String gmail) {
         super("User");
-        createdComics = new LinkedList<>();
-        putEntityIntoDatastore();
+        this.gmail = gmail;
+        try {
+            fromDatastoreEntity();
+        } catch (EntityNotFoundException ex) {
+            // Entity doesn't exist yet, init default values
+            this.username = this.gmail;
+            this.expPoints = 0;
+            this.dateJoined = new Date();
+            this.preferences = new Preferences();
+            this.createdComics = new LinkedList<>();
+            putEntityIntoDatastore();
+        }
     }
 
     /**
@@ -151,7 +161,8 @@ public class User extends DatastoreEntity{
 
         // The createdComics property will be a JsonArray of Comic ID's.
         JsonArray comicsList = new JsonArray();
-        for (Key k : createdComics) comicsList.add(k.getId());
+        // @TODO Figure out why the line below is causing a NullPointerException
+        //for (Key k : createdComics) comicsList.add(k.getId());
             obj.add(JsonFormat.CREATED_COMICS.toString(), comicsList);
 
         // Return the JsonObject.
@@ -218,7 +229,7 @@ public class User extends DatastoreEntity{
      */
 
     @Override
-    protected void putEntityIntoDatastore() throws IllegalArgumentException {
+    protected void putEntityIntoDatastore() {
         // Create a key for the current entity kind (which in this case should be "User") with the unique string
         // being the gmail.
         Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
@@ -265,8 +276,22 @@ public class User extends DatastoreEntity{
         entity.setProperty(JsonFormat.USERNAME.toString(), this.username);
         entity.setProperty(JsonFormat.EXP_POINTS.toString(), this.expPoints);
         entity.setProperty(JsonFormat.DATE_JOINED.toString(), this.dateJoined);
-        entity.setProperty(JsonFormat.PREFERENCES.toString(), this.preferences);
+        //entity.setProperty(JsonFormat.PREFERENCES.toString(), this.preferences);
         entity.setProperty(JsonFormat.CREATED_COMICS.toString(), this.createdComics);
+    }
+
+    private void fromDatastoreEntity() throws EntityNotFoundException {
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
+        Entity datastoreEntity = ds.get(userKey);
+
+        this.username = (String) datastoreEntity.getProperty(JsonFormat.USERNAME.toString());
+        this.expPoints = (double) datastoreEntity.getProperty(JsonFormat.EXP_POINTS.toString());
+        this.dateJoined = (Date) datastoreEntity.getProperty(JsonFormat.DATE_JOINED.toString());
+        //this.preferences = (Preferences) datastoreEntity.getProperty(JsonFormat.PREFERENCES.toString());
+        this.createdComics = (List<Key>) datastoreEntity.getProperty(JsonFormat.CREATED_COMICS.toString());
     }
 
 }
