@@ -31,11 +31,7 @@ public class UserCrudServlet extends CrudServlet {
 
         JsonObject obj = json.getAsJsonObject();
 
-        User newUser = new User();
-        newUser.setGmail(obj.get("gmail").getAsString());
-        newUser.setUsername(obj.get("gmail").getAsString());
-
-
+        User newUser = new User(obj.get("gmail").getAsString());
 
         return null;
 
@@ -67,8 +63,7 @@ public class UserCrudServlet extends CrudServlet {
             // @TODO retrieve user from datastore using email address.
 
             // Construct the user
-            User user = new User();
-            user.setGmail(gmail);
+            User user = new User(gmail);
 
             response.add("USER", user.toJsonObject());
 

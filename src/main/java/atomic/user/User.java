@@ -1,5 +1,7 @@
 package atomic.user;
 
+import atomic.data.DatastoreEntity;
+import com.google.appengine.api.datastore.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -15,14 +17,14 @@ import java.util.List;
  *
  * @author Anthony G. Musco
  */
-public class User {
+public class User extends DatastoreEntity{
 
     private String      gmail;
     private String      username;
     private double      expPoints;
     private Date        dateJoined;
     private Preferences preferences;
-    private List<Long>  createdComics;
+    private List<Key>  createdComics;
 
     /**
      * Enumeration used for defining the JSON structure of this Java Object. Essentially, this enumeration maps the
@@ -79,10 +81,20 @@ public class User {
     /**
      * Default constructor used to instantiate a user.
      */
-    public User() {
-
-        createdComics = new LinkedList<>();
-
+    public User(String gmail) {
+        super("User");
+        this.gmail = gmail;
+        try {
+            fromDatastoreEntity();
+        } catch (EntityNotFoundException ex) {
+            // Entity doesn't exist yet, init default values
+            this.username = this.gmail;
+            this.expPoints = 0;
+            this.dateJoined = new Date();
+            this.preferences = new Preferences();
+            this.createdComics = new LinkedList<>();
+            putEntityIntoDatastore();
+        }
     }
 
     /**
@@ -119,7 +131,8 @@ public class User {
             JsonArray comicsList = obj.get(JsonFormat.CREATED_COMICS.toString()).getAsJsonArray();
 
             for(JsonElement c : comicsList) {
-                createdComics.add(c.getAsLong());
+                Key k = KeyFactory.createKey("Comic", c.getAsLong());
+                createdComics.add(k);
             }
 
         }
@@ -148,7 +161,8 @@ public class User {
 
         // The createdComics property will be a JsonArray of Comic ID's.
         JsonArray comicsList = new JsonArray();
-        for (Long c : createdComics) comicsList.add(c);
+        // @TODO Figure out why the line below is causing a NullPointerException
+        //for (Key k : createdComics) comicsList.add(k.getId());
             obj.add(JsonFormat.CREATED_COMICS.toString(), comicsList);
 
         // Return the JsonObject.
@@ -162,6 +176,7 @@ public class User {
 
     public void setGmail(String gmail) {
         this.gmail = gmail;
+        saveEntity();
     }
 
     public String getUsername() {
@@ -170,6 +185,7 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+        saveEntity();
     }
 
     public double getExpPoints() {
@@ -178,6 +194,7 @@ public class User {
 
     public void setExpPoints(double expPoints) {
         this.expPoints = expPoints;
+        saveEntity();
     }
 
     public Date getDateJoined() {
@@ -186,6 +203,7 @@ public class User {
 
     public void setDateJoined(Date dateJoined) {
         this.dateJoined = dateJoined;
+        saveEntity();
     }
 
     public Preferences getPreferences() {
@@ -194,14 +212,86 @@ public class User {
 
     public void setPreferences(Preferences preferences) {
         this.preferences = preferences;
+        saveEntity();
     }
 
-    public List<Long> getCreatedComics() {
+    public List<Key> getCreatedComics() {
         return createdComics;
     }
 
-    public void setCreatedComics(List<Long> createdComics) {
+    public void setCreatedComics(List<Key> createdComics) {
         this.createdComics = createdComics;
+        saveEntity();
+    }
+
+    /**
+     * Database Methods
+     */
+
+    @Override
+    protected void putEntityIntoDatastore() {
+        // Create a key for the current entity kind (which in this case should be "User") with the unique string
+        // being the gmail.
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        try {
+            Entity datastoreEntity = ds.get(userKey);
+            // If this code is reached, no exception was thrown which means the key already exists. We don't want to put
+            // a user into the datastore twice so just exit.
+            return;
+        } catch (EntityNotFoundException ex) {
+            // If an exception is thrown, then the entity was not found, so we should initialize its data and place
+            // it into the datastore.
+            Entity newEntity = new Entity(this.ENTITY_KIND, this.gmail);
+            entitySetterHelper(newEntity);
+            ds.put(newEntity);
+        }
+
+    }
+
+    @Override
+    protected void saveEntity() {
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
+        try {
+            Entity datastoreEntity = ds.get(userKey);
+            // Entity was found, so update all of its properties.
+            entitySetterHelper(datastoreEntity);
+            ds.put(datastoreEntity);
+        } catch (EntityNotFoundException ex) {
+            // Entity was not found, so place it in the datastore. The code in 'putEntityIntoDatastore' is very similar
+            // to this function. Unfortunately, some data is reproduced, but this
+            putEntityIntoDatastore();
+        }
+    }
+
+    /**
+     * Helper method that sets all the attributes of the entity based on this objects instance variable values.
+     * @param entity The entity to assign values to.
+     */
+    private void entitySetterHelper(Entity entity) {
+        entity.setProperty(JsonFormat.USERNAME.toString(), this.username);
+        entity.setProperty(JsonFormat.EXP_POINTS.toString(), this.expPoints);
+        entity.setProperty(JsonFormat.DATE_JOINED.toString(), this.dateJoined);
+        //entity.setProperty(JsonFormat.PREFERENCES.toString(), this.preferences);
+        entity.setProperty(JsonFormat.CREATED_COMICS.toString(), this.createdComics);
+    }
+
+    private void fromDatastoreEntity() throws EntityNotFoundException {
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
+        Entity datastoreEntity = ds.get(userKey);
+
+        this.username = (String) datastoreEntity.getProperty(JsonFormat.USERNAME.toString());
+        this.expPoints = (double) datastoreEntity.getProperty(JsonFormat.EXP_POINTS.toString());
+        this.dateJoined = (Date) datastoreEntity.getProperty(JsonFormat.DATE_JOINED.toString());
+        //this.preferences = (Preferences) datastoreEntity.getProperty(JsonFormat.PREFERENCES.toString());
+        this.createdComics = (List<Key>) datastoreEntity.getProperty(JsonFormat.CREATED_COMICS.toString());
     }
 
 }
