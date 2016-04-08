@@ -1,6 +1,7 @@
 package atomic.user;
 
 import atomic.data.DatastoreEntity;
+import atomic.data.EntityKind;
 import com.google.appengine.api.datastore.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -82,7 +83,7 @@ public class User extends DatastoreEntity{
      * Default constructor used to instantiate a user.
      */
     public User(String gmail) {
-        super("User");
+        super(EntityKind.USER);
         this.gmail = gmail;
         try {
             fromDatastoreEntity();
@@ -232,7 +233,7 @@ public class User extends DatastoreEntity{
     protected void putEntityIntoDatastore() {
         // Create a key for the current entity kind (which in this case should be "User") with the unique string
         // being the gmail.
-        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND.toString(), this.gmail);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         try {
@@ -243,7 +244,7 @@ public class User extends DatastoreEntity{
         } catch (EntityNotFoundException ex) {
             // If an exception is thrown, then the entity was not found, so we should initialize its data and place
             // it into the datastore.
-            Entity newEntity = new Entity(this.ENTITY_KIND, this.gmail);
+            Entity newEntity = new Entity(this.ENTITY_KIND.toString(), this.gmail);
             entitySetterHelper(newEntity);
             ds.put(newEntity);
         }
@@ -252,7 +253,7 @@ public class User extends DatastoreEntity{
 
     @Override
     protected void saveEntity() {
-        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND.toString(), this.gmail);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
@@ -281,7 +282,7 @@ public class User extends DatastoreEntity{
     }
 
     private void fromDatastoreEntity() throws EntityNotFoundException {
-        Key userKey = KeyFactory.createKey(this.ENTITY_KIND, this.gmail);
+        Key userKey = KeyFactory.createKey(this.ENTITY_KIND.toString(), this.gmail);
 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
