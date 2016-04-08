@@ -23,12 +23,12 @@ app.config(['$routeProvider', '$mdThemingProvider', function ($routeProvider, $m
         .accentPalette('orange');
 }]);
 
-app.run(function ($http, $rootScope) {
+app.run(function ($http, $rootScope, $location) {
     'use strict';
     $rootScope.err = '';
-    $http.get("/login")
+    $http.get('/login')
         .then(function success(resp) {
-            if (resp.data.hasOwnProperty("LOGIN")) {
+            if (resp.data.hasOwnProperty('LOGIN')) {
                 $rootScope.link = resp.data.LOGIN;
                 $rootScope.acctBtnTxt = "Login!";
             } else if (resp.data.hasOwnProperty("LOGOUT")) {
@@ -41,12 +41,17 @@ app.run(function ($http, $rootScope) {
             $rootScope.err += 'No Login: ' + resp.toString() + '\n';
         });
 
-    $http.get("/user")
+    $http.get('/user')
         .then(function success(resp) {
-            if (resp.data.hasOwnProperty('infoNeeded')) {
+            if (resp.data.hasOwnProperty('USER')) {// || resp.data.username = null) {
                 $rootScope.user = resp.data.USER;
+                $rootScope.getInfo = true;
+                if (resp.data.USER.expPoints === 0) {
+                    $location.path('/profile');
+                }
             } else {
-                $rootScope.user = resp.data.USER;
+                $rootScope.getInfo = false;
+                $location.path('/main');
             }
         }, function error(resp) {
             $rootScope.err += 'No user: ' + resp.toString() + '\n';
