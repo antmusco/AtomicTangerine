@@ -1,0 +1,89 @@
+
+<!--<form ng-controller="settingsCtrl">-->
+    <!--<div>-->
+        <!--<div>-->
+
+        <!--</div>-->
+    <!--</div>-->
+
+
+    <!--<div>-->
+        <!--<span flex></span>-->
+        <!--<md-button ng-click="answer(true, user)">-->
+            <!--Confirm-->
+        <!--</md-button>-->
+        <!--<md-button ng-click="cancel()" style="margin-right:20px;">-->
+            <!--Cancel-->
+        <!--</md-button>-->
+    <!--</div>-->
+
+<!--</form>-->
+
+
+<div id="settings" ng-controller="settingsCtrl" layout="column" ng-cloak class="md-inline-form">
+    <md-content layout-gt-sm="row" layout-padding>
+        <div>
+            <md-input-container>
+                <label>Title</label>
+                <input ng-model="jobDesc" disabled>
+            </md-input-container>
+            <md-input-container>
+                <label>Email</label>
+                <input ng-model="user.gmail" type="email" disabled>
+            </md-input-container>
+        </div>
+    </md-content>
+    <md-content layout-padding>
+        <div>
+
+                <form name="userForm">
+                    <div layout="row">
+                        <md-input-container class="md-block">
+                            <label>Artist Handle</label>
+                            <input required name="handle" ng-model="user.handle">
+                            <div ng-messages="userForm.handle.$error">
+                                <div ng-message="required">First name is required.</div>
+                            </div>
+                        </md-input-container>
+                        <md-datepicker ng-model="user.birthday" md-placeholder="Birthday">
+                        </md-datepicker>
+                    </div>
+                    <div layout="row">
+                        <md-input-container class="md-block">
+                            <label>First name</label>
+                            <input required name="firstName" ng-model="user.firstName">
+                            <div ng-messages="userForm.firstName.$error">
+                                <div ng-message="required">First name is required.</div>
+                            </div>
+                        </md-input-container>
+                        <md-input-container class="md-block">
+                            <label>Last Name</label>
+                            <input required name="lastName" ng-model="user.lastName">
+                            <div ng-messages="userForm.lastName.$error">
+                                <div ng-message="required">Last name is required.</div>
+                            </div>
+                        </md-input-container>
+                    </div>
+                    <md-input-container class="md-block">
+                        <label>Biography</label>
+                        <textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus></textarea>
+                    </md-input-container>
+                    <div layout="row">
+                        <md-button ng-dirty ng-disabled="userForm.$invalid" ng-click="saveSettings()" class="md-icon-button" aria-label="save">
+                            <md-icon class="material-icons">save</md-icon>
+                        </md-button>
+                        <md-button ng-href="#/profile" class="md-icon-button" aria-label="cancel">
+                            <md-icon class="material-icons">cancel</md-icon>
+                        </md-button>
+                    </div>
+                </form>
+
+        </div>
+    </md-content>
+
+
+    <div layout="row">
+        <p>{{ confirm }}</p>
+    </div>
+
+</div>

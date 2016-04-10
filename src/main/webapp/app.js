@@ -3,6 +3,10 @@ var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial']);
 app.config(['$routeProvider', '$mdThemingProvider', function ($routeProvider, $mdThemingProvider) {
     'use strict';
     $routeProvider.
+        when('/settings', {
+            templateUrl: 'views/settings.html',
+            controller: 'settingsCtrl'
+        }).
         when('/main', {
             templateUrl: 'views/main.html',
             controller: 'mainCtrl'
@@ -23,7 +27,7 @@ app.config(['$routeProvider', '$mdThemingProvider', function ($routeProvider, $m
         .accentPalette('orange');
 }]);
 
-app.run(function ($http, $rootScope, $location) {
+app.run(function ($http, $rootScope) {
     'use strict';
     $rootScope.err = '';
     $http.get('/login')
@@ -41,19 +45,5 @@ app.run(function ($http, $rootScope, $location) {
             $rootScope.err += 'No Login: ' + resp.toString() + '\n';
         });
 
-    $http.get('/user')
-        .then(function success(resp) {
-            if (resp.data.hasOwnProperty('USER')) {// || resp.data.username = null) {
-                $rootScope.user = resp.data.USER;
-                $rootScope.getInfo = true;
-                if (resp.data.USER.expPoints === 0) {
-                    $location.path('/profile');
-                }
-            } else {
-                $rootScope.getInfo = false;
-                $location.path('/main');
-            }
-        }, function error(resp) {
-            $rootScope.err += 'No user: ' + resp.toString() + '\n';
-        });
+    
 });
