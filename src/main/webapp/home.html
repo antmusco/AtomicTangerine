@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <link rel="shortcut icon" type="image/png" href="favicon.png" />
     <title>Atomic Comics</title>
+
+    <script src="https://code.jquery.com/jquery-2.2.3.min.js"
+            integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo="
+            crossorigin="anonymous"></script>
+
     <!-- Angular Material Dependencies -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular-route.js"></script>
@@ -17,7 +22,10 @@
     <!--Angular Material Icons-->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.5.0/fabric.min.js"></script>
+
     <script src="app.js"></script>
+    <script src="services/crud.js"></script>
     <script src="controllers/nav.js"></script>
     <script src="controllers/main.js"></script>
     <script src="controllers/create.js"></script>
@@ -28,9 +36,6 @@
 
 </head>
 <header>
-    <p>USER: {{user}}</p>
-    <p>LOGIN/OUT LINK: {{link}} </p>
-    <p>ERR: {{err}}</p>
     <nav class="nav" ng-include="'views/nav.html'" ng-controller="navCtrl"></nav>
 </header>
 <body>

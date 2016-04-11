@@ -1,26 +1,10 @@
-
-<!--<form ng-controller="settingsCtrl">-->
-    <!--<div>-->
-        <!--<div>-->
-
-        <!--</div>-->
-    <!--</div>-->
-
-
-    <!--<div>-->
-        <!--<span flex></span>-->
-        <!--<md-button ng-click="answer(true, user)">-->
-            <!--Confirm-->
-        <!--</md-button>-->
-        <!--<md-button ng-click="cancel()" style="margin-right:20px;">-->
-            <!--Cancel-->
-        <!--</md-button>-->
-    <!--</div>-->
-
-<!--</form>-->
-
-
 <div id="settings" ng-controller="settingsCtrl" layout="column" ng-cloak class="md-inline-form">
+    <div>
+        <md-button ng-href="#/profile" class="md-icon-button" aria-label="arrow_back">
+            <md-icon class="material-icons">arrow_back</md-icon>
+        </md-button>
+        <p>{{ error }}</p>
+    </div>
     <md-content layout-gt-sm="row" layout-padding>
         <div>
             <md-input-container>
@@ -35,7 +19,6 @@
     </md-content>
     <md-content layout-padding>
         <div>
-
                 <form name="userForm">
                     <div layout="row">
                         <md-input-container class="md-block">
@@ -66,10 +49,10 @@
                     </div>
                     <md-input-container class="md-block">
                         <label>Biography</label>
-                        <textarea ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus></textarea>
+                        <textarea maxlength="150" ng-model="user.biography" md-maxlength="150" rows="5" md-select-on-focus></textarea>
                     </md-input-container>
                     <div layout="row">
-                        <md-button ng-dirty ng-disabled="userForm.$invalid" ng-click="saveSettings()" class="md-icon-button" aria-label="save">
+                        <md-button ng-dirty ng-disabled="userForm.$invalid" ng-click="updateUserSettings()" class="md-icon-button" aria-label="save">
                             <md-icon class="material-icons">save</md-icon>
                         </md-button>
                         <md-button ng-href="#/profile" class="md-icon-button" aria-label="cancel">

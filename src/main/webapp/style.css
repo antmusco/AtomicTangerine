@@ -8,6 +8,14 @@ nav {
     padding: 5%;
 }
 
+#theCanvas {
+    padding: 10%;
+    height: 90%;
+    width: 90%;
+    border: 1px solid;
+}
+
+
 #titleBar {
     background-image: url("assets/img/banner_red.png");
 }

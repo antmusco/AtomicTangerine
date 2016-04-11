@@ -1,32 +1,47 @@
-app.controller('settingsCtrl', ['$scope', '$http', '$rootScope', function ($scope, $http, $rootScope, $location) {
+app.controller('settingsCtrl', ['$scope', '$http', '$rootScope', 'crud', function ($scope, $http, $rootScope, crud) {
     'use strict';
+    $scope.$on('$routeChangeSuccess', function(scope, next, current){
+        $scope.retrieveUserSettings();
+    });
+
     $scope.jobDesc = 'Atomic Artist';
     $scope.user = {
         title: 'Atomic Artist',
-        email: '',
+        gmail: '',
         firstName: '',
         lastName: '',
+        birthday: '',
         biography: ''
     };
-    $http.get('/user')
-        .then(function success(resp) {
-            if (resp.data.USER !== null) {// || resp.data.username = null) {
-                $rootScope.user = resp.data.USER;
-                $scope.user = resp.data.USER;
-                //$location.path('/settings')
-            } else {
-                //$location.path('/main');
-            }
-        }, function error(resp) {
-            $rootScope.err += 'No user: ' + resp.toString() + '\n';
-        });
-    $scope.saveSettings = function () {
-        $http.put('/user', $scope.user)
-            .then(function sucess(resp) {
-                $scope.confirm = 'Saved!';
+    $scope.init = function () {
+
+    };
+
+    $scope.retrieveUserSettings = function () {
+        crud.retrieve('/user')
+            .then(function success(data) {
+                if (data.USER !== null) {
+                    $scope.user = data.USER;
+                }else{
+                    $scope.error = "You don't seemed to be logged in";
+                }
+            }, function error() {
+                $scope.error = "Oh Jesus, take the wheel";
+            })
+            .catch(function () {
+                $scope.error = "Why does the universe hate me";
+            })
+    };
+
+    $scope.updateUserSettings = function () {
+        crud.update('/user', $scope.user)
+            .then(function success() {
+                $scope.confirm = 'Saved your settings!';
             }, function error(resp) {
-                $scope.confirm = 'Uh oh!';
+                $scope.confirm = 'Uh oh, maybe try again!' + resp.status;
             });
     };
+
+    $scope.init();
 }]);
 
