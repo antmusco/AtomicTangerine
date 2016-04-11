@@ -9,7 +9,6 @@ import com.google.appengine.repackaged.com.google.gson.JsonElement;
  */
 public class Comic {
 
-
     private long ID;
 
     public Comic() {

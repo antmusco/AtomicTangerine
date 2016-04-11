@@ -1,6 +1,8 @@
 package atomic.user;
 
+import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
+import atomic.json.JsonProperty;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonElement;
@@ -15,25 +17,18 @@ public class UserCrudServlet extends CrudServlet {
 
     /**
      * For now, the json format should be as follows:
-     *
-     * {
-     *     "request"   : "create",
-     *     "gmail"     : "google@gmail.com",
-     *     "username"  : "gman1995",
-     *     "expPoints" : 456,
-     * }
-     *
-     * @param json
-     * @return
+     * @param json JsonObject containing the request parameters passed to this servlet.
+     * @return A JsonObject containing the return parameters.
      */
     @Override
     protected JsonElement create(JsonElement json) {
 
+        // Convert Json to object and retrieve user via their gmail account.
         JsonObject obj = json.getAsJsonObject();
+        User newUser = new User(obj.get(JsonProperty.GMAIL.toString()).getAsString());
 
-        User newUser = new User(obj.get("gmail").getAsString());
-
-        return null;
+        // Successful create.
+        return successfulRequest();
 
     }
 
@@ -51,21 +46,21 @@ public class UserCrudServlet extends CrudServlet {
         // Grab the UserService.
         UserService service = UserServiceFactory.getUserService();
 
-        // If the u
+        // If the user is not logged in, user can not be retrieved.
         if(service.getCurrentUser() == null) {
 
-            response.add("USER", null);
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+            response.add(JsonProperty.USER.toString(), null);
 
         } else {
 
             String gmail = service.getCurrentUser().getEmail();
 
-            // @TODO retrieve user from datastore using email address.
-
-            // Construct the user
+            // Construct the user - This will create in the data store if non-existent.
             User user = new User(gmail);
 
-            response.add("USER", user.toJsonObject());
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.USER.toString(), user.toJson());
 
         }
 
@@ -75,12 +70,12 @@ public class UserCrudServlet extends CrudServlet {
 
     @Override
     protected JsonElement update(JsonElement json) {
-        return null;
+        return unsupportedRequest();
     }
 
     @Override
     protected JsonElement delete(JsonElement json) {
-        return null;
+        return unsupportedRequest();
     }
 
 }

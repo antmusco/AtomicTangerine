@@ -1,8 +1,10 @@
 package atomic.crud;
 
 // GSON library.
+import atomic.json.JsonProperty;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 // Java Servlet library.
@@ -165,6 +167,42 @@ public abstract class CrudServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         response.getWriter().write(json.toString());
+
+    }
+
+    /**
+     * Creates a JsonObject indicating that the operation is unsupported.
+     * @return A JsonObject with a single field: "RESULT" : "UNSUPPORTED".
+     */
+    protected JsonElement unsupportedRequest() {
+
+        JsonObject response = new JsonObject();
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.UNSUPPORTED.toString());
+        return response;
+
+    }
+
+    /**
+     * Creates a JsonObject indicating that the operation completed successfully.
+     * @return A JsonObject with a single field: "RESULT" : "SUCCESS".
+     */
+    protected JsonElement successfulRequest() {
+
+        JsonObject response = new JsonObject();
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+        return response;
+
+    }
+
+    /**
+     * Creates a JsonObject indicating that the operation failed.
+     * @return A JsonObject with a single field: "RESULT" : "FAILED".
+     */
+    protected JsonElement failedRequest() {
+
+        JsonObject response = new JsonObject();
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        return response;
 
     }
 
