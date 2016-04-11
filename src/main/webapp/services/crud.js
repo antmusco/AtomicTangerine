@@ -5,7 +5,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.create = function (url, data) {
         var defer = $q.defer();
-        $http.post(url + '/c', data)
+        $http.put(url + '/c', data)
             .then(function success(resp) {
                 defer.resolve(resp);
             }, function error(resp) {
@@ -27,7 +27,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.update = function (url, data) {
         var defer = $q.defer();
-        $http.put(url + '/u', data)
+        $http.post(url + '/u', data)
             .then(function success(resp) {
                 defer.resolve(resp);
             }, function error(resp) {
