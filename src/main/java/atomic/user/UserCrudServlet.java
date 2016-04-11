@@ -5,6 +5,7 @@ import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -70,7 +71,20 @@ public class UserCrudServlet extends CrudServlet {
 
     @Override
     protected JsonElement update(JsonElement json) {
-        return unsupportedRequest();
+
+        JsonObject obj = json.getAsJsonObject();
+        System.out.println(obj);
+        if(obj.has(JsonProperty.USER.toString())) {
+
+            JsonObject userObj = obj.get(JsonProperty.USER.toString()).getAsJsonObject();
+            new User(userObj);
+
+        } else {
+            new User(obj);
+        }
+
+        return successfulRequest();
+
     }
 
     @Override

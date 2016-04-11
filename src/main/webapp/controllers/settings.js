@@ -21,7 +21,9 @@
             .then(function success(data) {
                 if (data.USER !== null) {
                     $scope.user = data.USER;
-                    $scope.user.birthday = new Date($scope.user.birthday);
+                    if(data.USER.hasOwnProperty('BIRTHDAY')){
+                        $scope.user.BIRTHDAY = new Date($scope.user.BIRTHDAY);
+                    }
                 }else{
                     $scope.error = "You don't seemed to be logged in";
                 }

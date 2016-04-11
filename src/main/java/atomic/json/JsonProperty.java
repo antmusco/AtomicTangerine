@@ -1,5 +1,7 @@
 package atomic.json;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,8 +25,8 @@ public enum JsonProperty {
     USER("USER"),
     GMAIL("GMAIL"),
     HANDLE("HANDLE"),
-    FIRST_NAME("FIRST_NAME"),
-    LAST_NAME("LAST_NAME"),
+    FIRST_NAME("FIRSTNAME"),
+    LAST_NAME("LASTNAME"),
     BIO("BIO"),
     EXP_POINTS("EXP_POINTS"),
     DATE_JOINED("DATE_JOINED"),
@@ -40,6 +42,7 @@ public enum JsonProperty {
     FAVORITE_COMICS("FAVORITE_COMICS");
 
     private String property;
+    public static final DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");
     private static Map<String, JsonProperty> propertyMap = new TreeMap<>();
 
     /**

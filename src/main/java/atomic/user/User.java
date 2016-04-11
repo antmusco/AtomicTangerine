@@ -8,6 +8,9 @@ import com.google.appengine.api.datastore.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.google.gson.JsonElement;
@@ -70,6 +73,11 @@ public class User extends DatastoreEntity implements Jsonable {
         if(obj.has(JsonProperty.GMAIL.toString())) {
             gmail = obj.get(JsonProperty.GMAIL.toString()).getAsString();
             fromJson(obj);
+            try {
+                saveEntity(retrieveEntity());
+            } catch (EntityNotFoundException e) {
+                System.err.println("SOMETHNG WENT HORRIBLY WRONG.");
+            }
         } else {
             throw new IllegalArgumentException("Json does not contain a unique key (gmail).");
         }
@@ -191,11 +199,19 @@ public class User extends DatastoreEntity implements Jsonable {
         }
 
         if(obj.has(JsonProperty.DATE_JOINED.toString())) {
-            dateJoined = new Date(obj.get(JsonProperty.DATE_JOINED.toString()).getAsLong());
+            try {
+                dateJoined = JsonProperty.dateFormat.parse(obj.get(JsonProperty.DATE_JOINED.toString()).getAsString());
+            } catch (ParseException e) {
+                System.err.println("Date unparseable.");
+            }
         }
 
         if(obj.has(JsonProperty.BIRTHDAY.toString())) {
-            birthday = new Date(obj.get(JsonProperty.BIRTHDAY.toString()).getAsLong());
+            try {
+                birthday = JsonProperty.dateFormat.parse(obj.get(JsonProperty.BIRTHDAY.toString()).getAsString());
+            } catch (ParseException e) {
+                System.err.println("Birthday unparseable.");
+            }
         }
 
         if(obj.has(JsonProperty.PREFERENCES.toString())) {
@@ -244,10 +260,10 @@ public class User extends DatastoreEntity implements Jsonable {
         obj.addProperty(JsonProperty.EXP_POINTS.toString(), expPoints);
 
         if(dateJoined != null)
-            obj.addProperty(JsonProperty.DATE_JOINED.toString(), dateJoined.toString());
+            obj.addProperty(JsonProperty.DATE_JOINED.toString(), JsonProperty.dateFormat.format(dateJoined));
 
         if(birthday != null)
-            obj.addProperty(JsonProperty.BIRTHDAY.toString(), birthday.toString());
+            obj.addProperty(JsonProperty.BIRTHDAY.toString(), JsonProperty.dateFormat.format(birthday));
 
         // The preferences property will be a JsonObject in itself.
         if(preferences != null)
@@ -289,9 +305,13 @@ public class User extends DatastoreEntity implements Jsonable {
 
         // Write each of the properties to the entity.
         entity.setProperty(JsonProperty.HANDLE.toString(), this.handle);
+        entity.setProperty(JsonProperty.FIRST_NAME.toString(), this.firstName);
+        entity.setProperty(JsonProperty.LAST_NAME.toString(), this.lastName);
+        entity.setProperty(JsonProperty.BIO.toString(), this.bio);
         entity.setProperty(JsonProperty.EXP_POINTS.toString(), this.expPoints);
         entity.setProperty(JsonProperty.DATE_JOINED.toString(), this.dateJoined);
-        entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences);
+        entity.setProperty(JsonProperty.BIRTHDAY.toString(), this.birthday);
+        //entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEntity());
         entity.setProperty(JsonProperty.CREATED_COMICS.toString(), this.createdComics);
 
     }
@@ -304,11 +324,15 @@ public class User extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.handle = (String) entity.getProperty(JsonProperty.HANDLE.toString());
-        this.expPoints = (double) entity.getProperty(JsonProperty.EXP_POINTS.toString());
-        this.dateJoined = (Date) entity.getProperty(JsonProperty.DATE_JOINED.toString());
-        this.preferences = (Preferences) entity.getProperty(JsonProperty.PREFERENCES.toString());
-        this.createdComics = (List<Key>) entity.getProperty(JsonProperty.CREATED_COMICS.toString());
+        this.handle        = (String)      entity.getProperty(JsonProperty.HANDLE.toString());
+        this.firstName     = (String)      entity.getProperty(JsonProperty.FIRST_NAME.toString());
+        this.lastName      = (String)      entity.getProperty(JsonProperty.LAST_NAME.toString());
+        this.bio           = (String)      entity.getProperty(JsonProperty.BIO.toString());
+        this.expPoints     = (double)      entity.getProperty(JsonProperty.EXP_POINTS.toString());
+        this.dateJoined    = (Date)        entity.getProperty(JsonProperty.DATE_JOINED.toString());
+        this.birthday      = (Date)        entity.getProperty(JsonProperty.BIRTHDAY.toString());
+        //this.preferences = (Preferences) entity.getProperty(JsonProperty.PREFERENCES.toString());
+        this.createdComics = (List<Key>)   entity.getProperty(JsonProperty.CREATED_COMICS.toString());
 
     }
 
