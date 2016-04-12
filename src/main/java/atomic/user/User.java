@@ -1,5 +1,6 @@
 package atomic.user;
 
+import atomic.json.NoUniqueKeyException;
 import atomic.json.JsonProperty;
 import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
@@ -8,9 +9,7 @@ import com.google.appengine.api.datastore.*;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.google.gson.JsonElement;
@@ -52,11 +51,11 @@ public class User extends DatastoreEntity implements Jsonable {
             this.handle = "";
             this.expPoints = 0;
             this.dateJoined = new Date();
-            this.preferences = new Preferences();
+            this.preferences = new Preferences(this.gmail);
             this.createdComics = new LinkedList<>();
 
             // Put the entity in the datastore.
-            saveEntity(new Entity(generateKey()));
+            saveEntity();
 
         }
 
@@ -66,21 +65,11 @@ public class User extends DatastoreEntity implements Jsonable {
      * Constructor which instantiates a User from a Json object.
      * @param obj JsonObject to construct a User from.
      */
-    public User(JsonObject obj) {
+    public User(JsonObject obj) throws NoUniqueKeyException {
 
         super(EntityKind.USER);
-
-        if(obj.has(JsonProperty.GMAIL.toString())) {
-            gmail = obj.get(JsonProperty.GMAIL.toString()).getAsString();
-            fromJson(obj);
-            try {
-                saveEntity(retrieveEntity());
-            } catch (EntityNotFoundException e) {
-                System.err.println("SOMETHNG WENT HORRIBLY WRONG.");
-            }
-        } else {
-            throw new IllegalArgumentException("Json does not contain a unique key (gmail).");
-        }
+        fromJson(obj);
+        saveEntity();
 
     }
 
@@ -172,10 +161,12 @@ public class User extends DatastoreEntity implements Jsonable {
      * Jsonable Methods
      ***********************************************************************/
 
-    public void fromJson(JsonObject obj) {
+    public void fromJson(JsonObject obj) throws NoUniqueKeyException {
 
         if(obj.has(JsonProperty.GMAIL.toString())) {
             gmail = obj.get(JsonProperty.GMAIL.toString()).getAsString();
+        } else {
+            throw new NoUniqueKeyException("User - gmail");
         }
 
         if(obj.has(JsonProperty.HANDLE.toString())) {
@@ -218,7 +209,7 @@ public class User extends DatastoreEntity implements Jsonable {
             JsonObject prefObj = obj.get(JsonProperty.DATE_JOINED.toString()).getAsJsonObject();
 
             //preferences = new Preferences(prefObj);
-            preferences = new Preferences();
+            preferences = new Preferences(this.gmail);
 
         }
 
@@ -231,6 +222,8 @@ public class User extends DatastoreEntity implements Jsonable {
             }
 
         }
+
+        saveEntity();
 
     }
 
@@ -298,10 +291,22 @@ public class User extends DatastoreEntity implements Jsonable {
 
     /**
      * Helper method that sets all the attributes of the entity based on this objects instance variable values.
-     * @param entity Entity to save values to.
+     * @return The Entity containing the current state of the object.
      */
     @Override
-    protected void toEntity(Entity entity) {
+    public Entity toEntity() {
+
+        Entity entity = null;
+
+        try {
+
+            entity = retrieveEntity();
+
+        } catch (EntityNotFoundException e) {
+
+            entity = new Entity(generateKey());
+
+        }
 
         // Write each of the properties to the entity.
         entity.setProperty(JsonProperty.HANDLE.toString(), this.handle);
@@ -311,8 +316,10 @@ public class User extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.EXP_POINTS.toString(), this.expPoints);
         entity.setProperty(JsonProperty.DATE_JOINED.toString(), this.dateJoined);
         entity.setProperty(JsonProperty.BIRTHDAY.toString(), this.birthday);
-        //entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEntity());
+        entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEntity());
         entity.setProperty(JsonProperty.CREATED_COMICS.toString(), this.createdComics);
+
+        return entity;
 
     }
 
@@ -324,6 +331,7 @@ public class User extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
+        this.gmail         = (String)      entity.getProperty(JsonProperty.GMAIL.toString());
         this.handle        = (String)      entity.getProperty(JsonProperty.HANDLE.toString());
         this.firstName     = (String)      entity.getProperty(JsonProperty.FIRST_NAME.toString());
         this.lastName      = (String)      entity.getProperty(JsonProperty.LAST_NAME.toString());
@@ -331,8 +339,10 @@ public class User extends DatastoreEntity implements Jsonable {
         this.expPoints     = (double)      entity.getProperty(JsonProperty.EXP_POINTS.toString());
         this.dateJoined    = (Date)        entity.getProperty(JsonProperty.DATE_JOINED.toString());
         this.birthday      = (Date)        entity.getProperty(JsonProperty.BIRTHDAY.toString());
-        //this.preferences = (Preferences) entity.getProperty(JsonProperty.PREFERENCES.toString());
         this.createdComics = (List<Key>)   entity.getProperty(JsonProperty.CREATED_COMICS.toString());
+
+        // Extract the Preferences entity.
+        this.preferences.fromEntity((Entity) entity.getProperty(JsonProperty.PREFERENCES.toString()));
 
     }
 

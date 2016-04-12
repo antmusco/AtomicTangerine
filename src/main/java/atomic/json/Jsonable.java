@@ -18,6 +18,6 @@ public interface Jsonable {
      * Deserializes an object from a String which contains the JSON representation of this object.
      * @param obj The JsonElement containing the JSON representation of this object.
      */
-    void fromJson(JsonObject obj);
+    void fromJson(JsonObject obj) throws NoUniqueKeyException;
 
 }

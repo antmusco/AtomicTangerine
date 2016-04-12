@@ -4,7 +4,7 @@ import atomic.crud.CrudResult;
 import com.google.appengine.api.datastore.*;
 
 /**
- * Created by Gustavo on 4/7/16.
+ * @author Gustavo Poscidonio
  */
 public abstract class DatastoreEntity {
 
@@ -19,41 +19,6 @@ public abstract class DatastoreEntity {
      */
     protected DatastoreEntity(EntityKind entityKind) {
         this.entityKind = entityKind;
-    }
-
-    /**
-     * Function which produces a Key for this DatastoreEntity.
-     * @return The Key for this DatastoreEntity.
-     */
-    protected abstract Key generateKey();
-
-    /**
-     * Create a new Entity and save it to the datastore.
-     * @return The Entity which was created.
-     */
-    protected Entity createEntity() {
-
-        // Create a key for the current entity kind.
-        Key userKey = generateKey();
-
-        try {
-
-            // Retreive the entity from the datastore. If it exists, simply return it.
-            Entity entity = retrieveEntity();
-            System.err.println("Error: attempt to create entity twice. Returning original.");
-            return entity;
-
-        } catch (EntityNotFoundException ex) {
-
-            // If the entity was not found, create it.
-            Entity newEntity = new Entity(userKey);
-            saveEntity(newEntity);
-
-            // Entity successfully created and placed in the data store.
-            return newEntity;
-
-        }
-
     }
 
     /**
@@ -74,19 +39,25 @@ public abstract class DatastoreEntity {
      * Takes this object and updates it in the datastore. If it does not exist yet in the datastore, it inserts it into
      * the datastore.
      */
-    protected void saveEntity(Entity entity) {
+    protected void saveEntity() {
 
-        toEntity(entity);
+        Entity entity = toEntity();
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(entity);
 
     }
 
     /**
-     * Write the current values of the object to the Entity parameter.
-     * @param entity Entity to have properties written to it.
+     * Function which produces a Key for this DatastoreEntity.
+     * @return The Key for this DatastoreEntity.
      */
-    protected abstract void toEntity(Entity entity);
+    protected abstract Key generateKey();
+
+    /**
+     * Write the current values of the object to the Entity parameter.
+     * @returns The entity which was created using the current state of the object.
+     */
+    public abstract Entity toEntity();
 
     /**
      * Read values from an Entity and update this object's state.

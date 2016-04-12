@@ -3,6 +3,7 @@ package atomic.user;
 import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
+import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.repackaged.com.google.api.client.json.Json;
@@ -73,17 +74,18 @@ public class UserCrudServlet extends CrudServlet {
     protected JsonElement update(JsonElement json) {
 
         JsonObject obj = json.getAsJsonObject();
-        System.out.println(obj);
-        if(obj.has(JsonProperty.USER.toString())) {
+        // System.out.println(obj);
+        try {
 
-            JsonObject userObj = obj.get(JsonProperty.USER.toString()).getAsJsonObject();
-            new User(userObj);
-
-        } else {
             new User(obj);
+            return successfulRequest();
+
+        } catch (NoUniqueKeyException nuke) {
+
+            return failedRequest();
+
         }
 
-        return successfulRequest();
 
     }
 

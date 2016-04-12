@@ -1,17 +1,16 @@
 package atomic.user;
 
-import atomic.comic.Comic;
 import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.Jsonable;
+import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,26 +27,31 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     private List<String> dislikeTags;
     private List<Key>    favoriteComics;
 
-    public Preferences() {
+    public Preferences(String userGmail) {
+
         super(EntityKind.PREFERENCES);
+        this.userGmail = userGmail;
 
-        subscriptions = new LinkedList<>();
-        likeTags = new LinkedList<>();
-        dislikeTags = new LinkedList<>();
-        favoriteComics = new LinkedList<>();
+        try {
 
+            fromEntity(retrieveEntity());
+
+        } catch (EntityNotFoundException ex) {
+
+            subscriptions  = new LinkedList<>();
+            likeTags       = new LinkedList<>();
+            dislikeTags    = new LinkedList<>();
+            favoriteComics = new LinkedList<>();
+
+        }
 
     }
-    public Preferences(JsonObject obj) {
+
+    public Preferences(JsonObject obj) throws NoUniqueKeyException {
 
         super(EntityKind.PREFERENCES);
-
-        if(obj.has(JsonProperty.USER_GMAIL.toString())) {
-            userGmail = obj.get(JsonProperty.USER_GMAIL.toString()).getAsString();
-            fromJson(obj);
-        } else {
-            throw new IllegalArgumentException("Json does not contain a unique key (userGmail).");
-        }
+        fromJson(obj);
+        saveEntity();
 
     }
 
@@ -57,30 +61,51 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     }
 
     @Override
-    protected void toEntity(Entity entity) {
+    public Entity toEntity() {
+
+        Entity entity = null;
+        try {
+            entity = retrieveEntity();
+        } catch (EntityNotFoundException e) {
+            entity = new Entity(generateKey());
+        }
+
         entity.setProperty(JsonProperty.USER_GMAIL.toString(), this.userGmail);
         entity.setProperty(JsonProperty.SUBSCRIPTIONS.toString(), this.subscriptions);
         entity.setProperty(JsonProperty.LIKE_TAGS.toString(), this.likeTags);
         entity.setProperty(JsonProperty.DISLIKE_TAGS.toString(), this.dislikeTags);
         entity.setProperty(JsonProperty.FAVORITE_COMICS.toString(), this.favoriteComics);
+
+        return entity;
+
     }
 
     @Override
     protected void fromEntity(Entity entity) {
-        this.userGmail = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
-        this.subscriptions = (List<Key>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
-        this.likeTags = (List<String>) entity.getProperty(JsonProperty.LIKE_TAGS.toString());
-        this.dislikeTags = (List<String>) entity.getProperty(JsonProperty.DISLIKE_TAGS.toString());
+
+        this.userGmail      = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
+        this.subscriptions  = (List<Key>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
+        this.likeTags       = (List<String>) entity.getProperty(JsonProperty.LIKE_TAGS.toString());
+        this.dislikeTags    = (List<String>) entity.getProperty(JsonProperty.DISLIKE_TAGS.toString());
         this.favoriteComics = (List<Key>) entity.getProperty(JsonProperty.FAVORITE_COMICS.toString());
+
     }
 
     @Override
     public JsonObject toJson() {
+
         return new JsonObject();
+
     }
 
     @Override
-    public void fromJson(JsonObject obj) {
+    public void fromJson(JsonObject obj) throws NoUniqueKeyException {
+
+        if(obj.has(JsonProperty.USER_GMAIL.toString())) {
+
+        } else {
+            throw new NoUniqueKeyException("Preferences - userGmail");
+        }
 
     }
 }
