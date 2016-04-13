@@ -2,6 +2,7 @@ var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate']);
 
 app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
     'use strict';
+
     $routeProvider.
     when('/settings', {
         templateUrl: 'views/settings.html',

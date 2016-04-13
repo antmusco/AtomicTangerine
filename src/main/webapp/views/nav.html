@@ -2,7 +2,7 @@
 
   <md-toolbar layout="row" md-scroll-shrink ng-if="true">
     <div id="titleBar" class="md-toolbar-tools">
-      <span>{{title}}</span>
+      <img height="90" width="95" src="assets/img/ac_title_red.png"/>
       <span flex></span>
       <md-button class="md-raised" href="{{ link }}" aria-label="{{acctBtnTxt}}">
         {{ acctBtnTxt }}
@@ -11,10 +11,10 @@
   </md-toolbar>
   <div layout="column" layout-fill>
     <md-toolbar layout="row">
-      <div class="md-toolbar-tools nav-points">
-        <a ng-href="#/main" flex><span>Read</span></a>
-        <a ng-href="#/create" flex><span>Create</span></a>
-        <a ng-href="#/profile" flex><span>Profile</span></a>
+      <div class="md-toolbar-tools nav-points" layout-align="space-around center">
+        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/main" aria-label="Read">Read</md-button>
+        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/create" aria-label="Create">Create</md-button>
+        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/profile" aria-label="Profile">Profile</md-button>
       </div>
     </md-toolbar>
   </div>

@@ -37,7 +37,7 @@
 
     $scope.updateUserSettings = function () {
         $scope.storeStringDate();
-        crud.update('/user', $scope.user)
+        crud.update('/user', { USER: $scope.user})
             .then(function success() {
                 $scope.confirm = 'Saved your settings!';
             }, function error(resp) {
@@ -46,8 +46,8 @@
     };
 
     $scope.storeStringDate = function () {
-        if ($scope.user.birthday instanceof Date){
-            $scope.user.birthday = $scope.user.birthday.format("m/dd/yy");
+        if ($scope.user.BIRTHDAY instanceof Date){
+            $scope.user.BIRTHDAY = $scope.user.BIRTHDAY.format("m/dd/yyyy");
         }
     };
 

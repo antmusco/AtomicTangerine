@@ -40,5 +40,7 @@
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-testing:1.9.34" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-api-stubs:1.9.34" level="project" />
+    <orderEntry type="library" name="date.format" level="application" />
+    <orderEntry type="library" name="jquery.noisy" level="application" />
   </component>
 </module>
