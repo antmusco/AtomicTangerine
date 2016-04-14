@@ -1,5 +1,8 @@
 package atomic.data;
 
+import atomic.json.JsonProperty;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
+
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -8,9 +11,9 @@ import java.util.TreeMap;
  */
 public enum EntityKind {
 
-    USER("User"),
-    COMIC("Comic"),
-    PREFERENCES("Preferences");
+    USER(JsonProperty.USER.toString()),
+    COMIC(JsonProperty.COMIC.toString()),
+    PREFERENCES(JsonProperty.PREFERENCES.toString());
 
     /**
      * The string representation of the kind of entity.

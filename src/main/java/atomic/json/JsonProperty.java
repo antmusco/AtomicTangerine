@@ -39,7 +39,15 @@ public enum JsonProperty {
     SUBSCRIPTIONS("SUBSCRIPTIONS"),
     LIKE_TAGS("LIKE_TAGS"),
     DISLIKE_TAGS("DISLIKE_TAGS"),
-    FAVORITE_COMICS("FAVORITE_COMICS");
+    FAVORITE_COMICS("FAVORITE_COMICS"),
+
+    // COMICS
+    COMIC("COMIC"),
+
+    // Comic State
+    DRAFT("DRAFT"),
+    PUBLISHED("PUBLISHED")
+    ;
 
     private String property;
     public static final DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");
