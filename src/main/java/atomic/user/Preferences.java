@@ -5,10 +5,7 @@ import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.Jsonable;
 import atomic.json.NoUniqueKeyException;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
 import com.google.gson.JsonObject;
 
 import java.util.LinkedList;
@@ -107,5 +104,29 @@ public class Preferences extends DatastoreEntity implements Jsonable {
             throw new NoUniqueKeyException("Preferences - userGmail");
         }
 
+    }
+
+    public EmbeddedEntity toEmbeddedEntity() {
+        Entity thisEntity = this.toEntity();
+
+        EmbeddedEntity embeddedEntity = new EmbeddedEntity();
+        embeddedEntity.setKey(thisEntity.getKey());
+        embeddedEntity.setPropertiesFrom(thisEntity);
+
+        return embeddedEntity;
+    }
+
+    public static Preferences fromEmbeddedEntity(EmbeddedEntity embeddedEntity) throws NoUniqueKeyException {
+        if(embeddedEntity.hasProperty(JsonProperty.USER_GMAIL.toString())) {
+            Preferences newPreferences = new Preferences((String) embeddedEntity.getProperty(JsonProperty.USER_GMAIL.toString()));
+
+            // In order to avoid duplicating code
+            Entity entity = new Entity(newPreferences.userGmail);
+            entity.setPropertiesFrom(embeddedEntity);
+            newPreferences.fromEntity(entity);
+            return newPreferences;
+        } else {
+            throw new NoUniqueKeyException(JsonProperty.USER_GMAIL.toString());
+        }
     }
 }

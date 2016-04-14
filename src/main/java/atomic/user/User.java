@@ -6,6 +6,7 @@ import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
 import atomic.json.Jsonable;
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -316,7 +317,7 @@ public class User extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.EXP_POINTS.toString(), this.expPoints);
         entity.setProperty(JsonProperty.DATE_JOINED.toString(), this.dateJoined);
         entity.setProperty(JsonProperty.BIRTHDAY.toString(), this.birthday);
-        entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEntity());
+        entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEmbeddedEntity());
         entity.setProperty(JsonProperty.CREATED_COMICS.toString(), this.createdComics);
 
         return entity;
@@ -331,7 +332,7 @@ public class User extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.gmail         = (String)      entity.getProperty(JsonProperty.GMAIL.toString());
+        this.gmail         =               entity.getKey().getName();
         this.handle        = (String)      entity.getProperty(JsonProperty.HANDLE.toString());
         this.firstName     = (String)      entity.getProperty(JsonProperty.FIRST_NAME.toString());
         this.lastName      = (String)      entity.getProperty(JsonProperty.LAST_NAME.toString());
@@ -342,7 +343,11 @@ public class User extends DatastoreEntity implements Jsonable {
         this.createdComics = (List<Key>)   entity.getProperty(JsonProperty.CREATED_COMICS.toString());
 
         // Extract the Preferences entity.
-        this.preferences.fromEntity((Entity) entity.getProperty(JsonProperty.PREFERENCES.toString()));
+        try {
+            this.preferences = Preferences.fromEmbeddedEntity((EmbeddedEntity) entity.getProperty(JsonProperty.PREFERENCES.toString()));
+        } catch (NoUniqueKeyException n) {
+            this.preferences = new Preferences(this.gmail);
+        }
 
     }
 
