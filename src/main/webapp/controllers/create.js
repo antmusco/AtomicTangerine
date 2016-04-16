@@ -16,4 +16,9 @@ app.controller('createCtrl', ['$scope', function ($scope) {
     canvas.add(rect);
     rect.set({ left: 20, top: 50 });
     canvas.renderAll();
+
+    $scope.upload = function () {
+        angular.element(document.querySelector('#fileInput')).click();
+    };
+
 }]);

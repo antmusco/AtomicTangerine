@@ -28,7 +28,7 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
 
     $mdThemingProvider.theme('default')
         .primaryPalette('red')
-        .accentPalette('orange');
+        .accentPalette('blue-grey');
 }
 ]);
 
