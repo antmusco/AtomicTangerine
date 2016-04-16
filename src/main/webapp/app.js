@@ -1,6 +1,6 @@
 var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate']);
 
-app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
+app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', function($routeProvider, $mdThemingProvider , $locationProvider) {
     'use strict';
 
     $routeProvider.
@@ -23,6 +23,9 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
     otherwise({
         redirectTo: '/main'
     });
+
+    $locationProvider.html5Mode(true);
+
     $mdThemingProvider.theme('default')
         .primaryPalette('red')
         .accentPalette('orange');
