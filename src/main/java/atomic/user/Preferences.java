@@ -117,6 +117,10 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     }
 
     public static Preferences fromEmbeddedEntity(EmbeddedEntity embeddedEntity) throws NoUniqueKeyException {
+        if(embeddedEntity == null){
+            System.out.println("TODO: PREFERENCES CLASS STILL BROKEN");
+            return new Preferences("----");
+        }
         if(embeddedEntity.hasProperty(JsonProperty.USER_GMAIL.toString())) {
             Preferences newPreferences = new Preferences((String) embeddedEntity.getProperty(JsonProperty.USER_GMAIL.toString()));
 
