@@ -24,7 +24,7 @@
               </div>
                <div>
                    <h2>Email</h2>
-                   <label>bunny@atomicomics.com</label>
+                   <label>{{user.GMAIL}}</label>
                </div>
                 </div>
                 <div layout="row" layout-padding>
@@ -33,7 +33,7 @@
                         <img src = "assets/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
                         <h2>Artist Handle</h2>
                         </div>
-                        <label>Nbbeeken</label>
+                        <label>{{user.HANDLE}}</label>
                     </div>
                     <div>
                         <div layout="row" >
@@ -41,23 +41,23 @@
                             <h2> Birthday</h2>
                         </div>
 
-                        <label>1993/09/03</label>
+                        <label>{{user.BIRTHDAY}}</label>
                     </div>
                 </div>
                 <div layout="row" layout-padding>
                     <div>
                         <h2>First Name</h2>
-                        <label> John </label>
+                        <label> {{user.FIRSTNAME}} </label>
                     </div>
                     <div>
                         <h2>Last Name</h2>
-                        <label> Smith </label>
+                        <label> {{user.LASTNAME}} </label>
                     </div>
                 </div>
                 <div layout ="row" layout-padding>
                     <div>
                         <h2>Biography</h2>
-                        <label> Today Special, I turn now</label>
+                        <label>{{user.BIO}}</label>
                     </div>
                 </div>
 
