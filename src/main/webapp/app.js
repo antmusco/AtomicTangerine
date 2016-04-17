@@ -24,8 +24,6 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
         redirectTo: '/main'
     });
 
-    $locationProvider.html5Mode(true);
-
     $mdThemingProvider.theme('default')
         .primaryPalette('red')
         .accentPalette('blue-grey');
@@ -35,7 +33,6 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
 app.run(function(crud, $rootScope) {
     'use strict';
     $rootScope.err = '';
-
     crud.retrieve('/login')
         .then(function success(data) {
             if (data.hasOwnProperty('LOGIN')) {

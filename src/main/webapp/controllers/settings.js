@@ -26,8 +26,7 @@
                  $scope.confirm = "Uh oh, there's a server issue."
              })
      };
-
-
+     
 
  }]);
 

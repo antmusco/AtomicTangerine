@@ -44,7 +44,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
-
+        System.out.println("RECV-GET: " + input.toString());
         // Perform the operation using the input and generat the output.
         JsonElement output = retrieve(input);
 
@@ -66,6 +66,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-POST: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = update(input);
@@ -87,6 +88,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-PUT: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = create(input);
@@ -108,6 +110,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-DELETE: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = delete(input);

@@ -1,6 +1,6 @@
 <div id="settings" ng-controller="settingsCtrl" layout="column" ng-cloak class="md-inline-form">
     <div>
-        <md-button ng-href="profile" class="md-icon-button" aria-label="arrow_back">
+        <md-button ng-href="#/profile" class="md-icon-button" aria-label="arrow_back">
             <md-icon class="material-icons">arrow_back</md-icon>
         </md-button>
         <p style="color:red;">{{ msg }}</p>
@@ -55,7 +55,7 @@
                         <md-button ng-dirty ng-disabled="userForm.$invalid" ng-click="updateUserSettings()" class="md-icon-button" aria-label="save">
                             <md-icon class="material-icons">save</md-icon>
                         </md-button>
-                        <md-button ng-href="profile" class="md-icon-button" aria-label="cancel">
+                        <md-button ng-href="#/profile" class="md-icon-button" aria-label="cancel">
                             <md-icon class="material-icons">cancel</md-icon>
                         </md-button>
                     </div>
