@@ -28,13 +28,15 @@ app.service('auth', function auth(crud, $q) {
         crud.update('/user', { USER: user})
             .then(function success() {
                 later.resolve("Updated.");
+                if (!(user.BIRTHDAY instanceof Date)){
+                    user.BIRTHDAY = new Date(user.BIRTHDAY);
+                }
             }, function error() {
                 later.reject("Not Updated.");
-
+                if (!(user.BIRTHDAY instanceof Date)){
+                    user.BIRTHDAY = new Date(user.BIRTHDAY);
+                }
             });
-        if (!(user.BIRTHDAY instanceof Date)){
-            user.BIRTHDAY = new Date(user.BIRTHDAY);
-        }
         return later.promise;
     };
 

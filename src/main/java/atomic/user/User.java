@@ -337,7 +337,7 @@ public class User extends DatastoreEntity implements Jsonable {
         this.firstName     = (String)      entity.getProperty(JsonProperty.FIRST_NAME.toString());
         this.lastName      = (String)      entity.getProperty(JsonProperty.LAST_NAME.toString());
         this.bio           = (String)      entity.getProperty(JsonProperty.BIO.toString());
-        this.expPoints     = (double)      entity.getProperty(JsonProperty.EXP_POINTS.toString());
+        //this.expPoints     = (double)      entity.getProperty(JsonProperty.EXP_POINTS.toString());
         this.dateJoined    = (Date)        entity.getProperty(JsonProperty.DATE_JOINED.toString());
         this.birthday      = (Date)        entity.getProperty(JsonProperty.BIRTHDAY.toString());
         this.createdComics = (List<Key>)   entity.getProperty(JsonProperty.CREATED_COMICS.toString());

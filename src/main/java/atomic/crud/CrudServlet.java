@@ -50,7 +50,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Write the output to response.
         writeJsonToResponse(output, response);
-
+        System.out.println("SEND-GET: " + output.toString());
     }
 
     /**
@@ -73,6 +73,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-POST: " + output.toString());
 
     }
 
@@ -95,6 +96,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-PUT: " + output.toString());
 
     }
 
@@ -117,6 +119,7 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-DELETE: " + output.toString());
 
     }
 
