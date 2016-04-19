@@ -30,6 +30,13 @@
             <version>2.6.2</version>
         </dependency>
 
+        <!-- GCS dependency -->
+        <dependency>
+            <groupId>com.google.appengine.tools</groupId>
+            <artifactId>appengine-gcs-client</artifactId>
+            <version>RELEASE</version>
+        </dependency>
+
         <!-- Compile/runtime dependencies -->
         <dependency>
             <groupId>com.google.appengine</groupId>
