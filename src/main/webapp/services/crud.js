@@ -36,7 +36,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
         return defer.promise;
     };
 
-    crudobj.delete = function (url) {
+    crudobj.delete = function (posturl) {
         var defer = $q.defer();
         $http.delete(url + '/d')
             .then(function success(resp) {

@@ -36,8 +36,8 @@ public class UserCrudServlet extends CrudServlet {
 
     /**
      * Retrieves the data associated with the user currently logged in to Gmail.
-     * @param json
-     * @return
+     * @param json Json which contains the request parameters.
+     * @return Successful or failed request.
      */
     @Override
     protected JsonElement retrieve(JsonElement json) {
@@ -70,6 +70,11 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
+    /**
+     * Updates a user given a Json representation of that user.
+     * @param json Json which contains the field to update.
+     * @return Successful or failed request.
+     */
     @Override
     protected JsonElement update(JsonElement json) {
 
@@ -77,7 +82,11 @@ public class UserCrudServlet extends CrudServlet {
         // System.out.println(obj);
         try {
 
-            new User(obj);
+            // Simply construct a user from the Json passed.
+            JsonObject userObj = obj.getAsJsonObject(JsonProperty.USER.toString());
+            new User(userObj);
+
+            // Successful update.
             return successfulRequest();
 
         } catch (NoUniqueKeyException nuke) {

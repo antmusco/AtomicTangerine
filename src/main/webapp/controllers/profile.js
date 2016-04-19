@@ -27,7 +27,7 @@ app.controller('profileCtrl', ['$scope', '$route','auth', 'crud', function ($sco
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
             var encodedData = btoa(binaryString);
-            crud.update('/user', {PROFILE: encodedData})
+            crud.update('/user', {USER:  {GMAIL: $scope.user.GMAIL, PROFILE: encodedData}})
                 .then(function success() {
                     $scope.msg = "Uploaded!";
                 }, function () {

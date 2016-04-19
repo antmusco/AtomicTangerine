@@ -75,94 +75,14 @@ public class User extends DatastoreEntity implements Jsonable {
     }
 
     /************************************************************************
-     * Getters and Setters
-     ***********************************************************************/
-
-    public String getGmail() {
-        return gmail;
-    }
-
-    public void setGmail(String gmail) {
-        this.gmail = gmail;
-    }
-
-    public String getHandle() {
-        return handle;
-    }
-
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public double getExpPoints() {
-        return expPoints;
-    }
-
-    public void setExpPoints(double expPoints) {
-        this.expPoints = expPoints;
-    }
-
-    public Date getDateJoined() {
-        return dateJoined;
-    }
-
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
-    public void setDateJoined(Date dateJoined) {
-        this.dateJoined = dateJoined;
-    }
-
-    public Preferences getPreferences() {
-        return preferences;
-    }
-
-    public void setPreferences(Preferences preferences) {
-        this.preferences = preferences;
-    }
-
-    public List<Key> getCreatedComics() {
-        return createdComics;
-    }
-
-    public void setCreatedComics(List<Key> createdComics) {
-        this.createdComics = createdComics;
-    }
-
-    /************************************************************************
      * Jsonable Methods
      ***********************************************************************/
 
     public void fromJson(JsonObject obj) throws NoUniqueKeyException {
+
+        if(obj == null) {
+            throw new IllegalArgumentException("JSON object null");
+        }
 
         if(obj.has(JsonProperty.GMAIL.toString())) {
             gmail = obj.get(JsonProperty.GMAIL.toString()).getAsString();
@@ -191,19 +111,11 @@ public class User extends DatastoreEntity implements Jsonable {
         }
 
         if(obj.has(JsonProperty.DATE_JOINED.toString())) {
-            try {
-                dateJoined = JsonProperty.dateFormat.parse(obj.get(JsonProperty.DATE_JOINED.toString()).getAsString());
-            } catch (ParseException e) {
-                System.err.println("Date unparseable.");
-            }
+            dateJoined = new Date(obj.get(JsonProperty.DATE_JOINED.toString()).getAsLong());
         }
 
         if(obj.has(JsonProperty.BIRTHDAY.toString())) {
-            try {
-                birthday = JsonProperty.dateFormat.parse(obj.get(JsonProperty.BIRTHDAY.toString()).getAsString());
-            } catch (ParseException e) {
-                System.err.println("Birthday unparseable.");
-            }
+            birthday = new Date(obj.get(JsonProperty.BIRTHDAY.toString()).getAsLong());
         }
 
         if(obj.has(JsonProperty.PREFERENCES.toString())) {
@@ -213,7 +125,6 @@ public class User extends DatastoreEntity implements Jsonable {
             preferences = new Preferences(this.gmail);
 
         }
-
         if(obj.has(JsonProperty.CREATED_COMICS.toString())) {
             JsonArray comicsList = obj.get(JsonProperty.CREATED_COMICS.toString()).getAsJsonArray();
 
@@ -223,7 +134,6 @@ public class User extends DatastoreEntity implements Jsonable {
             }
 
         }
-
         saveEntity();
 
     }
