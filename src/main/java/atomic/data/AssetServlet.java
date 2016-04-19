@@ -1,32 +1,29 @@
 package atomic.data;
 
-import atomic.crud.CrudServlet;
-import com.google.gson.JsonElement;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by anthony on 4/18/16.
  */
-public class AssetServlet extends CrudServlet {
+public class AssetServlet extends HttpServlet {
 
     @Override
-    protected JsonElement create(JsonElement json) {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //super.doGet(req, resp);
 
-        return null;
+
 
     }
 
     @Override
-    protected JsonElement retrieve(JsonElement json) {
-        return null;
-    }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //super.doPost(req, resp);
 
-    @Override
-    protected JsonElement update(JsonElement json) {
-        return null;
-    }
 
-    @Override
-    protected JsonElement delete(JsonElement json) {
-        return null;
+
     }
 }
