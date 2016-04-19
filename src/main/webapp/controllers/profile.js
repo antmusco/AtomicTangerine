@@ -1,4 +1,4 @@
-app.controller('profileCtrl', ['$scope', '$route','auth', 'crud', function ($scope, $route, auth, crud) {
+app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($scope, $route, auth, $http) {
     'use strict';
     $scope.status = '  ';
     $scope.message = "Profile Ctrl Active";
@@ -22,17 +22,18 @@ app.controller('profileCtrl', ['$scope', '$route','auth', 'crud', function ($sco
 
 
     $('#profilePic').on('change', function () {
+        var info = 'profilepic';
         var file = $(this).get(0).files[0];
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
-            var encodedData = btoa(binaryString);
-            crud.update('/user', {USER:  {GMAIL: $scope.user.GMAIL, PROFILE: encodedData}})
-                .then(function success() {
-                    $scope.msg = "Uploaded!";
-                }, function () {
-                    $scope.msg = "Not Uploaded.";
-                })
+            // var encodedData = btoa(binaryString);
+            $http.post('assets/' + info, binaryString)
+                .then(function success(resp) {
+                    $scope.msg = resp;
+                }, function error(resp) {
+                    $scope.msg = resp;
+                });
         };
         reader.readAsBinaryString(file);
     });
