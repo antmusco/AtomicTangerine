@@ -29,6 +29,8 @@ app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
         $scope.canvasOps();
     });
 
+    
+
     $scope.canvasOps = function canvasOps() {
 
 
@@ -43,6 +45,10 @@ app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
 
         $scope.canvas.add(rect);
         $scope.canvas.renderAll();
+    };
+    
+    $scope.draw = function () {
+        $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
     };
 
     $scope.canvasInit = function () {
