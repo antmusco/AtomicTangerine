@@ -4,8 +4,6 @@ import atomic.json.JsonProperty;
 import atomic.user.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.json.Json;
-import com.google.appengine.repackaged.com.google.gson.JsonObject;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsInputChannel;
@@ -13,6 +11,7 @@ import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,8 @@ public class AssetServlet extends HttpServlet {
     private static final int RETRY_MAX_ATTEMPTS = 10;
     private static final int RETRY_PERIOD_MILLIS = 15000;
     private static final int BUFFER_SIZE = 2 * 1024 * 1024;
-    private static final String BUCKET_NAME = "comics-cse-308";
+    public static final String BUCKET_NAME = "comics-cse-308";
+    public static final String GCS_DOMAIN = "storage.googleapis.com";
 
     /**
      * This is where backoff parameters are configured. Here it is aggressively retrying with
@@ -83,7 +83,7 @@ public class AssetServlet extends HttpServlet {
         copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
 
         JsonObject json = new JsonObject();
-        json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), filename.toString());
+        json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), getAssetURL(filename.getObjectName()));
 
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
@@ -113,8 +113,11 @@ public class AssetServlet extends HttpServlet {
             String profilePicID = user.getProfilePicID();
 
             // Uploading first time - generate new unique ID.
-            if(profilePicID.equals(User.DEFAULT_PROFILE_PIC_ID))
+            if(profilePicID.equals(User.DEFAULT_PROFILE_PIC_ID)) {
                 profilePicID = UUID.randomUUID().toString();
+                user.setProfilePicID(profilePicID);
+                user.saveEntity();
+            }
 
             return new GcsFilename(BUCKET_NAME, profilePicID);
 
@@ -156,6 +159,12 @@ public class AssetServlet extends HttpServlet {
             output.close();
 
         }
+
+    }
+
+    public static String getAssetURL(String assetID) {
+
+        return GCS_DOMAIN + "/" + BUCKET_NAME + "/" + assetID;
 
     }
 
