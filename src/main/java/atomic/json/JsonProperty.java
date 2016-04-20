@@ -43,6 +43,13 @@ public enum JsonProperty {
 
     // COMICS
     COMIC("COMIC"),
+    OWNER_KEY("OWNER_KEY"),
+    TITLE("TITLE"),
+    STATE("STATE"),
+    FRAMES("FRAMES"),
+    GLOBAL_CAPTION("GLOBAL_CAPTION"),
+    DATE_CREATED("DATE_CREATED"),
+    DATE_MODIFIED("DATE_MODIFIED"),
 
     // Comic State
     DRAFT("DRAFT"),
