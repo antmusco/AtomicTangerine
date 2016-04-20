@@ -2,7 +2,7 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
     'use strict';
     $scope.status = '  ';
     $scope.message = "Profile Ctrl Active";
-    $scope.user;
+    $scope.user = null;
     $scope.goToSettings = function () {
         $route.path('/settings');
     };

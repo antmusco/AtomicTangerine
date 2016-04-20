@@ -8,7 +8,7 @@
     <div>
        <div layout="row" layout-padding  layout-align="center center">
         <div layout="column">
-            <img src="assets/ac_title.png" height="300" width="300" layout-padding>
+            <img ng-src="{{user.PROFILE_PIC_URL}}" height="300" width="300" layout-padding>
             <div layout="row" layout-align="end center">
                 <md-button ng-href="#/settings" class="md-fab md-mini" aria-label="settings">
                     <md-icon class="material-icons">settings</md-icon>
@@ -37,14 +37,14 @@
                 <div layout="row" layout-padding>
                     <div>
                         <div layout="row" >
-                        <img src = "assets/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
+                        <img src = "img/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
                         <h2>Artist Handle</h2>
                         </div>
                         <label>{{user.HANDLE}}</label>
                     </div>
                     <div>
                         <div layout="row" >
-                            <img src = "assets/cake.png" alt="cake" height="35.7" width="33" layout-padding>
+                            <img src = "img/cake.png" alt="cake" height="35.7" width="33" layout-padding>
                             <h2> Birthday</h2>
                         </div>
 
