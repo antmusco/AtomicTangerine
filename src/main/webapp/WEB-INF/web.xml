@@ -30,7 +30,7 @@
 
     <servlet-mapping>
         <servlet-name>assetServlet</servlet-name>
-        <url-pattern>/asset/</url-pattern>
+        <url-pattern>/assets/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
