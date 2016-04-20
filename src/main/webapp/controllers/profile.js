@@ -22,8 +22,8 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
 
 
     $('#profilePic').on('change', function () {
-        var info = 'profilepic';
         var file = $(this).get(0).files[0];
+        var info = 'profilepic/' + file.name;
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;

@@ -276,4 +276,7 @@ public class User extends DatastoreEntity implements Jsonable {
         this.profilePicID = profilePicID;
     }
 
+    public String getGmail() {
+        return gmail;
+    }
 }
