@@ -30,9 +30,9 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
             // var encodedData = btoa(binaryString);
             $http.post('/assets/' + info, binaryString)
                 .then(function success(resp) {
-                    $scope.msg = resp;
+                    $scope.msg = 'Good';
                 }, function error(resp) {
-                    $scope.msg = resp;
+                    $scope.msg = 'Bad';
                 });
         };
         reader.readAsBinaryString(file);
