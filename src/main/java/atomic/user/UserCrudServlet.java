@@ -11,34 +11,34 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
- * CrudServlet implementation which will be used to create, retrieve, update, and delete user data.
+ * CrudServlet implementation which will be used to create, retrieve, update, and delete User data.
  *
  * @author Anthony G. Musco
  */
 public class UserCrudServlet extends CrudServlet {
 
-    /**
-     * For now, the json format should be as follows:
-     * @param json JsonObject containing the request parameters passed to this servlet.
-     * @return A JsonObject containing the return parameters.
-     */
     @Override
     protected JsonElement create(JsonElement json) {
 
         // Convert Json to object and retrieve user via their gmail account.
         JsonObject obj = json.getAsJsonObject();
-        User newUser = new User(obj.get(JsonProperty.GMAIL.toString()).getAsString());
 
-        // Successful create.
-        return successfulRequest();
+        // Attempt to create user.
+        try {
+
+            new User(obj.get(JsonProperty.GMAIL.toString()).getAsString()); // creates user.
+
+            // Successful create.
+            return successfulRequest();
+
+        } catch (NoUniqueKeyException nuke) {
+
+            return failedRequest();
+
+        }
 
     }
 
-    /**
-     * Retrieves the data associated with the user currently logged in to Gmail.
-     * @param json
-     * @return
-     */
     @Override
     protected JsonElement retrieve(JsonElement json) {
 
@@ -59,10 +59,19 @@ public class UserCrudServlet extends CrudServlet {
             String gmail = service.getCurrentUser().getEmail();
 
             // Construct the user - This will create in the data store if non-existent.
-            User user = new User(gmail);
+            try {
 
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-            response.add(JsonProperty.USER.toString(), user.toJson());
+                User user = new User(gmail);
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+                response.add(JsonProperty.USER.toString(), user.toJson());
+
+            } catch (NoUniqueKeyException nuke) {
+
+                System.err.println(nuke.getMessage());
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+                response.add(JsonProperty.USER.toString(), null);
+
+            }
 
         }
 
@@ -73,11 +82,13 @@ public class UserCrudServlet extends CrudServlet {
     @Override
     protected JsonElement update(JsonElement json) {
 
+        // Retrieve the user as a JSON.
         JsonObject obj = json.getAsJsonObject();
-        // System.out.println(obj);
+
+        // Attempt to update the user.
         try {
 
-            new User(obj);
+            new User(obj); // updates simply by creating the user.
             return successfulRequest();
 
         } catch (NoUniqueKeyException nuke) {
@@ -91,7 +102,10 @@ public class UserCrudServlet extends CrudServlet {
 
     @Override
     protected JsonElement delete(JsonElement json) {
+
+        // Cannot delete users as of yet.
         return unsupportedRequest();
+
     }
 
 }

@@ -43,7 +43,7 @@ public enum JsonProperty {
 
     // COMICS
     COMIC("COMIC"),
-    OWNER_KEY("OWNER_KEY"),
+    OWNER_GMAIL("OWNER_GMAIL"),
     TITLE("TITLE"),
     STATE("STATE"),
     FRAMES("FRAMES"),
@@ -71,6 +71,7 @@ public enum JsonProperty {
 
     /**
      * Constructor which binds the property String to it's enum value.
+     *
      * @param property The String representation of the property.
      */
     JsonProperty(String property) {
@@ -79,6 +80,7 @@ public enum JsonProperty {
 
     /**
      * Static function which parses a property from a String parameter.
+     *
      * @param property The String representation of the property, such as what is submitted in JSON.
      * @return The appropriate JsonProperty enum.
      */
@@ -93,6 +95,7 @@ public enum JsonProperty {
 
     /**
      * Public method which returns the indicated property in it's String form.
+     *
      * @return The property as a String.
      */
     public String toString() {
