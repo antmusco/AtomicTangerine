@@ -15,6 +15,7 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
         auth.getUser()
             .then(function success(user) {
                 $scope.user = user;
+                $scope.user.PROFILE_PIC_URL = 'data:image/jpeg;base64, ' + $scope.user.PROFILE_PIC_URL;
             }, function error(msg) {
                 $scope.msg = msg;
             });
