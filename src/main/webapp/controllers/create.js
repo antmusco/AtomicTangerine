@@ -50,6 +50,13 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     
     $scope.draw = function () {
         $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
+        if ($scope.canvas.isDrawingMode){
+            $scope.buttonStyle={background:'#808080'};
+
+        }else{
+            $scope.buttonStyle={background:'#ab2323'};
+            
+        }
     };
 
     $scope.canvasInit = function () {
