@@ -3,7 +3,7 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
     $('#comicPic').on('change', function () {
         var file = $(this).get(0).files[0];
-        var info = 'comic/' + file.name;
+        var info = 'comic/' + $scope.comicTitle + '/add/' + file.name;
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;

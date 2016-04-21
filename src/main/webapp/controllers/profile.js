@@ -27,8 +27,7 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
-            // var encodedData = btoa(binaryString);
-            $http.post('/assets/' + info, binaryString)
+            $http.post('/assets/' + info,  binaryString)
                 .then(function success(resp) {
                     $scope.msg = 'Good';
                 }, function error(resp) {
