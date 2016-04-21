@@ -54,3 +54,13 @@ nav {
 .view-animate.ng-leave.ng-leave-active {
     left:-100%;
 }
+
+.md-button.md-fab.md-mini{
+    background:#ab2323;
+}
+#controls{
+    padding-top:10px;
+}
+#theCanvas{
+    border: 5px #ab2323 ridge;
+}

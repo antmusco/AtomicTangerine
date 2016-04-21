@@ -108,6 +108,7 @@ public class AssetServlet extends HttpServlet {
         } catch (IndexOutOfBoundsException | NullPointerException ex) {
 
             System.err.println("Illegal format for retrieve: " + uri);
+            ex.printStackTrace();
 
         }
 
@@ -159,6 +160,7 @@ public class AssetServlet extends HttpServlet {
         } catch (IndexOutOfBoundsException | NullPointerException ex) {
 
             System.err.println("Illegal format for upload request by " + user.getGmail() + ": " + uri);
+            ex.printStackTrace();
 
         }
 
