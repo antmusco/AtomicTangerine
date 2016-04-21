@@ -10,7 +10,7 @@
 
     <properties>
         <app.id>atomiccomics-308</app.id>
-        <app.version>2</app.version>
+        <app.version>3</app.version>
         <appengine.version>1.9.34</appengine.version>
         <gcloud.plugin.version>2.0.9.74.v20150814</gcloud.plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,6 +28,13 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.6.2</version>
+        </dependency>
+
+        <!-- GCS dependency -->
+        <dependency>
+            <groupId>com.google.appengine.tools</groupId>
+            <artifactId>appengine-gcs-client</artifactId>
+            <version>RELEASE</version>
         </dependency>
 
         <!-- Compile/runtime dependencies -->

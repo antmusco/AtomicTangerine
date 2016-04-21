@@ -1,8 +1,5 @@
 
 <div ng-controller="profileCtrl">
-    <md-button ng-href="#/settings" class="md-icon-button" aria-label="settings">
-        <md-icon class="material-icons">settings</md-icon>
-    </md-button>
 
     <h1>{{ user.handle }}</h1>
 
@@ -10,8 +7,18 @@
 
     <div>
        <div layout="row" layout-padding  layout-align="center center">
-        <div >
-            <img src="assets/ac_title.png" height="300" width="300" layout-padding>
+        <div layout="column">
+            <img src="{{'https://'+user.PROFILE_PIC_URL}}" height="300" width="300" layout-padding>
+            <div layout="row" layout-align="end center">
+                <md-button ng-href="#/settings" class="md-fab md-mini" aria-label="settings">
+                    <md-icon class="material-icons">settings</md-icon>
+                </md-button>
+                <input id="profilePic" type="file"  class="ng-hide">
+                <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
+                    <md-icon class="material-icons">file_upload</md-icon>
+                </md-button>
+                <p>{{msg}}</p>
+            </div>
         </div>
 
 
@@ -24,40 +31,40 @@
               </div>
                <div>
                    <h2>Email</h2>
-                   <label>bunny@atomicomics.com</label>
+                   <label>{{user.GMAIL}}</label>
                </div>
                 </div>
                 <div layout="row" layout-padding>
                     <div>
                         <div layout="row" >
-                        <img src = "assets/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
+                        <img src = "img/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
                         <h2>Artist Handle</h2>
                         </div>
-                        <label>Nbbeeken</label>
+                        <label>{{user.HANDLE}}</label>
                     </div>
                     <div>
                         <div layout="row" >
-                            <img src = "assets/cake.png" alt="cake" height="35.7" width="33" layout-padding>
+                            <img src = "img/cake.png" alt="cake" height="35.7" width="33" layout-padding>
                             <h2> Birthday</h2>
                         </div>
 
-                        <label>1993/09/03</label>
+                        <label>{{user.BIRTHDAY}}</label>
                     </div>
                 </div>
                 <div layout="row" layout-padding>
                     <div>
                         <h2>First Name</h2>
-                        <label> John </label>
+                        <label> {{user.FIRSTNAME}} </label>
                     </div>
                     <div>
                         <h2>Last Name</h2>
-                        <label> Smith </label>
+                        <label> {{user.LASTNAME}} </label>
                     </div>
                 </div>
                 <div layout ="row" layout-padding>
                     <div>
                         <h2>Biography</h2>
-                        <label> Today Special, I turn now</label>
+                        <label>{{user.BIO}}</label>
                     </div>
                 </div>
 

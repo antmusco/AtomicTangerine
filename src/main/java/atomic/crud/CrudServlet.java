@@ -44,13 +44,13 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
-
+        System.out.println("RECV-GET: " + input.toString());
         // Perform the operation using the input and generat the output.
         JsonElement output = retrieve(input);
 
         // Write the output to response.
         writeJsonToResponse(output, response);
-
+        System.out.println("SEND-GET: " + output.toString());
     }
 
     /**
@@ -66,12 +66,14 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-POST: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = update(input);
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-POST: " + output.toString());
 
     }
 
@@ -87,12 +89,14 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-PUT: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = create(input);
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-PUT: " + output.toString());
 
     }
 
@@ -108,12 +112,14 @@ public abstract class CrudServlet extends HttpServlet {
 
         // Read input from the request object.
         JsonElement input = readJsonFromRequest(request);
+        System.out.println("RECV-DELETE: " + input.toString());
 
         // Perform the operation using the input and generat the output.
         JsonElement output = delete(input);
 
         // Write the output to response.
         writeJsonToResponse(output, response);
+        System.out.println("SEND-DELETE: " + output.toString());
 
     }
 

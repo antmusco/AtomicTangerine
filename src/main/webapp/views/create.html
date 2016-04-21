@@ -1,6 +1,65 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
     <div>
-        <canvas style="border-style: solid" width="800" height="500" id="theCanvas"></canvas>
+        <canvas style="border: thin red solid" width="900" height="550" id="theCanvas"></canvas>
     </div>
 </div>
-<div>Controls</div>
+<div>
+    <h3>Controls</h3>
+    <div layout="row">
+        <md-button ng-click="draw()" class="md-fab md-mini" aria-label="brush">
+            <md-icon class="material-icons">brush</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini" aria-label="delete">
+            <md-icon class="material-icons">delete</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini" aria-label="fingerprint">
+            <md-icon class="material-icons">fingerprint</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini" aria-label="add">
+            <md-icon class="material-icons">add</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini" aria-label="text_format">
+            <md-icon class="material-icons">text_format</md-icon>
+        </md-button>
+        <!--<md-button class="md-fab md-mini" aria-label="">-->
+            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--</md-button>-->
+        <!--<md-button class="md-fab md-mini" aria-label="">-->
+            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--</md-button>-->
+        <!--<md-button class="md-fab md-mini" aria-label="">-->
+            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--</md-button>-->
+    </div>
+    <div layout="row">
+        <md-button style="background: red" class="md-fab md-mini" aria-label="red">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: orange" class="md-fab md-mini" aria-label="orange">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: yellow" class="md-fab md-mini" aria-label="yellow">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: green" class="md-fab md-mini" aria-label="green">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: blue" class="md-fab md-mini" aria-label="blue">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: indigo" class="md-fab md-mini" aria-label="indigo">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: violet" class="md-fab md-mini" aria-label="violet">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+        <md-button style="background: black" class="md-fab md-mini" aria-label="black">
+            <md-icon class="material-icons"></md-icon>
+        </md-button>
+    </div>
+</div>
+<h3>Upload</h3>
+<input id="comicPic" type="file"  class="ng-hide">
+<md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
+    <md-icon class="material-icons">file_upload</md-icon>
+</md-button>

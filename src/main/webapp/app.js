@@ -1,6 +1,6 @@
 var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate']);
 
-app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
+app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', function($routeProvider, $mdThemingProvider , $locationProvider) {
     'use strict';
 
     $routeProvider.
@@ -23,16 +23,16 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
     otherwise({
         redirectTo: '/main'
     });
+
     $mdThemingProvider.theme('default')
         .primaryPalette('red')
-        .accentPalette('orange');
+        .accentPalette('blue-grey');
 }
 ]);
 
 app.run(function(crud, $rootScope) {
     'use strict';
     $rootScope.err = '';
-
     crud.retrieve('/login')
         .then(function success(data) {
             if (data.hasOwnProperty('LOGIN')) {

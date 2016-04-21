@@ -33,6 +33,7 @@ public enum JsonProperty {
     BIRTHDAY("BIRTHDAY"),
     PREFERENCES("PREFERENCES"),
     CREATED_COMICS("CREATED_COMICS"),
+    PROFILE_PIC_URL("PROFILE_PIC_URL"),
 
     // USER PREFERENCES
     USER_GMAIL("USER_GMAIL"),
@@ -53,8 +54,7 @@ public enum JsonProperty {
 
     // Comic State
     DRAFT("DRAFT"),
-    PUBLISHED("PUBLISHED")
-    ;
+    PUBLISHED("PUBLISHED");
 
     private String property;
     public static final DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");

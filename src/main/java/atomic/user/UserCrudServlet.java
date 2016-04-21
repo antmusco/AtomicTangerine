@@ -79,7 +79,6 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
-    @Override
     protected JsonElement update(JsonElement json) {
 
         // Retrieve the user as a JSON.
@@ -88,7 +87,11 @@ public class UserCrudServlet extends CrudServlet {
         // Attempt to update the user.
         try {
 
-            new User(obj); // updates simply by creating the user.
+            // Simply construct a user from the Json passed.
+            JsonObject userObj = obj.getAsJsonObject(JsonProperty.USER.toString());
+            new User(userObj);
+
+            // Successful update.
             return successfulRequest();
 
         } catch (NoUniqueKeyException nuke) {
