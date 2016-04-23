@@ -72,7 +72,6 @@ public class User extends DatastoreEntity implements Jsonable {
             saveEntity();
 
         }
-
     }
 
     /**
@@ -257,7 +256,7 @@ public class User extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.gmail         = (String)       entity.getProperty(JsonProperty.GMAIL.toString());
+        this.gmail         = (String)       entity.getKey().getName();
         this.handle        = (String)       entity.getProperty(JsonProperty.HANDLE.toString());
         this.firstName     = (String)       entity.getProperty(JsonProperty.FIRST_NAME.toString());
         this.lastName      = (String)       entity.getProperty(JsonProperty.LAST_NAME.toString());
