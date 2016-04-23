@@ -83,7 +83,6 @@ public class AssetServlet extends HttpServlet {
 
         try {
             String gmail = service.getCurrentUser().getEmail();
-            System.out.println("gmail = " + gmail);
             User user = new User(gmail);
             GcsFilename resource = getResource(uri, user);
             GcsFileOptions options = getOptions(uri);
