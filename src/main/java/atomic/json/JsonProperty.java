@@ -33,6 +33,7 @@ public enum JsonProperty {
     BIRTHDAY("BIRTHDAY"),
     PREFERENCES("PREFERENCES"),
     CREATED_COMICS("CREATED_COMICS"),
+    PROFILE_PIC_URL("PROFILE_PIC_URL"),
 
     // USER PREFERENCES
     USER_GMAIL("USER_GMAIL"),
@@ -40,7 +41,20 @@ public enum JsonProperty {
     LIKE_TAGS("LIKE_TAGS"),
     DISLIKE_TAGS("DISLIKE_TAGS"),
     FAVORITE_COMICS("FAVORITE_COMICS"),
-    PROFILE_PIC_URL("PROFILE_PIC_URL");
+
+    // COMICS
+    COMIC("COMIC"),
+    OWNER_GMAIL("OWNER_GMAIL"),
+    TITLE("TITLE"),
+    STATE("STATE"),
+    FRAMES("FRAMES"),
+    GLOBAL_CAPTION("GLOBAL_CAPTION"),
+    DATE_CREATED("DATE_CREATED"),
+    DATE_MODIFIED("DATE_MODIFIED"),
+
+    // Comic State
+    DRAFT("DRAFT"),
+    PUBLISHED("PUBLISHED");
 
     private String property;
     public static final DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");
@@ -57,6 +71,7 @@ public enum JsonProperty {
 
     /**
      * Constructor which binds the property String to it's enum value.
+     *
      * @param property The String representation of the property.
      */
     JsonProperty(String property) {
@@ -65,6 +80,7 @@ public enum JsonProperty {
 
     /**
      * Static function which parses a property from a String parameter.
+     *
      * @param property The String representation of the property, such as what is submitted in JSON.
      * @return The appropriate JsonProperty enum.
      */
@@ -79,6 +95,7 @@ public enum JsonProperty {
 
     /**
      * Public method which returns the indicated property in it's String form.
+     *
      * @return The property as a String.
      */
     public String toString() {

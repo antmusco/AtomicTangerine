@@ -1,6 +1,7 @@
 package atomic.data;
 
 import atomic.json.JsonProperty;
+import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
 import com.google.appengine.api.datastore.Index;
 import com.google.appengine.api.users.UserService;
@@ -80,18 +81,25 @@ public class AssetServlet extends HttpServlet {
 
         String uri = req.getRequestURI();
 
-        GcsFilename resource = getResource(uri, new User(service.getCurrentUser().getEmail()));
-        GcsFileOptions options = getOptions(uri);
+        try {
+            String gmail = service.getCurrentUser().getEmail();
+            User user = new User(gmail);
+            GcsFilename resource = getResource(uri, user);
+            GcsFileOptions options = getOptions(uri);
 
-        GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
-        copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
+            GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
+            copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
 
-        JsonObject json = new JsonObject();
-        json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), getAssetURL(resource.getObjectName()));
+            JsonObject json = new JsonObject();
+            json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), getAssetURL(resource.getObjectName()));
 
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(json.toString());
+            resp.setContentType("application/json");
+            resp.setCharacterEncoding("UTF-8");
+            resp.getWriter().write(json.toString());
+        } catch (NoUniqueKeyException n) {
+            System.out.println("The email is null for some reason.");
+            n.printStackTrace();
+        }
 
     }
 

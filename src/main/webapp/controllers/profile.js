@@ -21,21 +21,26 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
             });
     };
 
-
-    $('#profilePic').on('change', function () {
-        var file = $(this).get(0).files[0];
-        var info = 'profilepic/' + file.name;
-        var reader = new FileReader();
-        reader.onload = function(readerEvt) {
-            var binaryString = readerEvt.target.result;
-            $http.post('/assets/' + info,  binaryString)
-                .then(function success(resp) {
-                    $scope.msg = 'Good';
-                }, function error(resp) {
-                    $scope.msg = 'Bad';
-                });
-        };
-        reader.readAsBinaryString(file);
+    // For some reason, this entire file was being loaded twice on the profile view.
+    // So we have to unbind the old change method before we put in the new one
+    // or else we have multiple action listeners doing the same thing.
+    $('#profilePic').unbind('change').on('change', function () {
+        if ($(this).get(0).files.length > 0) {
+            var file = $(this).get(0).files[0];
+            var info = 'profilepic/' + file.name;
+            var reader = new FileReader();
+            reader.onload = function (readerEvt) {
+                var binaryString = readerEvt.target.result;
+                console.log("File size: " + file.size)
+                $http.post('/assets/' + info, binaryString)
+                    .then(function success(resp) {
+                        $scope.msg = 'Good';
+                    }, function error(resp) {
+                        $scope.msg = 'Bad';
+                    });
+            };
+            reader.readAsBinaryString(file);
+        }
     });
 
 
