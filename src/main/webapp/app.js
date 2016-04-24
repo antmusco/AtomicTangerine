@@ -5,20 +5,20 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
 
     $routeProvider.
     when('/settings', {
-        templateUrl: 'views/settings.html',
-        controller: 'settingsCtrl'
+        templateUrl: 'views/settings.html'
+        //controller: 'settingsCtrl'
     }).
     when('/main', {
-        templateUrl: 'views/main.html',
-        controller: 'mainCtrl'
+        templateUrl: 'views/main.html'
+        //controller: 'mainCtrl'
     }).
     when('/create', {
-        templateUrl: 'views/create.html',
-        controller: 'createCtrl'
+        templateUrl: 'views/create.html'
+        //controller: 'createCtrl'
     }).
     when('/profile', {
-        templateUrl: 'views/profile.html',
-        controller: 'profileCtrl'
+        templateUrl: 'views/profile.html'
+        //controller: 'profileCtrl'
     }).
     otherwise({
         redirectTo: '/main'
