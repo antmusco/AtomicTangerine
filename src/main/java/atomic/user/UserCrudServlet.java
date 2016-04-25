@@ -4,9 +4,6 @@ import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -42,36 +39,21 @@ public class UserCrudServlet extends CrudServlet {
     @Override
     protected JsonElement retrieve(JsonElement json) {
 
-        // Initialize response.
-        JsonObject response = new JsonObject();
+        JsonElement response;
 
-        // Grab the UserService.
-        UserService service = UserServiceFactory.getUserService();
+        // Construct the user - This will create in the data store if non-existent.
+        try {
+            // Grab the UserService.
+            User user = User.getCurrentUser();
+            response = successfulRequest();
+            ((JsonObject)response).add(JsonProperty.USER.toString(), user.toJson());
 
-        // If the user is not logged in, user can not be retrieved.
-        if(service.getCurrentUser() == null) {
+        } catch (Exception e) {
 
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-            response.add(JsonProperty.USER.toString(), null);
-
-        } else {
-
-            String gmail = service.getCurrentUser().getEmail();
-
-            // Construct the user - This will create in the data store if non-existent.
-            try {
-
-                User user = new User(gmail);
-                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-                response.add(JsonProperty.USER.toString(), user.toJson());
-
-            } catch (NoUniqueKeyException nuke) {
-
-                System.err.println(nuke.getMessage());
-                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-                response.add(JsonProperty.USER.toString(), null);
-
-            }
+            // Problem occurred while retrieving the user.
+            System.err.println(e.getMessage());
+            response = failedRequest();
+            ((JsonObject)response).add(JsonProperty.USER.toString(), null);
 
         }
 
@@ -79,6 +61,7 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
+    @Override
     protected JsonElement update(JsonElement json) {
 
         // Retrieve the user as a JSON.

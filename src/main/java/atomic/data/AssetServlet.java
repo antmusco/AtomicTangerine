@@ -1,8 +1,10 @@
 package atomic.data;
 
+import atomic.comic.Comic;
 import atomic.json.JsonProperty;
+import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
-import com.google.appengine.api.datastore.Index;
+import atomic.user.UserNotFoundException;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
@@ -48,130 +50,135 @@ public class AssetServlet extends HttpServlet {
             .totalRetryPeriodMillis(RETRY_PERIOD_MILLIS)
             .build());
 
-    /**
-     * Retrieves a file from GCS and returns it in the http response.
-     * If the request path is /gcs/Foo/Bar this will be interpreted as
-     * a request to read the GCS file named Bar in the bucket Foo.
-     */
-    @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        GcsFilename fileName = getResource(req.getRequestURI());
-
-        GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0, BUFFER_SIZE);
-        copy(Channels.newInputStream(readChannel), resp.getOutputStream());
-
-    }
-
-    /**
-     * Writes the payload of the incoming post as the contents of a file to GCS.
-     * If the request path is /gcs/Foo/Bar this will be interpreted as
-     * a request to create a GCS file named Bar in bucket Foo.
-     */
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 
-        // Grab the UserService.
-        UserService service = UserServiceFactory.getUserService();
-
-        if(service.getCurrentUser() == null) {
-            return;
-        }
-
-        String uri = req.getRequestURI();
-
-        GcsFilename resource = getResource(uri, new User(service.getCurrentUser().getEmail()));
-        GcsFileOptions options = getOptions(uri);
-
-        GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
-        copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
-
-        JsonObject json = new JsonObject();
-        json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), getAssetURL(resource.getObjectName()));
-
-        resp.setContentType("application/json");
-        resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(json.toString());
-
-    }
-
-    private GcsFilename getResource(String uri) {
-
-        // POSSIBLE FORMATS:
-        // /assets/{assetID}
-
         try {
 
-            String[] splits = uri.split("/", 2);
-            return new GcsFilename(BUCKET_NAME, splits[1]);
+            // Grab a reference to the current User.
+            User currentUser = User.getCurrentUser();
 
-        } catch (IndexOutOfBoundsException | NullPointerException ex) {
+            // Grab the request tokens.
+            String[] tokens = req.getRequestURI().split("/");
 
-            System.err.println("Illegal format for retrieve: " + uri);
+            // Request and option parameters.
+            GcsFilename resource = null;
+            GcsFileOptions options = null;
+
+            // tokens[0] should be empty string.
+            // tokens[1] should be "assets".
+            AssetRequest assetRequest = AssetRequest.fromString(tokens[2]);
+            switch(assetRequest) {
+
+                // /assets/profilepic/{imageName}
+                // 0  1         2          3
+                case PROFILE_PIC: {
+
+                    // Grab the ID of the user profile pic.
+                    String profilePicID = currentUser.getProfilePicID();
+
+                    // Uploading first time - generate new unique ID.
+                    if (profilePicID.equals(User.DEFAULT_PROFILE_PIC_ID)) {
+
+                        profilePicID = UUID.randomUUID().toString();
+                        currentUser.setProfilePicID(profilePicID);
+                        currentUser.saveEntity();
+
+                    }
+
+                    // Construct the resource and the options.
+                    resource = new GcsFilename(BUCKET_NAME, profilePicID);
+                    options = getOptions(tokens[3]/*imagename*/);
+
+                    // Copy the date from the input stream to the output stream.
+                    GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
+                    copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
+
+                    // Return a JSON containing the Profile Pic URL.
+                    JsonObject json = new JsonObject();
+                    json.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), getAssetURL(resource.getObjectName()));
+
+                    // Write out the response.
+                    resp.setContentType("application/json");
+                    resp.setCharacterEncoding("UTF-8");
+                    resp.getWriter().write(json.toString());
+
+                } break;
+
+                // /assets/comic/{title}/add/{imageName}
+                // /assets/comic/{title}/delete/{index}
+                // /assets/comic/{title}/save/{index}/{imageName}
+                // 0  1      2      3     4      5        6
+                case COMIC_FRAME: {
+
+                    // Grab the requested comic.
+                    Comic comic = new Comic(currentUser.getGmail(), tokens[3]/*title*/);
+
+                    // Determine which request was made.
+                    if(tokens[4].equals("add")) {
+
+                        // Append a new asset to the list of frames and save the entitiy.
+                        String newAssetID = UUID.randomUUID().toString();
+                        comic.getFrames().add(newAssetID);
+                        comic.saveEntity();
+
+                        // Construct the resource and the options.
+                        resource = new GcsFilename(BUCKET_NAME, newAssetID);
+                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image*/);
+
+                        // Copy over the asset from the input stream to the output stream.
+                        GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
+                        copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
+
+                        // Write out the comic data.
+                        resp.setContentType("application/json");
+                        resp.setCharacterEncoding("UTF-8");
+                        resp.getWriter().write(comic.toJson().toString());
+
+                    } else if (tokens[4].equals("save")) {
+
+                        // Grab the assetID of the frame to save.
+                        int frameIndex = Integer.parseInt(tokens[5]);
+                        String assetID = comic.getFrames().get(frameIndex);
+
+                        // Overwrite the
+                        resource = new GcsFilename(BUCKET_NAME, assetID);
+                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image*/);
+
+                        GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
+                        copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
+
+                        resp.setContentType("application/json");
+                        resp.setCharacterEncoding("UTF-8");
+                        resp.getWriter().write(comic.toJson().toString());
+
+                    }else if (tokens[4].equals("delete")) {
+
+                        // TODO: Implemented.
+
+                    }
+
+                } break;
+
+            }
+
+        } catch (Exception e) {
+
+            System.err.println(e.getMessage());
+            e.printStackTrace();
 
         }
 
-        return new GcsFilename(BUCKET_NAME, "img-not-found");
+        System.err.println("Request failed: " + req.getRequestURI());
 
     }
 
-    private GcsFilename getResource(String uri, User user) {
-
-        // POSSIBLE FORMATS:
-        // /assets/profilepic
-        // /assets/comic_{comicID}/frame_{frameID}
-
-        // Assume valid format and catch exception otherwise.
-        try {
-
-            String[] tokens = uri.split("/", 4);
-
-            if (!tokens[0].equals("") || !tokens[1].equals("assets")) {
-                throw new IllegalArgumentException("The URL is not formed as expected. " +
-                        "Expecting /assets/<request>");
-            }
-
-            if (tokens[2].equals("profilepic")) {
-
-                // Grab the ID of the user profile pic.
-                String profilePicID = user.getProfilePicID();
-
-                // Uploading first time - generate new unique ID.
-                if (profilePicID.equals(User.DEFAULT_PROFILE_PIC_ID)) {
-                    profilePicID = UUID.randomUUID().toString();
-                    user.setProfilePicID(profilePicID);
-                    user.saveEntity();
-                }
-
-                return new GcsFilename(BUCKET_NAME, profilePicID);
-
-            } else if (tokens[2].startsWith("comic")) {
-
-                int comicNo = Integer.parseInt(tokens[2].split("_", 2)[1]);
-                int frameNo = Integer.parseInt(tokens[3].split("_", 2)[1]);
-
-                // @TODO: IMPLEMENT.
-
-                return new GcsFilename(BUCKET_NAME, "default-comic");
-
-            }
-
-        } catch (IndexOutOfBoundsException | NullPointerException ex) {
-
-            System.err.println("Illegal format for upload request by " + user.getGmail() + ": " + uri);
-
-        }
-
-        return new GcsFilename(BUCKET_NAME, "img-not-found");
-
-    }
-
-    private GcsFileOptions getOptions(String uri) {
+    private GcsFileOptions getOptions(String filename) {
 
         try {
 
             String mime = null;
-            String ext = uri.split("\\.", 2)[1];
+            String ext = filename.split("\\.", 2)[1];
 
             if(ext.equalsIgnoreCase("jpeg") || ext.equalsIgnoreCase("jpg"))
                 mime = "image/jpeg";
@@ -186,7 +193,7 @@ public class AssetServlet extends HttpServlet {
 
         } catch (Exception e) {
 
-            System.err.println("Illegal image upload: " + uri);
+            System.err.println("Illegal image upload: " + filename);
 
         }
 

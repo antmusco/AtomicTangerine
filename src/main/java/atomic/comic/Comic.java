@@ -261,4 +261,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
+    public List<String> getFrames() {
+        return frames;
+    }
 }

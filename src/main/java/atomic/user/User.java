@@ -7,6 +7,8 @@ import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
 import atomic.json.Jsonable;
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -35,6 +37,27 @@ public class User extends DatastoreEntity implements Jsonable {
     private Preferences  preferences;
     private List<String> createdComics;
     private String       profilePicID;
+
+    /**
+     * Static utility function which grabs the user that is currently logged in and returns it to the caller.
+     *
+     * @return The user who is currently logged in.
+     * @throws NoUniqueKeyException If the gmail for the user could not be recovered or is null.
+     * @throws UserNotFoundException If there is no user logged in.
+     */
+    public static User getCurrentUser() throws NoUniqueKeyException, UserNotFoundException {
+
+        UserService service = UserServiceFactory.getUserService();
+
+        com.google.appengine.api.users.User user = service.getCurrentUser();
+        if(user == null) throw new UserNotFoundException("User not logged in.");
+
+        String gmail = user.getEmail();
+        if(gmail == null) throw new NoUniqueKeyException("No gmail found.");
+
+        return new User(gmail);
+
+    }
 
     /**
      * Default constructor used to instantiate a user with a particular gmail..
