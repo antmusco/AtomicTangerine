@@ -2,14 +2,9 @@ package atomic.data;
 
 import atomic.comic.Comic;
 import atomic.json.JsonProperty;
-import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
-import atomic.user.UserNotFoundException;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsInputChannel;
 import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;

@@ -1,44 +1,73 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
-    <div>
-        <canvas style="border: thin red solid" width="900" height="550" id="theCanvas"></canvas>
-    </div>
-</div>
-<div>
-    <h3>Controls</h3>
     <div layout="row">
-        <md-button ng-click="draw()" class="md-fab md-mini" aria-label="brush">
+        <md-input-container>
+            <label>Comic Title</label>
+            <input ng-model="comicTitle">
+        </md-input-container>
+
+        <md-button  class="md-fab md-mini" aria-label="edit">
+            <md-tooltip> Edit Title </md-tooltip>
+            <md-icon class="material-icons">edit</md-icon>
+        </md-button>
+    </div>
+    <div>
+        <canvas width="900" height="550" id="theCanvas"></canvas>
+    </div>
+
+ 
+
+</div>
+<div id="controls" >
+
+    <div layout="row" layout-align="center center" >
+        <md-button ng-style="buttonStyle" ng-click="draw()" class="md-fab md-mini" aria-label="brush">
+            <md-tooltip> Brush  </md-tooltip>
             <md-icon class="material-icons">brush</md-icon>
         </md-button>
         <md-button class="md-fab md-mini" aria-label="delete">
+            <md-tooltip> Delete  </md-tooltip>
             <md-icon class="material-icons">delete</md-icon>
         </md-button>
         <md-button class="md-fab md-mini" aria-label="fingerprint">
+            <md-tooltip> Signature  </md-tooltip>
             <md-icon class="material-icons">fingerprint</md-icon>
         </md-button>
         <md-button class="md-fab md-mini" aria-label="add">
+            <md-tooltip> Templates </md-tooltip>
             <md-icon class="material-icons">add</md-icon>
         </md-button>
         <md-button class="md-fab md-mini" aria-label="text_format">
+            <md-tooltip> Text </md-tooltip>
             <md-icon class="material-icons">text_format</md-icon>
         </md-button>
+        <input id="comicPic" type="file"  class="ng-hide">
+        <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
+            <md-tooltip> Upload</md-tooltip>
+            <md-icon class="material-icons">file_upload</md-icon>
+        </md-button>
         <!--<md-button class="md-fab md-mini" aria-label="">-->
-            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
         <!--<md-button class="md-fab md-mini" aria-label="">-->
-            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
         <!--<md-button class="md-fab md-mini" aria-label="">-->
-            <!--<md-icon class="material-icons"></md-icon>-->
+        <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
     </div>
-    <div layout="row">
+    <div layout="row" layout-align="center center"  id="colors">
+
         <md-button style="background: red" class="md-fab md-mini" aria-label="red">
+
             <md-icon class="material-icons"></md-icon>
         </md-button>
+
         <md-button style="background: orange" class="md-fab md-mini" aria-label="orange">
+
             <md-icon class="material-icons"></md-icon>
         </md-button>
         <md-button style="background: yellow" class="md-fab md-mini" aria-label="yellow">
+
             <md-icon class="material-icons"></md-icon>
         </md-button>
         <md-button style="background: green" class="md-fab md-mini" aria-label="green">
@@ -58,8 +87,3 @@
         </md-button>
     </div>
 </div>
-<h3>Upload</h3>
-<input id="comicPic" type="file"  class="ng-hide">
-<md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
-    <md-icon class="material-icons">file_upload</md-icon>
-</md-button>
