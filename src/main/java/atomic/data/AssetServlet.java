@@ -3,12 +3,18 @@ package atomic.data;
 import atomic.comic.Comic;
 import atomic.json.JsonProperty;
 import atomic.user.User;
+import com.google.appengine.api.blobstore.BlobstoreService;
+import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.UploadOptions;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
@@ -17,6 +23,7 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.util.UUID;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,26 +35,46 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AssetServlet extends HttpServlet {
 
-    private static final int INIT_RETRY_DELAY_MILLIS = 10;
-    private static final int RETRY_MAX_ATTEMPTS = 10;
-    private static final int RETRY_PERIOD_MILLIS = 15000;
-    private static final int BUFFER_SIZE = 2 * 1024 * 1024;
     public static final String BUCKET_NAME = "comics-cse-308";
-    public static final String GCS_DOMAIN = "storage.googleapis.com";
 
-    /**
-     * This is where backoff parameters are configured. Here it is aggressively retrying with
-     * backoff, up to 10 times but taking no more that 15 seconds total to do so.
-     */
-    private final GcsService gcsService = GcsServiceFactory.createGcsService(new RetryParams.Builder()
-            .initialRetryDelayMillis(INIT_RETRY_DELAY_MILLIS)
-            .retryMaxAttempts(RETRY_MAX_ATTEMPTS)
-            .totalRetryPeriodMillis(RETRY_PERIOD_MILLIS)
-            .build());
+    private static final BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
+
+    private static final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    protected void sendUploadUrl(HttpServletRequest req, HttpServletResponse resp, String errorMessage)
+        throws ServletException, IOException
+    {
+        UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(BUCKET_NAME);
+        String uploadUrl = blobstore.createUploadUrl("/assets", options);
+
+        req.setAttribute("uploadUrl", uploadUrl);
+        if(errorMessage != null) {
+            req.setAttribute("error", errorMessage);
+        }
+    }
+
+
+    @Override
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+        UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(BUCKET_NAME);
+        String uploadUrl = blobstore.createUploadUrl("/assets", options);
+
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("uploadUrl", uploadUrl);
+
+        resp.setContentType("application/json");
+        resp.setCharacterEncoding("UTF-8");
+        resp.getWriter().write(jsonObject.toString());
+    }
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        System.out.println("DO POST TRIGGERED");
 
+        // I am purposely leaving the code below commented but in source control so that I can
+        // refer to it as I write the new doPost method.
+
+/*
         try {
 
             // Grab a reference to the current User.
@@ -83,7 +110,7 @@ public class AssetServlet extends HttpServlet {
 
                     // Construct the resource and the options.
                     resource = new GcsFilename(BUCKET_NAME, profilePicID);
-                    options = getOptions(tokens[3]/*imagename*/);
+                    options = getOptions(tokens[3]/*imagename);
 
                     // Copy the date from the input stream to the output stream.
                     GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
@@ -107,7 +134,7 @@ public class AssetServlet extends HttpServlet {
                 case COMIC_FRAME: {
 
                     // Grab the requested comic.
-                    Comic comic = new Comic(currentUser.getGmail(), tokens[3]/*title*/);
+                    Comic comic = new Comic(currentUser.getGmail(), tokens[3]/*title);
 
                     // Determine which request was made.
                     if(tokens[4].equals("add")) {
@@ -119,7 +146,7 @@ public class AssetServlet extends HttpServlet {
 
                         // Construct the resource and the options.
                         resource = new GcsFilename(BUCKET_NAME, newAssetID);
-                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image*/);
+                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image);
 
                         // Copy over the asset from the input stream to the output stream.
                         GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
@@ -138,7 +165,7 @@ public class AssetServlet extends HttpServlet {
 
                         // Overwrite the
                         resource = new GcsFilename(BUCKET_NAME, assetID);
-                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image*/);
+                        options = GcsFileOptions.getDefaultInstance(); //getOptions(/*new default image);
 
                         GcsOutputChannel outputChannel = gcsService.createOrReplace(resource, options);
                         copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
@@ -165,66 +192,7 @@ public class AssetServlet extends HttpServlet {
         }
 
         System.err.println("Request failed: " + req.getRequestURI());
-
-    }
-
-    private GcsFileOptions getOptions(String filename) {
-
-        try {
-
-            String mime = null;
-            String ext = filename.split("\\.", 2)[1];
-
-            if(ext.equalsIgnoreCase("jpeg") || ext.equalsIgnoreCase("jpg"))
-                mime = "image/jpeg";
-            else if(ext.equalsIgnoreCase("png"))
-                mime = "image/png";
-            else if(ext.equalsIgnoreCase("gif"))
-                mime = "image/gif";
-            else if(ext.equalsIgnoreCase("bmp"))
-                mime = "image/bmp";
-
-            return (new  GcsFileOptions.Builder()).mimeType(mime).build();
-
-        } catch (Exception e) {
-
-            System.err.println("Illegal image upload: " + filename);
-
-        }
-
-        return GcsFileOptions.getDefaultInstance();
-
-    }
-
-
-    /**
-     * Transfer the data from the inputStream to the outputStream. Then close both streams.
-     */
-    private void copy(InputStream input, OutputStream output) throws IOException {
-
-        try {
-
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytesRead = input.read(buffer);
-
-            while (bytesRead != -1) {
-                output.write(buffer, 0, bytesRead);
-                bytesRead = input.read(buffer);
-            }
-
-        } finally {
-
-            input.close();
-            output.close();
-
-        }
-
-    }
-
-    public static String getAssetURL(String assetID) {
-
-        return GCS_DOMAIN + "/" + BUCKET_NAME + "/" + assetID;
-
+*/
     }
 
 }

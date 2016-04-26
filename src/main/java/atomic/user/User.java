@@ -204,7 +204,7 @@ public class User extends DatastoreEntity implements Jsonable {
             obj.addProperty(JsonProperty.BIRTHDAY.toString(), birthday.getTime());
 
         if(profilePicID != null)
-            obj.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), AssetServlet.getAssetURL(profilePicID));
+            obj.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), "" /*AssetServlet.getAssetURL(profilePicID)*/);
 
         // The preferences property will be a JsonObject in itself.
         if(preferences != null)

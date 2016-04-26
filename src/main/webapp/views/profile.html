@@ -14,7 +14,9 @@
                     <md-tooltip> Edit Profile </md-tooltip>
                     <md-icon class="material-icons">settings</md-icon>
                 </md-button>
-                <input id="profilePic" type="file"  class="ng-hide">
+                <form id="profilePicForm" action="{{uploadUrl}}" method="post" class="ng-hide" enctype="multipart/form-data">
+                    <input id="profilePic" type="file"  name="files" class="ng-hide">
+                </form>
                 <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
                     <md-tooltip> Upload </md-tooltip>
                     <md-icon class="material-icons">file_upload</md-icon>
