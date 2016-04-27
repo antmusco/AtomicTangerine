@@ -22,7 +22,7 @@ app.service('auth', function auth(crud, $q) {
 
     authobj.updateUser = function (user) {
         if (user.BIRTHDAY instanceof Date){
-            user.BIRTHDAY = user.BIRTHDAY.getTime() / 1000;
+            user.BIRTHDAY_LONG = user.BIRTHDAY.getTime();
         }
         var later = $q.defer();
         crud.update('/user', { USER: user})

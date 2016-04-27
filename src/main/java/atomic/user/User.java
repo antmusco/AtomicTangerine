@@ -149,11 +149,11 @@ public class User extends DatastoreEntity implements Jsonable {
         }
 
         if(obj.has(JsonProperty.BIRTHDAY.toString())) {
-            birthday = new Date(obj.get(JsonProperty.BIRTHDAY.toString()).getAsLong());
+            birthday = new Date(obj.get(JsonProperty.BIRTHDAY_LONG.toString()).getAsLong());
         }
 
         if(obj.has(JsonProperty.PREFERENCES.toString())) {
-            JsonObject prefObj = obj.get(JsonProperty.DATE_JOINED.toString()).getAsJsonObject();
+            //JsonObject prefObj = obj.get(JsonProperty.PREFERENCES.toString()).getAsJsonObject();
 
             //preferences = new Preferences(prefObj);
             preferences = new Preferences(this.gmail);
