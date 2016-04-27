@@ -15,7 +15,9 @@
                     <md-icon class="material-icons">settings</md-icon>
                 </md-button>
                 <form id="profilePicForm" action="{{uploadUrl}}" method="post" class="ng-hide" enctype="multipart/form-data">
-                    <input id="profilePic" type="file"  name="files" class="ng-hide">
+                    <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
+                    <input id="redirectAddress" type="hidden" name="REDIRECT_URL" class="ng-hide">
+                    <input id="profilePic" type="file"  name="FILES" class="ng-hide">
                 </form>
                 <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
                     <md-tooltip> Upload </md-tooltip>

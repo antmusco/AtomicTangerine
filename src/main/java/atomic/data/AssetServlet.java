@@ -1,27 +1,21 @@
 package atomic.data;
 
-import atomic.comic.Comic;
 import atomic.json.JsonProperty;
+import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
+import com.google.appengine.api.blobstore.FileInfo;
 import com.google.appengine.api.blobstore.UploadOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.tools.cloudstorage.GcsFileOptions;
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-import com.google.appengine.tools.cloudstorage.RetryParams;
-import com.google.gson.JsonElement;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.channels.Channels;
-import java.util.UUID;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -71,6 +65,59 @@ public class AssetServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         System.out.println("DO POST TRIGGERED");
 
+        String submissionType = req.getParameter(JsonProperty.SUBMISSION_TYPE.toString());
+        if (submissionType == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request did not contain 'SUBMISSION_TYPE' field.");
+            return;
+        }
+
+        String redirectUrl = req.getParameter(JsonProperty.REDIRECT_URL.toString());
+        if (redirectUrl == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request did not contain 'REDIRECT_URL' field.");
+            return;
+        }
+
+        if(submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {
+
+            UserService userService = UserServiceFactory.getUserService();
+
+            if(!userService.isUserLoggedIn()){
+                // User not logged in. Request sent in error.
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User is not logged in.");
+                return;
+            }
+
+            String gmail = userService.getCurrentUser().getEmail();
+
+            User user = null;
+            try {
+                user = new User(gmail);
+            } catch (NoUniqueKeyException n) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to" +
+                        " retrieve the user with email: " + gmail);
+                return;
+            }
+
+            Map<String, List<FileInfo>> uploads = blobstore.getFileInfos(req);
+            List<FileInfo> fileInfos = uploads.get(JsonProperty.FILES.toString());
+
+            if(fileInfos == null || fileInfos.size() != 1) {
+                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request either contained no files for submission," +
+                        " or more than one file for submission. There must be exactly one file.");
+                return;
+            }
+
+            // Retrieve the google cloud storage name for the object.
+            String gsObjectName = fileInfos.get(0).getGsObjectName();
+            // And parse it into a profile pic URL.
+            String profilePicUrl = "https://storage.googleapis.com" + gsObjectName.substring(3);
+
+            user.setProfilePicUrl(profilePicUrl);
+            user.saveEntity();
+
+            resp.sendRedirect(redirectUrl);
+        }
+
         // I am purposely leaving the code below commented but in source control so that I can
         // refer to it as I write the new doPost method.
 
@@ -97,13 +144,13 @@ public class AssetServlet extends HttpServlet {
                 case PROFILE_PIC: {
 
                     // Grab the ID of the user profile pic.
-                    String profilePicID = currentUser.getProfilePicID();
+                    String profilePicID = currentUser.getProfilePicUrl();
 
                     // Uploading first time - generate new unique ID.
                     if (profilePicID.equals(User.DEFAULT_PROFILE_PIC_ID)) {
 
                         profilePicID = UUID.randomUUID().toString();
-                        currentUser.setProfilePicID(profilePicID);
+                        currentUser.setProfilePicUrl(profilePicID);
                         currentUser.saveEntity();
 
                     }
