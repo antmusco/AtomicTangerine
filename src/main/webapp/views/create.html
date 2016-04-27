@@ -20,10 +20,18 @@
 <div id="controls" >
 
     <div layout="row" layout-align="center center" >
-        <md-button ng-style="buttonStyle" ng-click="draw()" class="md-fab md-mini" aria-label="brush">
+
+        <md-button  ng-style="buttonStyle" ng-click="draw()" class="md-fab md-mini" aria-label="brush">
             <md-tooltip> Brush  </md-tooltip>
             <md-icon class="material-icons">brush</md-icon>
         </md-button>
+
+        <md-input-container  class="md-icon-float md-icon-right md-block" id="linewidth">
+            <label id="linesize">Line Width</label>
+
+            <input ng-model="withInput" type="number"  >
+        </md-input-container>
+
         <md-button class="md-fab md-mini" aria-label="delete">
             <md-tooltip> Delete  </md-tooltip>
             <md-icon class="material-icons">delete</md-icon>
@@ -45,6 +53,14 @@
             <md-tooltip> Upload</md-tooltip>
             <md-icon class="material-icons">file_upload</md-icon>
         </md-button>
+        <md-button class="md-fab md-mini"  aria-label="colorize">
+            <md-tooltip> Color Picker</md-tooltip>
+            <md-icon class="material-icons">colorize</md-icon>
+        </md-button>
+        <md-button class="md-fab md-mini"   aria-label="save">
+            <md-tooltip> save</md-tooltip>
+            <md-icon class="material-icons">save</md-icon>
+        </md-button>
         <!--<md-button class="md-fab md-mini" aria-label="">-->
         <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
@@ -55,34 +71,35 @@
         <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
     </div>
+
     <div layout="row" layout-align="center center"  id="colors">
 
-        <md-button style="background: red" class="md-fab md-mini" aria-label="red">
+        <md-button style="background: red"  ng-click="pickColor('red')" class="md-fab md-mini" aria-label="red">
 
             <md-icon class="material-icons"></md-icon>
         </md-button>
 
-        <md-button style="background: orange" class="md-fab md-mini" aria-label="orange">
+        <md-button style="background: orange" ng-click="pickColor('orange')" class="md-fab md-mini" aria-label="orange">
 
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: yellow" class="md-fab md-mini" aria-label="yellow">
+        <md-button style="background: yellow" ng-click="pickColor('yellow')" class="md-fab md-mini" aria-label="yellow">
 
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: green" class="md-fab md-mini" aria-label="green">
+        <md-button style="background: green" ng-click="pickColor('green')" class="md-fab md-mini" aria-label="green">
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: blue" class="md-fab md-mini" aria-label="blue">
+        <md-button style="background: blue" ng-click="pickColor('blue')" class="md-fab md-mini" aria-label="blue">
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: indigo" class="md-fab md-mini" aria-label="indigo">
+        <md-button style="background: indigo" ng-click="pickColor('indigo')" class="md-fab md-mini" aria-label="indigo">
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: violet" class="md-fab md-mini" aria-label="violet">
+        <md-button style="background: violet" ng-click="pickColor('violet')" class="md-fab md-mini" aria-label="violet">
             <md-icon class="material-icons"></md-icon>
         </md-button>
-        <md-button style="background: black" class="md-fab md-mini" aria-label="black">
+        <md-button style="background: black" ng-click="pickColor('black')" class="md-fab md-mini" aria-label="black">
             <md-icon class="material-icons"></md-icon>
         </md-button>
     </div>
