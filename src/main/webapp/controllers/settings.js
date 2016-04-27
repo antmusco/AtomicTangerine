@@ -8,6 +8,7 @@
          LASTNAME: '',
          GMAIL: '',
          BIRTHDAY: new Date(),
+         BIRTHDAY_LONG: 0,
          BIO: ''
      };
 

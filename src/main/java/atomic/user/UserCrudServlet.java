@@ -4,65 +4,56 @@ import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 /**
- * CrudServlet implementation which will be used to create, retrieve, update, and delete user data.
+ * CrudServlet implementation which will be used to create, retrieve, update, and delete User data.
  *
  * @author Anthony G. Musco
  */
 public class UserCrudServlet extends CrudServlet {
 
-    /**
-     * For now, the json format should be as follows:
-     * @param json JsonObject containing the request parameters passed to this servlet.
-     * @return A JsonObject containing the return parameters.
-     */
     @Override
     protected JsonElement create(JsonElement json) {
 
         // Convert Json to object and retrieve user via their gmail account.
         JsonObject obj = json.getAsJsonObject();
-        User newUser = new User(obj.get(JsonProperty.GMAIL.toString()).getAsString());
 
-        // Successful create.
-        return successfulRequest();
+        // Attempt to create user.
+        try {
+
+            new User(obj.get(JsonProperty.GMAIL.toString()).getAsString()); // creates user.
+
+            // Successful create.
+            return successfulRequest();
+
+        } catch (NoUniqueKeyException nuke) {
+
+            return failedRequest();
+
+        }
 
     }
 
-    /**
-     * Retrieves the data associated with the user currently logged in to Gmail.
-     * @param json Json which contains the request parameters.
-     * @return Successful or failed request.
-     */
     @Override
     protected JsonElement retrieve(JsonElement json) {
 
-        // Initialize response.
-        JsonObject response = new JsonObject();
+        JsonElement response;
 
-        // Grab the UserService.
-        UserService service = UserServiceFactory.getUserService();
+        // Construct the user - This will create in the data store if non-existent.
+        try {
+            // Grab the UserService.
+            User user = User.getCurrentUser();
+            response = successfulRequest();
+            ((JsonObject)response).add(JsonProperty.USER.toString(), user.toJson());
 
-        // If the user is not logged in, user can not be retrieved.
-        if(service.getCurrentUser() == null) {
+        } catch (Exception e) {
 
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-            response.add(JsonProperty.USER.toString(), null);
-
-        } else {
-
-            String gmail = service.getCurrentUser().getEmail();
-
-            // Construct the user - This will create in the data store if non-existent.
-            User user = new User(gmail);
-
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-            response.add(JsonProperty.USER.toString(), user.toJson());
+            // Problem occurred while retrieving the user.
+            System.err.println(e.getMessage());
+            response = failedRequest();
+            ((JsonObject)response).add(JsonProperty.USER.toString(), null);
 
         }
 
@@ -70,16 +61,13 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
-    /**
-     * Updates a user given a Json representation of that user.
-     * @param json Json which contains the field to update.
-     * @return Successful or failed request.
-     */
     @Override
     protected JsonElement update(JsonElement json) {
 
+        // Retrieve the user as a JSON.
         JsonObject obj = json.getAsJsonObject();
-        // System.out.println(obj);
+
+        // Attempt to update the user.
         try {
 
             // Simply construct a user from the Json passed.
@@ -100,7 +88,10 @@ public class UserCrudServlet extends CrudServlet {
 
     @Override
     protected JsonElement delete(JsonElement json) {
+
+        // Cannot delete users as of yet.
         return unsupportedRequest();
+
     }
 
 }

@@ -1,18 +1,19 @@
-app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
+app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     'use strict';
     ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
     $('#comicPic').on('change', function () {
         var file = $(this).get(0).files[0];
+        var info = 'comic/' + $scope.comicTitle + '/add/' + file.name;
         var reader = new FileReader();
         reader.onload = function(readerEvt) {
             var binaryString = readerEvt.target.result;
-            var encodedData = btoa(binaryString);
-            crud.update('/comic', {COMIC: encodedData})
-                .then(function success() {
-                    $scope.msg = "Uploaded!";
-                }, function () {
-                    $scope.msg = "Not Uploaded.";
-                })
+            // var encodedData = btoa(binaryString);
+            $http.post('/assets/' + info, binaryString)
+                .then(function success(resp) {
+                    $scope.msg = 'Good';
+                }, function error(resp) {
+                    $scope.msg = 'Bad';
+                });
         };
         reader.readAsBinaryString(file);
     });
@@ -55,7 +56,6 @@ app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
 
         }else{
             $scope.buttonStyle={background:'#ab2323'};
-            
         }
     };
 

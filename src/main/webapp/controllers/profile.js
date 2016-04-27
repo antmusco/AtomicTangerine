@@ -20,22 +20,24 @@ app.controller('profileCtrl', ['$scope', '$route','auth', '$http' , function ($s
             });
     };
 
+    $http.get("/assets")
+        .then(function success(resp) {
+            $scope.uploadUrl = resp.data.uploadUrl;
+        }, function error (resp) {
+            console.log(resp);
+        });
 
-    $('#profilePic').on('change', function () {
-        var info = 'profilepic';
-        var file = $(this).get(0).files[0];
-        var reader = new FileReader();
-        reader.onload = function(readerEvt) {
-            var binaryString = readerEvt.target.result;
-            // var encodedData = btoa(binaryString);
-            $http.post('/assets/' + info, binaryString)
-                .then(function success(resp) {
-                    $scope.msg = 'Good';
-                }, function error(resp) {
-                    $scope.msg = 'Bad';
-                });
-        };
-        reader.readAsBinaryString(file);
+    $('#profilePic').unbind('change').on('change', function () {
+        if ($(this).get(0).files.length > 0) {
+            var file = $(this).get(0).files[0];
+            var reader = new FileReader();
+            reader.onload = function (readerEvt) {
+                $("#submissionType").val("PROFILE_PIC");
+                $("#redirectAddress").val("/#/profile");
+                $("#profilePicForm").submit();
+            };
+            reader.readAsBinaryString(file);
+        }
     });
 
 
