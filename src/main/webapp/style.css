@@ -73,3 +73,16 @@ nav {
 #linesize{
     color:#ab2323;
 }
+
+#pickedcolor{
+    padding-right: 40px;
+    padding-bottom: 40px;
+    font-size:60px;
+
+}
+#colorpicker{
+    background-image:url("img/colorpicker.png");
+
+    padding-right: 40px;
+    padding-bottom: 20px;
+}

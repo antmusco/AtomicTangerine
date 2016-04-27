@@ -36,6 +36,13 @@
             <md-tooltip> Delete  </md-tooltip>
             <md-icon class="material-icons">delete</md-icon>
         </md-button>
+
+        <md-button class="md-fab md-mini" aria-label="format_color_fill">
+
+            <md-tooltip> Paint Bucket  </md-tooltip>
+            <md-icon class="material-icons">format_color_fill</md-icon>
+        </md-button>
+
         <md-button class="md-fab md-mini" aria-label="fingerprint">
             <md-tooltip> Signature  </md-tooltip>
             <md-icon class="material-icons">fingerprint</md-icon>
@@ -48,19 +55,18 @@
             <md-tooltip> Text </md-tooltip>
             <md-icon class="material-icons">text_format</md-icon>
         </md-button>
+
+        <md-button class="md-fab md-mini"   aria-label="save">
+            <md-tooltip> save</md-tooltip>
+            <md-icon class="material-icons">save</md-icon>
+        </md-button>
+
         <input id="comicPic" type="file"  class="ng-hide">
         <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
             <md-tooltip> Upload</md-tooltip>
             <md-icon class="material-icons">file_upload</md-icon>
         </md-button>
-        <md-button class="md-fab md-mini"  aria-label="colorize">
-            <md-tooltip> Color Picker</md-tooltip>
-            <md-icon class="material-icons">colorize</md-icon>
-        </md-button>
-        <md-button class="md-fab md-mini"   aria-label="save">
-            <md-tooltip> save</md-tooltip>
-            <md-icon class="material-icons">save</md-icon>
-        </md-button>
+
         <!--<md-button class="md-fab md-mini" aria-label="">-->
         <!--<md-icon class="material-icons"></md-icon>-->
         <!--</md-button>-->
@@ -72,7 +78,20 @@
         <!--</md-button>-->
     </div>
 
+
     <div layout="row" layout-align="center center"  id="colors">
+
+    <div>
+        <md-tooltip>Color in Use</md-tooltip>
+        <md-icon ng-style="pickedcolorstyle"  id="pickedcolor">palette</md-icon>
+    </div>
+
+
+
+        <md-button class="md-fab md-mini"  aria-label="colorize">
+            <md-tooltip> Color Picker</md-tooltip>
+            <md-icon class="material-icons">colorize</md-icon>
+        </md-button>
 
         <md-button style="background: red"  ng-click="pickColor('red')" class="md-fab md-mini" aria-label="red">
 

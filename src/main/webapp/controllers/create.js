@@ -63,7 +63,10 @@ app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
     $scope.pickColor = function(color){
 
         $scope.canvas.freeDrawingBrush.color = color;
+        $scope.pickedcolorstyle={color:color};
+     
     };
+
 
     $scope.canvasInit = function () {
        console.log('bloop');
