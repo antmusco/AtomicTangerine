@@ -52,10 +52,17 @@ app.controller('createCtrl', ['$scope', 'crud', function ($scope, crud) {
         if ($scope.canvas.isDrawingMode){
             $scope.buttonStyle={background:'#808080'};
 
+
         }else{
             $scope.buttonStyle={background:'#ab2323'};
             
         }
+    };
+
+    
+    $scope.pickColor = function(color){
+
+        $scope.canvas.freeDrawingBrush.color = color;
     };
 
     $scope.canvasInit = function () {

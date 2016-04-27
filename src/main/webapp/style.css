@@ -65,5 +65,11 @@ nav {
     border: 5px #ab2323 ridge;
 }
 #colors{
-    padding-top:20px;
+    padding-top:-20px;
+}
+#linewidth{
+    padding-top:25px;
+}
+#linesize{
+    color:#ab2323;
 }
