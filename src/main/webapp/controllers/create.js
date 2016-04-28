@@ -30,11 +30,14 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
         $scope.canvasOps();
     });
 
-    
+    $scope.lineWidth = '1';
+    $('#linewidth').on('change', function () {
+        var inputWidth = $(this).val();
+        $scope.lineWidth = inputWidth
+    });
 
     $scope.canvasOps = function canvasOps() {
-
-
+        $scope.canvas.setCursor('url(img/brush_sm.png)');
         var rect = new fabric.Rect({
             left: 100,
             top: 100,
@@ -46,6 +49,10 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
 
         $scope.canvas.add(rect);
         $scope.canvas.renderAll();
+    };
+
+    $scope.delete = function () {
+      $scope.canvas.clear()
     };
     
     $scope.draw = function () {
@@ -68,11 +75,6 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     };
 
 
-    $scope.canvasInit = function () {
-       console.log('bloop');
-       
-    };
-    $scope.canvasInit();
     ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
 }]);
