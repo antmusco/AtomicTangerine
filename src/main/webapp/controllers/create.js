@@ -30,22 +30,19 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
         $scope.canvasOps();
     });
 
-    
+    $scope.lineWidth = '1';
+    $('#linewidth').on('change', function () {
+        var inputWidth = $(this).val();
+        $scope.lineWidth = inputWidth
+    });
 
     $scope.canvasOps = function canvasOps() {
-
-
-        var rect = new fabric.Rect({
-            left: 100,
-            top: 100,
-            fill: 'green',
-            width: 40,
-            height: 40,
-            angle: 0
-        });
-
-        $scope.canvas.add(rect);
+        $scope.canvas.setCursor('url(img/brush_sm.png)');
         $scope.canvas.renderAll();
+    };
+
+    $scope.delete = function () {
+      $scope.canvas.clear()
     };
     
     $scope.draw = function () {
@@ -66,13 +63,36 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
         $scope.pickedcolorstyle={color:color};
      
     };
+    
+    $scope.drawshape=function(shape){
+        if(shape=='cir'){
+            var circle = new fabric.Circle({
+                radius: 20, fill: 'yellow',
+                left:400, top:400
+            });
+            $scope.canvas.add(circle);
 
+        }else if(shape=='tri'){
+            var triangle = new fabric.Triangle({
+                width: 20, height: 30, fill: 'indigo',
+                left:200, top:200
+            });
+            $scope.canvas.add(triangle);
 
-    $scope.canvasInit = function () {
-       console.log('bloop');
-       
+        }else if(shape=='rect'){
+            var rectangle = new fabric.Rect({
+
+                fill: 'violet',
+                width: 20,
+                height: 40,
+                angle: 0,
+                left:300, top:300
+            });
+            $scope.canvas.add(rectangle);
+
+        };
     };
-    $scope.canvasInit();
+
     ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
 }]);

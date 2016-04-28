@@ -63,13 +63,12 @@ nav {
 }
 #theCanvas{
     border: 5px #ab2323 ridge;
+    cursor: url(img/brush_sm.png), auto;
 }
 #colors{
     padding-top:-20px;
 }
-#linewidth{
-    padding-top:25px;
-}
+
 #linesize{
     color:#ab2323;
 }
@@ -85,4 +84,7 @@ nav {
 
     padding-right: 40px;
     padding-bottom: 20px;
+}
+#geometry{
+    padding-left:40px;
 }
