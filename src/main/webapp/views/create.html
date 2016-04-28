@@ -1,4 +1,5 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
+
     <div layout="row">
         <md-input-container>
             <label>Comic Title</label>
@@ -10,11 +11,31 @@
             <md-icon class="material-icons">edit</md-icon>
         </md-button>
     </div>
+    <div layout="row">
+
     <div>
         <canvas width="900" height="550" id="theCanvas"></canvas>
     </div>
+        <div layout="column" id="geometry" layout-align="center center">
+            <md-button class="md-fab md-mini" aria-label="change_history" ng-click="drawshape('tri')">
+                <md-tooltip> Triangle  </md-tooltip>
+                <md-icon class="material-icons">change_history</md-icon>
+            </md-button>
 
- 
+            <md-button class="md-fab md-mini" aria-label="crop_landscape" ng-click="drawshape('rect')">
+
+                <md-tooltip> Rectangle  </md-tooltip>
+                <md-icon class="material-icons">crop_landscape</md-icon>
+            </md-button>
+
+            <md-button class="md-fab md-mini" aria-label="panorama_fish_eye" ng-click="drawshape('cir')">
+                <md-tooltip> Circle </md-tooltip>
+                <md-icon class="material-icons">panorama_fish_eye</md-icon>
+            </md-button>
+
+        </div>
+
+    </div>
 
 
 <div id="controls" >
