@@ -1,25 +1,52 @@
 app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     'use strict';
     ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
-    $('#comicPic').on('change', function () {
-        var file = $(this).get(0).files[0];
-        var info = 'comic/' + $scope.comicTitle + '/add/' + file.name;
-        var reader = new FileReader();
-        reader.onload = function(readerEvt) {
-            var binaryString = readerEvt.target.result;
-            // var encodedData = btoa(binaryString);
-            $http.post('/assets/' + info, binaryString)
-                .then(function success(resp) {
-                    $scope.msg = 'Good';
-                }, function error(resp) {
-                    $scope.msg = 'Bad';
-                });
-        };
-        reader.readAsBinaryString(file);
+    $('#comicFrame').unbind('change').on('change', function () {
+        if ($(this).get(0).files.length > 0) {
+            var file = $(this).get(0).files[0];
+            var reader = new FileReader();
+            reader.onload = function (readerEvt) {
+                $("#submissionType").val("COMIC_DRAFT");
+                $("#redirectAddress").val("/#/create");
+                if($scope.comicTitle == ''){
+                    $scope.comicTitle = 'NO TITLE!!!';
+                    return;
+                }
+                $("#comicTitle").val($scope.comicTitle);
+                // We don't touch the comic Frame input as it contains the file
+                $("#comicFrameForm").submit();
+                return $scope.getUpload();
+            };
+            reader.readAsBinaryString(file);
+        }
     });
+    $scope.getUpload = function () {
+      $http.get("/comic/frames")
+          .then(function success(resp) {
+             $scope.frames = resp.data.FRAMES;
+          }, function error() {
+              $scope.frames = [];
+          });
+    };
+    $http.get("/assets")
+        .then(function success(resp) {
+            $scope.uploadUrl = resp.data.uploadUrl;
+        }, function error (resp) {
+            console.log(resp);
+        });
     $scope.upload = function () {
-        var fileInput = angular.element(document.querySelector('#comicPic'));
+        var fileInput = angular.element(document.querySelector('#comicFrame'));
         fileInput.click();
+    };
+    $scope.save = function () {
+        $("#submissionType").val("COMIC_DRAFT");
+        $("#redirectAddress").val("/#/create");
+        if($scope.comicTitle == ''){
+            $scope.noTitle = true;
+        }
+        $("#comicTitle").val($scope.comicTitle);
+        $("#comicFrame").val($scope.canvas.toSVG());
+        $("#comicFrameForm").submit();
     };
     ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
 

@@ -3,7 +3,7 @@
     <div layout="row">
         <md-input-container>
             <label>Comic Title</label>
-            <input ng-model="comicTitle">
+            <input ng-model="comicTitle" ng-required="true" ng-trim="true">
         </md-input-container>
 
         <md-button  class="md-fab md-mini" aria-label="edit">
@@ -77,8 +77,8 @@
             <md-icon class="material-icons">text_format</md-icon>
         </md-button>
 
-        <md-button class="md-fab md-mini"   aria-label="save">
-            <md-tooltip> save</md-tooltip>
+        <md-button class="md-fab md-mini" ng-click="save()" aria-label="save">
+            <md-tooltip>Save</md-tooltip>
             <md-icon class="material-icons">save</md-icon>
         </md-button>
         <form id="comicFrameForm" action="{{uploadUrl}}" method="post" class="ng-hide" enctype="multipart/form-data">
