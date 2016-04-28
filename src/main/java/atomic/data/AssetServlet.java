@@ -1,8 +1,10 @@
 package atomic.data;
 
+import atomic.comic.Comic;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
+import atomic.user.UserNotFoundException;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 import com.google.appengine.api.blobstore.FileInfo;
@@ -29,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AssetServlet extends HttpServlet {
 
+    public static final String GOOGLE_STORAGE_ROOT = "https://storage.googleapis.com";
+
     public static final String BUCKET_NAME = "comics-cse-308";
 
     private static final BlobstoreService blobstore = BlobstoreServiceFactory.getBlobstoreService();
@@ -36,8 +40,8 @@ public class AssetServlet extends HttpServlet {
     private static final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     protected void sendUploadUrl(HttpServletRequest req, HttpServletResponse resp, String errorMessage)
-        throws ServletException, IOException
-    {
+        throws ServletException, IOException {
+
         UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(BUCKET_NAME);
         String uploadUrl = blobstore.createUploadUrl("/assets", options);
 
@@ -45,6 +49,7 @@ public class AssetServlet extends HttpServlet {
         if(errorMessage != null) {
             req.setAttribute("error", errorMessage);
         }
+        
     }
 
 
@@ -65,57 +70,90 @@ public class AssetServlet extends HttpServlet {
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         System.out.println("DO POST TRIGGERED");
 
+        // Retrieve the submission requested.
         String submissionType = req.getParameter(JsonProperty.SUBMISSION_TYPE.toString());
         if (submissionType == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request did not contain 'SUBMISSION_TYPE' field.");
             return;
         }
 
+        // Retrieve the redirect URL.
         String redirectUrl = req.getParameter(JsonProperty.REDIRECT_URL.toString());
         if (redirectUrl == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request did not contain 'REDIRECT_URL' field.");
             return;
         }
 
+        // Attempt to determine the current User.
+        User user = null;
+        try {
+            user = User.getCurrentUser();
+        } catch (UserNotFoundException | NoUniqueKeyException n) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to get user.");
+            return;
+        }
+
+        // Grab the List associated file information.
+        Map<String, List<FileInfo>> uploads = blobstore.getFileInfos(req);
+        List<FileInfo> fileInfos = uploads.get(JsonProperty.FILES.toString());
+
+        // Make sure there are files to extract.
+        if(fileInfos == null || fileInfos.size() == 0) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request contained no file information.");
+            return;
+        }
+
+        // Uploaded profile picture.
         if(submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {
-
-            UserService userService = UserServiceFactory.getUserService();
-
-            if(!userService.isUserLoggedIn()){
-                // User not logged in. Request sent in error.
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN, "User is not logged in.");
-                return;
-            }
-
-            String gmail = userService.getCurrentUser().getEmail();
-
-            User user = null;
-            try {
-                user = new User(gmail);
-            } catch (NoUniqueKeyException n) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to" +
-                        " retrieve the user with email: " + gmail);
-                return;
-            }
-
-            Map<String, List<FileInfo>> uploads = blobstore.getFileInfos(req);
-            List<FileInfo> fileInfos = uploads.get(JsonProperty.FILES.toString());
-
-            if(fileInfos == null || fileInfos.size() != 1) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request either contained no files for submission," +
-                        " or more than one file for submission. There must be exactly one file.");
-                return;
-            }
 
             // Retrieve the google cloud storage name for the object.
             String gsObjectName = fileInfos.get(0).getGsObjectName();
-            // And parse it into a profile pic URL.
-            String profilePicUrl = "https://storage.googleapis.com" + gsObjectName.substring(3);
+            String profilePicUrl = GOOGLE_STORAGE_ROOT + gsObjectName.substring(3);
 
             user.setProfilePicUrl(profilePicUrl);
             user.saveEntity();
 
             resp.sendRedirect(redirectUrl);
+
+        // Uploaded comic frame.
+        } else if(submissionType.equals(JsonProperty.COMIC_FRAME.toString())) {
+
+            // Retrieve the google cloud storage name for the object.
+            String gsObjectName = fileInfos.get(0).getGsObjectName();
+            String comicFrameUrl = GOOGLE_STORAGE_ROOT + gsObjectName.substring(3);
+
+            String comicTitle = req.getParameter(JsonProperty.COMIC_FRAME.toString());
+            Comic comic = null;
+            try {
+                comic = new Comic(user.getGmail(), comicTitle);
+            } catch (NoUniqueKeyException e) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when getting the comic.");
+                return;
+            }
+
+            List<String> frames = comic.getFrames();
+            if(frames == null) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Frames was null for some reason.");
+                return;
+            }
+
+            String comicIndexStr = req.getParameter(JsonProperty.COMIC_INDEX.toString());
+            if (comicIndexStr == null) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid index selected.");
+                return;
+            }
+
+            int comicIndex = Integer.parseInt(comicIndexStr);
+            if(comicIndex > frames.size()) {
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid index selected.");
+            } else if (comicIndex == frames.size()) {
+                // Frame uploaded!
+                frames.add(comicFrameUrl);
+            } else {
+                // Frame uploaded!
+                frames.set(comicIndex, comicFrameUrl);
+            }
+
         }
 
         // I am purposely leaving the code below commented but in source control so that I can
