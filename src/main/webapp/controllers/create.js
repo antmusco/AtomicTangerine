@@ -37,32 +37,7 @@ app.controller('createCtrl', ['$scope', '$http', function ($scope, $http) {
     });
 
     $scope.canvasOps = function canvasOps() {
-<<<<<<< HEAD
         $scope.canvas.setCursor('url(img/brush_sm.png)');
-        var rect = new fabric.Rect({
-            left: 100,
-            top: 100,
-            fill: 'green',
-            width: 40,
-            height: 40,
-            angle: 0
-        });
-
-        $scope.canvas.add(rect);
-=======
-
-
-        // var rect = new fabric.Rect({
-        //     left: 100,
-        //     top: 100,
-        //     fill: 'green',
-        //     width: 40,
-        //     height: 40,
-        //     angle: 0
-        // });
-        //
-        // $scope.canvas.add(rect);
->>>>>>> ui
         $scope.canvas.renderAll();
     };
 
