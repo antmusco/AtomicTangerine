@@ -1,8 +1,8 @@
 app.controller('mainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
     'use strict';
 
-    $scope.$on('$routeChangeSuccess', function(scope, next, current){
-        
+    $scope.$on('$routeChangeSuccess', function (scope, next, current) {
+
     });
 
     $scope.message = "Main Ctrl Active ----- !";

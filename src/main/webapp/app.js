@@ -1,26 +1,21 @@
 var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate']);
 
-app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', function($routeProvider, $mdThemingProvider , $locationProvider) {
+app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', function ($routeProvider, $mdThemingProvider, $locationProvider) {
     'use strict';
 
-    $routeProvider.
-    when('/settings', {
+    $routeProvider.when('/settings', {
         templateUrl: 'views/settings.html'
         //controller: 'settingsCtrl'
-    }).
-    when('/main', {
+    }).when('/main', {
         templateUrl: 'views/main.html'
         //controller: 'mainCtrl'
-    }).
-    when('/create', {
+    }).when('/create', {
         templateUrl: 'views/create.html'
         //controller: 'createCtrl'
-    }).
-    when('/profile', {
+    }).when('/profile', {
         templateUrl: 'views/profile.html'
         //controller: 'profileCtrl'
-    }).
-    otherwise({
+    }).otherwise({
         redirectTo: '/main'
     });
 
@@ -30,7 +25,7 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
 }
 ]);
 
-app.run(function(crud, $rootScope) {
+app.run(function (crud, $rootScope, auth, $log) {
     'use strict';
     $rootScope.err = '';
     crud.retrieve('/login')
@@ -41,10 +36,14 @@ app.run(function(crud, $rootScope) {
             } else if (data.hasOwnProperty("LOGOUT")) {
                 $rootScope.link = data.LOGOUT;
                 $rootScope.acctBtnTxt = "Logout!";
+                auth.getUserFromServer()
+                    .then(function success() {
+                        $log.warn('User Logged in, and data received')
+                    }, function () {
+                        $log.error('User Logged in, and data NOT received')
+                    });
             }
         }, function err(resp) {
             $rootScope.err += 'Bad Login: ' + resp.status;
         });
-
-
 });

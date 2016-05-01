@@ -1,4 +1,4 @@
-app.factory('$navPoints', function($mdInkRipple) {
+app.factory('$navPoints', function ($mdInkRipple) {
     'use strict';
     return {
         attach: function (scope, element, options) {
@@ -14,7 +14,7 @@ app.factory('$navPoints', function($mdInkRipple) {
 app.controller('navCtrl', ['$rootScope', '$scope', function ($scope, $rootScope) {
     'use strict';
     $scope.onClick = function (ev) {
-        $navPoints.attach($scope, angular.element(ev.target), { center: true });
-    }
+        $navPoints.attach($scope, angular.element(ev.target), {center: true});
+    };
     $scope.title = "Atomic Comics!";
 }]);

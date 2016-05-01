@@ -1,22 +1,27 @@
 <div layout="column" layout-fill ng-controller="navCtrl">
 
-  <md-toolbar layout="row" md-scroll-shrink ng-if="true">
-    <div id="titleBar" class="md-toolbar-tools">
-      <img height="90" width="95" src="img/ac_title_red.png"/>
-      <span flex></span>
-      <md-button aria-label="{{acctBtnTxt}}" class="md-raised" href="{{ link }}">
-        {{ acctBtnTxt }}
-      </md-button>
-    </div>
-  </md-toolbar>
-  <div layout="column" layout-fill>
-    <md-toolbar layout="row">
-      <div class="md-toolbar-tools nav-points" layout-align="space-around center">
-        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/main" aria-label="Read">Read</md-button>
-        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/create" aria-label="Create">Create</md-button>
-        <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/profile" aria-label="Profile">Profile</md-button>
-      </div>
+    <md-toolbar layout="row" md-scroll-shrink ng-if="true">
+        <div id="titleBar" class="md-toolbar-tools">
+            <img height="90" width="95" src="img/ac_title_red.png"/>
+            <span flex></span>
+            <md-button aria-label="{{acctBtnTxt}}" class="md-raised" href="{{ link }}">
+                {{ acctBtnTxt }}
+            </md-button>
+        </div>
     </md-toolbar>
-  </div>
+    <div layout="column" layout-fill>
+        <md-toolbar layout="row">
+            <div class="md-toolbar-tools nav-points" layout-align="space-around center">
+                <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/main" aria-label="Read">Read
+                </md-button>
+                <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/create" aria-label="Create">
+                    Create
+                </md-button>
+                <md-button style="width: 120px; height: 20px;font-size: 1em" ng-href="#/profile" aria-label="Profile">
+                    Profile
+                </md-button>
+            </div>
+        </md-toolbar>
+    </div>
 </div>
 

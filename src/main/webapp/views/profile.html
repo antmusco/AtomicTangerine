@@ -1,4 +1,3 @@
-
 <div ng-controller="profileCtrl">
 
     <h1>{{ user.handle }}</h1>
@@ -6,51 +5,51 @@
     <p>{{status}}</p>
 
     <div>
-       <div layout="row" layout-padding  layout-align="center center">
-        <div layout="column">
-            <img src="{{user.PROFILE_PIC_URL}}" height="300" width="300" layout-padding>
-            <div layout="row" layout-align="end center">
-                <md-button ng-href="#/settings" class="md-fab md-mini" aria-label="settings">
-                    <md-tooltip> Edit Profile </md-tooltip>
-                    <md-icon class="material-icons">settings</md-icon>
-                </md-button>
-                <form id="profilePicForm" action="{{uploadUrl}}" method="post" class="ng-hide" enctype="multipart/form-data">
-                    <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
-                    <input id="redirectAddress" type="hidden" name="REDIRECT_URL" class="ng-hide">
-                    <input id="profilePic" type="file"  name="FILES" class="ng-hide">
-                </form>
-                <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
-                    <md-tooltip> Upload </md-tooltip>
-                    <md-icon class="material-icons">file_upload</md-icon>
-                </md-button>
-                <p>{{msg}}</p>
+        <div layout="row" layout-padding layout-align="center center">
+            <div layout="column">
+                <img src="{{user.PROFILE_PIC_URL}}" height="300" width="300" layout-padding>
+                <div layout="row" layout-align="end center">
+                    <md-button ng-href="#/settings" class="md-fab md-mini" aria-label="settings">
+                        <md-tooltip> Edit Profile</md-tooltip>
+                        <md-icon class="material-icons">settings</md-icon>
+                    </md-button>
+                    <form id="profilePicForm" action="{{uploadUrl}}" method="post" class="ng-hide"
+                          enctype="multipart/form-data">
+                        <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
+                        <input id="redirectAddress" type="hidden" name="REDIRECT_URL" class="ng-hide">
+                        <input id="profilePic" type="file" name="FILES" class="ng-hide">
+                    </form>
+                    <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
+                        <md-tooltip> Upload</md-tooltip>
+                        <md-icon class="material-icons">file_upload</md-icon>
+                    </md-button>
+                    <p>{{msg}}</p>
+                </div>
             </div>
-        </div>
 
 
-
-        <div>
-            <div layout="row"  layout-padding>
-              <div>
-                  <h2>Title</h2>
-                  <label>Atomic Artist</label>
-              </div>
-               <div>
-                   <h2>Email</h2>
-                   <label>{{user.GMAIL}}</label>
-               </div>
+            <div>
+                <div layout="row" layout-padding>
+                    <div>
+                        <h2>Title</h2>
+                        <label>Atomic Artist</label>
+                    </div>
+                    <div>
+                        <h2>Email</h2>
+                        <label>{{user.GMAIL}}</label>
+                    </div>
                 </div>
                 <div layout="row" layout-padding>
                     <div>
-                        <div layout="row" >
-                        <img src = "img/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
-                        <h2>Artist Handle</h2>
+                        <div layout="row">
+                            <img src="img/bunny.png" alt="cake" height="35.7" width="33" layout-padding>
+                            <h2>Artist Handle</h2>
                         </div>
                         <label>{{user.HANDLE}}</label>
                     </div>
                     <div>
-                        <div layout="row" >
-                            <img src = "img/cake.png" alt="cake" height="35.7" width="33" layout-padding>
+                        <div layout="row">
+                            <img src="img/cake.png" alt="cake" height="35.7" width="33" layout-padding>
                             <h2> Birthday</h2>
                         </div>
 
@@ -67,15 +66,15 @@
                         <label> {{user.LASTNAME}} </label>
                     </div>
                 </div>
-                <div layout ="row" layout-padding>
+                <div layout="row" layout-padding>
                     <div>
                         <h2>Biography</h2>
                         <label>{{user.BIO}}</label>
                     </div>
                 </div>
 
+            </div>
         </div>
-       </div>
 
     </div>
 
