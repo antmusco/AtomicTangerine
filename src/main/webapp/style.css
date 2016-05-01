@@ -1,7 +1,7 @@
 @import url(https://fonts.googleapis.com/css?family=Bangers);
 
 nav {
-    font-family: Bangers;
+    font-family: Bangers, sans-serif;
 }
 
 #settings {

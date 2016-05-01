@@ -27,10 +27,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="angular" level="application" />
-    <orderEntry type="library" name="angular-animate" level="application" />
-    <orderEntry type="library" name="angular-aria" level="application" />
-    <orderEntry type="library" name="angular-material" level="application" />
     <orderEntry type="library" name="angular-route" level="application" />
     <orderEntry type="library" name="fabric" level="application" />
     <orderEntry type="library" name="jquery-2.2.3" level="application" />
@@ -64,5 +60,8 @@
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-testing:1.9.34" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-api-stubs:1.9.34" level="project" />
+    <orderEntry type="library" name="jquery-2.2.3" level="application" />
+    <orderEntry type="library" name="angular-route" level="application" />
+    <orderEntry type="library" name="fabric" level="application" />
   </component>
 </module>

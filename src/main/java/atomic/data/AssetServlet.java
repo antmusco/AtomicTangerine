@@ -154,6 +154,9 @@ public class AssetServlet extends HttpServlet {
                 frames.set(comicIndex, comicFrameUrl);
             }
 
+            comic.saveEntity();
+            resp.sendRedirect(redirectUrl);
+
         }
 
         // I am purposely leaving the code below commented but in source control so that I can
