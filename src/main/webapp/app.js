@@ -38,7 +38,7 @@ app.run(function (crud, $rootScope, auth, $log) {
                 $rootScope.acctBtnTxt = "Logout!";
                 auth.getUserFromServer()
                     .then(function success() {
-                        $log.warn('User Logged in, and data received')
+                        $log.info('User Logged in, and data received')
                     }, function () {
                         $log.error('User Logged in, and data NOT received')
                     });
