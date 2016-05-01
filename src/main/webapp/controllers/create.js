@@ -25,7 +25,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
                     .ok('Clean the slate!')
                     .cancel('Oh no! go back!');
                 $mdDialog.show(confirm).then(function yes() {
-                    $scope.delete();
+                    $scope.canvas.clear();
                     $scope.comicStarted = true;
                 });
             } else {
@@ -93,9 +93,11 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
         });
 
         $scope.delete = function () {
-            $scope.canvas.clear()
+            if($scope.canvas.getActiveObject() != null) {
+                $scope.canvas.getActiveObject().remove();
+            }
         };
-
+        
         $scope.draw = function () {
             $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
             if ($scope.canvas.isDrawingMode) {
@@ -144,10 +146,10 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
             });
             var curCanvas = $scope.canvas.toJSON();
             var newCanvas = curCanvas.objects.concat(sign.objects);
+            $scope.canvas.clear();
             fabric.util.enlivenObjects(newCanvas, function(objects) {
                 var origRenderOnAddRemove = canvas.renderOnAddRemove;
                 $scope.canvas.renderOnAddRemove = false;
-
                 objects.forEach(function(o) {
                     $scope.canvas.add(o);
                 });

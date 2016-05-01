@@ -3,6 +3,7 @@ app.controller('settingsCtrl', ['$scope', '$rootScope', 'auth', function ($scope
 
     $scope.canvas = new fabric.Canvas('signCanvas');
     $scope.canvas.isDrawingMode = true;
+    $scope.canvas.freeDrawingBrush.width = 3;
 
 
     $scope.jobDesc = 'Atomic Artist';
