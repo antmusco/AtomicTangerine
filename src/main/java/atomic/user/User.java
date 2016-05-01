@@ -10,6 +10,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.google.appengine.api.datastore.Text;
 
 import java.util.*;
 
@@ -36,6 +37,7 @@ public class User extends DatastoreEntity implements Jsonable {
     private Preferences  preferences;
     private List<String> createdComics;
     private String       profilePicUrl;
+    private Text   signature;
 
     /**
      * Static utility function which grabs the user that is currently logged in and returns it to the caller.
@@ -89,6 +91,7 @@ public class User extends DatastoreEntity implements Jsonable {
             this.preferences = new Preferences(this.gmail);
             this.createdComics = new LinkedList<>();
             this.profilePicUrl = DEFAULT_PROFILE_PIC_URL;
+            this.signature = new Text("{}");
 
             // Put the entity in the datastore.
             saveEntity();
@@ -167,6 +170,9 @@ public class User extends DatastoreEntity implements Jsonable {
             }
 
         }
+        if(obj.has(JsonProperty.SIGNATURE.toString())){
+            signature = new Text(obj.get(JsonProperty.SIGNATURE.toString()).getAsString());
+        }
         saveEntity();
 
     }
@@ -217,6 +223,10 @@ public class User extends DatastoreEntity implements Jsonable {
             obj.add(JsonProperty.CREATED_COMICS.toString(), comicsList);
         }
 
+        if(signature != null){
+            obj.addProperty(JsonProperty.SIGNATURE.toString(), signature.getValue());
+        }
+
         // Return the JsonObject.
         return obj;
 
@@ -265,6 +275,7 @@ public class User extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.PREFERENCES.toString(), this.preferences.toEmbeddedEntity());
         entity.setProperty(JsonProperty.CREATED_COMICS.toString(), this.createdComics);
         entity.setProperty(JsonProperty.PROFILE_PIC_URL.toString(), this.profilePicUrl);
+        entity.setUnindexedProperty(JsonProperty.SIGNATURE.toString(), this.signature);
 
         return entity;
 
@@ -288,6 +299,7 @@ public class User extends DatastoreEntity implements Jsonable {
         this.birthday      = (Date)         entity.getProperty(JsonProperty.BIRTHDAY.toString());
         this.createdComics = (List<String>) entity.getProperty(JsonProperty.CREATED_COMICS.toString());
         this.profilePicUrl = (String)       entity.getProperty(JsonProperty.PROFILE_PIC_URL.toString());
+        this.signature     = (Text)         entity.getProperty(JsonProperty.SIGNATURE.toString());
 
 
         // Extract the Preferences entity.

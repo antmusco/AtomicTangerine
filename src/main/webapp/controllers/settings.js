@@ -19,11 +19,11 @@ app.controller('settingsCtrl', ['$scope', '$rootScope', 'auth', function ($scope
 
     $scope.user = auth.getUser();
     if ($scope.user.SIGNATURE != null) {
-        $scope.canvas.loadFromJSON($scope.user.SIGNATURE, $scope.canvas.renderAll.bind($scope.canvas));
+        $scope.canvas.loadFromJSON(JSON.parse($scope.user.SIGNATURE), $scope.canvas.renderAll.bind($scope.canvas));
     }
 
     $scope.updateUserSettings = function () {
-        $scope.user.SIGNATURE = $scope.canvas.toJSON();
+        $scope.user.SIGNATURE = JSON.stringify($scope.canvas.toJSON());
         auth.updateUser($scope.user)
             .then(function success(msg) {
                 $scope.confirm = "Saved User Settings!"
