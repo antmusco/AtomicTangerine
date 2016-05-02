@@ -5,7 +5,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.create = function (url, data) {
         var defer = $q.defer();
-        $http.put(url + '/c', data)
+        $http.put(url, data)
             .then(function success(resp) {
                 defer.resolve(resp);
             }, function error(resp) {
@@ -16,7 +16,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.retrieve = function (url) {
         var defer = $q.defer();
-        $http.get(url + '/r')
+        $http.get(url)
             .then(function success(resp) {
                 defer.resolve(resp.data);
             }, function error(resp) {
@@ -27,7 +27,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.update = function (url, data) {
         var defer = $q.defer();
-        $http.post(url + '/u', data)
+        $http.post(url, data)
             .then(function success(resp) {
                 defer.resolve(resp);
             }, function error(resp) {
@@ -38,7 +38,7 @@ app.service('crud', function crud($http, $q, $rootScope) {
 
     crudobj.delete = function (posturl) {
         var defer = $q.defer();
-        $http.delete(url + '/d')
+        $http.delete(url)
             .then(function success(resp) {
                 defer.resolve(resp);
             }, function error(resp) {

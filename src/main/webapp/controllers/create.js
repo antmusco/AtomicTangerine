@@ -1,5 +1,5 @@
-app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidenav',
-    function ($scope, $http, $mdDialog, $mdSidenav, $log) {
+app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth',
+    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth) {
         'use strict';
 
         $scope.comicTitle = '';
@@ -25,8 +25,12 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
                     .ok('Clean the slate!')
                     .cancel('Oh no! go back!');
                 $mdDialog.show(confirm).then(function yes() {
-                    $scope.delete();
+                    $scope.canvas.clear();
                     $scope.comicStarted = true;
+                    $http.get()
+                        .then(function s() {
+
+                        })
                 });
             } else {
                 $scope.comicStarted = true;
@@ -86,7 +90,28 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
         ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
-            $scope.canvasOps();
+            var user = auth.getUser();
+            if(user === null || user == undefined)return;
+            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', CREATED_DATE: (new Date()/1000)})
+                .then(function (resp) {
+                    $log.info(resp);
+                }, function (resp) {
+                    $log.info(resp);
+                });
+
+            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
+                .then(function (resp) {
+                    $log.info(resp);
+                }, function (resp) {
+                    $log.info(resp);
+                });
+
+            // $http.post('/comic', {REQUEST:'SINGLE_COMIC', USER_GMAIL: user.GMAIL})
+            //     .then(function (resp) {
+            //         $log.info(resp);
+            //     }, function (resp) {
+            //         $log.info(resp);
+            //     });
         });
 
         $scope.lineWidth = '1';
@@ -94,32 +119,24 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
             $scope.lineWidth = $(this).val();
         });
 
-        $scope.canvasOps = function canvasOps() {
-            //$scope.canvas.setCursor('url(img/brush_sm.png)');
-            //$scope.canvas.renderAll();
-        };
-
         $scope.delete = function () {
-            $scope.canvas.clear()
+            if($scope.canvas.getActiveObject() != null) {
+                $scope.canvas.getActiveObject().remove();
+            }
         };
-
+        
         $scope.draw = function () {
             $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
             if ($scope.canvas.isDrawingMode) {
                 $scope.buttonStyle = {background: '#808080'};
-
-
             } else {
                 $scope.buttonStyle = {background: '#ab2323'};
             }
         };
 
-
         $scope.pickColor = function (color) {
-
             $scope.canvas.freeDrawingBrush.color = color;
             $scope.pickedcolorstyle = {color: color};
-
         };
 
         $scope.drawshape = function (shape) {
@@ -130,20 +147,17 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
                 });
                 $scope.canvas.add(circle);
 
-            } else if (shape == 'tri') {
+            } else if (shape === 'tri') {
                 var triangle = new fabric.Triangle({
                     width: 20, height: 30, fill: 'indigo',
                     left: 200, top: 200
                 });
                 $scope.canvas.add(triangle);
 
-            } else if (shape == 'rect') {
+            } else if (shape === 'rect') {
                 var rectangle = new fabric.Rect({
-
-                    fill: 'violet',
-                    width: 20,
-                    height: 40,
-                    angle: 0,
+                    fill: 'violet', width: 20,
+                    height: 40, angle: 0,
                     left: 300, top: 300
                 });
                 $scope.canvas.add(rectangle);
@@ -151,9 +165,24 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
             }
         };
 
-
         $scope.addSignature = function () {
-
+            var sign = JSON.parse(auth.getUser().SIGNATURE);
+            sign.objects.forEach(function(currentValue,index,arr){
+                currentValue.top += 450;
+                currentValue.left += 400;
+            });
+            var curCanvas = $scope.canvas.toJSON();
+            var newCanvas = curCanvas.objects.concat(sign.objects);
+            $scope.canvas.clear();
+            fabric.util.enlivenObjects(newCanvas, function(objects) {
+                var origRenderOnAddRemove = canvas.renderOnAddRemove;
+                $scope.canvas.renderOnAddRemove = false;
+                objects.forEach(function(o) {
+                    $scope.canvas.add(o);
+                });
+                $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;
+                $scope.canvas.renderAll();
+            });
         };
 
         $scope.openTemplateSideBar = function () {
@@ -165,11 +194,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidena
         };
 
         $scope.publish = function () {
-
-        };
-
-        $scope.addSignature = function () {
-
+            $log.info('publish clicked');
         };
 
         ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
