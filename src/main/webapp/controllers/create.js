@@ -76,7 +76,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             fileInput.click();
         };
         $scope.save = function () {
-            $("#submissionType").val("COMIC_DRAFT");
+            $("#frameIndex").val(0);
+            $("#submissionType").val("COMIC_FRAME");
             $("#redirectAddress").val("/#/create");
             if ($scope.comicTitle == '') {
                 $scope.noTitle = true;

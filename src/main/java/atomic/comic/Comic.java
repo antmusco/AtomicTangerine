@@ -5,10 +5,8 @@ import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.Jsonable;
 import atomic.json.NoUniqueKeyException;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.images.ImagesServicePb;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -80,7 +78,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
      *              for EACH User.
      * @throws NoUniqueKeyException Thrown if either of the parameters are null.
      */
-    public Comic(String userGmail, String title) throws NoUniqueKeyException {
+    private Comic(String userGmail, String title) throws NoUniqueKeyException {
 
         super(EntityKind.COMIC);
 
@@ -305,6 +303,59 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     public List<String> getFrames() {
         return frames;
+    }
+
+    /**
+     * Static function which creates a new comic with the indicated gmail and title. The function first checks to ensure
+     * that no other comics with the given unique key exist - if one does then an exception is thrown.
+     * @param gmail Gmail of the user creating the comic.
+     * @param title Title fo the comic to create (must be unique per user).
+     * @throws ComicAlreadyExistsException Thrown if a comic with the given <gmail, title> pair already exists.
+     * @throws NoUniqueKeyException Thrown if gmail or title are empty or illegal.
+     */
+    public static void makeNewComic(String gmail, String title) throws ComicAlreadyExistsException,
+        NoUniqueKeyException {
+
+        // Make filter to ensure that a comic with the given key does not already exist.
+        Query.Filter comicFilter = new Query.FilterPredicate(
+                JsonProperty.TITLE.toString(),
+                Query.FilterOperator.EQUAL,
+                title
+        );
+
+        // Execute query to ensure no other comics exist with the specified key.
+        Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
+        if(!DatastoreEntity.executeQuery(q).isEmpty())
+            throw new ComicAlreadyExistsException(gmail, title);
+
+        // Create new comic.
+        new Comic(gmail, title);
+
+    }
+
+    /**
+     * Factory method used to retrieve a comic.
+     * @param gmail
+     * @param title
+     * @return
+     * @throws NoUniqueKeyException
+     */
+    public static Comic retrieveComic(String gmail, String title) throws NoUniqueKeyException, ComicNotFoundException {
+
+        // Make filter to locate a comic with the indicated title.
+        Query.Filter comicFilter = new Query.FilterPredicate(
+                JsonProperty.TITLE.toString(),
+                Query.FilterOperator.EQUAL,
+                title
+        );
+
+        // Execute query to ensure comic exist with the specified key.
+        Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
+        if(DatastoreEntity.executeQuery(q).isEmpty())
+            throw new ComicNotFoundException(gmail, title);
+
+        return new Comic(gmail, title);
+
     }
 
 }

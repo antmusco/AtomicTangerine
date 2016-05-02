@@ -32,6 +32,9 @@
     <orderEntry type="library" name="jquery-2.2.3" level="application" />
     <orderEntry type="library" name="date.format" level="application" />
     <orderEntry type="library" name="jquery.noisy" level="application" />
+    <orderEntry type="library" name="jquery-2.2.3" level="application" />
+    <orderEntry type="library" name="angular-route" level="application" />
+    <orderEntry type="library" name="fabric" level="application" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.6.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.appengine.tools:appengine-gcs-client:0.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.guava:guava:19.0-rc1" level="project" />
@@ -60,8 +63,5 @@
     <orderEntry type="library" name="Maven: jstl:jstl:1.2" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-testing:1.9.34" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.google.appengine:appengine-api-stubs:1.9.34" level="project" />
-    <orderEntry type="library" name="jquery-2.2.3" level="application" />
-    <orderEntry type="library" name="angular-route" level="application" />
-    <orderEntry type="library" name="fabric" level="application" />
   </component>
 </module>

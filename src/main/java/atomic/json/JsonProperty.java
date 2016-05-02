@@ -46,6 +46,7 @@ public enum JsonProperty {
 
     // ASSET SERVLET
     FILES("FILES"),
+    SVG_DATA("SVG_DATA"),
     SUBMISSION_TYPE("SUBMISSION_TYPE"),
     PROFILE_PIC("PROFILE_PIC"),
     COMIC_FRAME("COMIC_FRAME"),

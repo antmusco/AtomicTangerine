@@ -48,13 +48,12 @@ public class ComicCrudServlet extends CrudServlet {
             else
                 return failedRequest();
 
-            // TODO: Make sure that comic does not already exist!
-            new Comic(userGmail, title); // creates comic.
+            Comic.makeNewComic(userGmail, title); // creates comic.
 
             // Successful create.
             return successfulRequest();
 
-        } catch (NoUniqueKeyException nuke) {
+        } catch (ComicAlreadyExistsException | NoUniqueKeyException nuke) {
 
             return failedRequest();
 
@@ -121,7 +120,7 @@ public class ComicCrudServlet extends CrudServlet {
 
             }
 
-        } catch (NoUniqueKeyException nuke) {
+        } catch (ComicNotFoundException | NoUniqueKeyException nuke) {
 
             System.err.println(nuke.getMessage());
 
@@ -147,11 +146,11 @@ public class ComicCrudServlet extends CrudServlet {
         // All requests must have a generation criteria.
 
         // Generation criteria - Date created.
-        if(request.has(JsonProperty.DATE_CREATED.toString())) {
+        if (request.has(JsonProperty.DATE_CREATED.toString())) {
 
             // Get the start date timestamp.
-            String timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsString();
-            Date lastDateCreated = new Date(Integer.parseInt(timestamp));
+            long timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsLong();
+            Date lastDateCreated = new Date(timestamp);
 
             // Generate the filter.
             Query.Filter dateFilter = new Query.FilterPredicate(
@@ -166,7 +165,7 @@ public class ComicCrudServlet extends CrudServlet {
                     .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
         // Generation criteria - User gmail.
-        } else if(request.has(JsonProperty.USER_GMAIL.toString())) {
+        } else if (request.has(JsonProperty.USER_GMAIL.toString())) {
 
             // Grab the gmail.
             String gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
@@ -186,11 +185,11 @@ public class ComicCrudServlet extends CrudServlet {
         }
 
         // Make sure a query was generated.
-        if(q == null) throw new IllegalArgumentException("Comic list cannot be generated.");
+        if (q == null) throw new IllegalArgumentException("Comic list cannot be generated.");
 
         // Execute the query and generate the results.
         List<Entity> results = DatastoreEntity.executeQuery(q);
-        if(!results.isEmpty()) {
+        if (!results.isEmpty()) {
 
             // Add field indicating the end of the date ranges.
             Entity lastEntity = results.get(results.size() - 1);
@@ -199,7 +198,7 @@ public class ComicCrudServlet extends CrudServlet {
 
             // Add the list of comic keys to the JSON response.
             JsonArray comicArray = new JsonArray();
-            for(Entity e : results) {
+            for (Entity e : results) {
                 String gmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());
                 String title = (String) e.getProperty(JsonProperty.TITLE.toString());
                 JsonObject comicObj = new JsonObject();
@@ -216,7 +215,15 @@ public class ComicCrudServlet extends CrudServlet {
 
     }
 
-    protected void processSingleComicRequest(JsonObject request, JsonObject response) throws NoUniqueKeyException {
+    /**
+     * Process a request to retrieve a single comic.
+     * @param request The request which contains the gmail and title of the comic to retrieve.
+     * @param response Response which contains the comic, if retrieval was successful.
+     * @throws NoUniqueKeyException Thrown if either the gmail or title was missing from the request.
+     * @throws ComicNotFoundException Thrown if the comic does not exist in the datastore.
+     */
+    protected void processSingleComicRequest(JsonObject request, JsonObject response) throws NoUniqueKeyException,
+        ComicNotFoundException {
 
         // Make sure gmail is specified, and capture it.
         String userGmail;
@@ -233,9 +240,9 @@ public class ComicCrudServlet extends CrudServlet {
             throw new NoUniqueKeyException("Cannot find comic. Missing comic title.");
 
         // Retrieve comic from the datastore and return it as a JSON.
-        Comic comic = new Comic(userGmail, title);
+        Comic comic = Comic.retrieveComic(userGmail, title);
         response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-        response.add(JsonProperty.USER.toString(), comic.toJson());
+        response.add(JsonProperty.COMIC.toString(), comic.toJson());
 
     }
 
