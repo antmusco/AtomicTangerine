@@ -1,13 +1,15 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
     <div layout="row">
-        <md-input-container>
-            <label>Comic Title</label>
-            <input ng-model="comicTitle" ng-required="true" ng-trim="true" ng-disabled="comicStarted">
-        </md-input-container>
-        <md-button ng-click="startComic()" class="md-fab md-mini" aria-label="new">
-            <md-tooltip>New Comic</md-tooltip>
-            <md-icon class="material-icons">fiber_new</md-icon>
-        </md-button>
+        <form action="/comic" method="post">
+            <md-input-container>
+                <label>Comic Title</label>
+                <input ng-model="comicTitle" ng-required="true" ng-trim="true" ng-disabled="comicStarted">
+            </md-input-container>
+            <md-button ng-click="startComic()" class="md-fab md-mini" aria-label="new">
+                <md-tooltip>New Comic</md-tooltip>
+                <md-icon class="material-icons">fiber_new</md-icon>
+            </md-button>
+        </form>
     </div>
     <div layout="row">
         <div>

@@ -27,6 +27,10 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $mdDialog.show(confirm).then(function yes() {
                     $scope.canvas.clear();
                     $scope.comicStarted = true;
+                    $http.get()
+                        .then(function s() {
+
+                        })
                 });
             } else {
                 $scope.comicStarted = true;
@@ -85,7 +89,30 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
         ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
-        //$scope.$on('$routeChangeSuccess', function (scope, next, current) {});
+        $scope.$on('$routeChangeSuccess', function (scope, next, current) {
+            var user = auth.getUser();
+            if(user === null || user == undefined)return;
+            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', CREATED_DATE: (new Date()/1000)})
+                .then(function (resp) {
+                    $log.info(resp);
+                }, function (resp) {
+                    $log.info(resp);
+                });
+
+            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
+                .then(function (resp) {
+                    $log.info(resp);
+                }, function (resp) {
+                    $log.info(resp);
+                });
+
+            // $http.post('/comic', {REQUEST:'SINGLE_COMIC', USER_GMAIL: user.GMAIL})
+            //     .then(function (resp) {
+            //         $log.info(resp);
+            //     }, function (resp) {
+            //         $log.info(resp);
+            //     });
+        });
 
         $scope.lineWidth = '1';
         $('#linewidth').on('change', function () {
