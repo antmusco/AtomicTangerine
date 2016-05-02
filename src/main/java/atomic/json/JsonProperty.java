@@ -60,6 +60,7 @@ public enum JsonProperty {
     GLOBAL_CAPTION("GLOBAL_CAPTION"),
     DATE_CREATED("DATE_CREATED"),
     DATE_MODIFIED("DATE_MODIFIED"),
+    TAGS("TAGS"),
 
     // Comic State
     DRAFT("DRAFT"),

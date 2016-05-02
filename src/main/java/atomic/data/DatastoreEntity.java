@@ -3,10 +3,14 @@ package atomic.data;
 import atomic.crud.CrudResult;
 import com.google.appengine.api.datastore.*;
 
+import java.util.List;
+
 /**
  * @author Gustavo Poscidonio
  */
 public abstract class DatastoreEntity {
+
+    public static final int DEFAULT_QUERY_LIMIT = 10;
 
     /**
      * The kind of entity represented by the object (USER, COMIC, etc.)
@@ -64,5 +68,30 @@ public abstract class DatastoreEntity {
      * @param entity
      */
     protected abstract void fromEntity(Entity entity);
+
+    /**
+     * Static function which executes a query on behalf of the Datastore. Limit is set to DEFAULT_QUERY_LIMIT.
+     * @param q Query to execute.
+     * @return A list of Entities which match the query criteria.
+     */
+    public static List<Entity> executeQuery(Query q) {
+
+        return executeQuery(q, DEFAULT_QUERY_LIMIT);
+
+    }
+
+    /**
+     * Static function which executes a query on behalf of the Datastore.
+     * @param q Query to execute.
+     * @param limit Limits the number of Entities returned.
+     * @return A list of Entities which match the query criteria.
+     */
+    public static List<Entity> executeQuery(Query q, int limit) {
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery result = ds.prepare(q);
+        return result.asList(FetchOptions.Builder.withLimit(limit));
+
+    }
 
 }

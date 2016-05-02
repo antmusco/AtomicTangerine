@@ -26,7 +26,6 @@ import java.util.List;
  */
 public class Comic extends DatastoreEntity implements Jsonable {
 
-    // KEY = {userGmail}_{title}
     /**
      * Email of the owner of the comic. This member is used in conjuntion with `title` to produce the unique key for
      * this Comic.
@@ -62,8 +61,11 @@ public class Comic extends DatastoreEntity implements Jsonable {
      * Date on which this Comic was created.
      */
     private Date dateCreated;
+    /**
+     * List of tags associated with the comic.
+     */
+    private List<String> tags;
 
-    //TODO private List<ComicTag> tags;
     //TODO private ComicStyle style;
 
 
@@ -104,7 +106,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             this.state = ComicState.DRAFT;
             this.dateCreated = new Date();
             this.dateModified = (Date)dateCreated.clone();
-
+            this.tags = new LinkedList<>();
             // Put the entity in the datastore.
             saveEntity();
 
@@ -166,6 +168,16 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         }
 
+        if(obj.has(JsonProperty.TAGS.toString())) {
+
+            JsonArray tagsList = obj.get(JsonProperty.TAGS.toString()).getAsJsonArray();
+
+            for(JsonElement t : tagsList) {
+                tagsList.add(t.getAsString());
+            }
+
+        }
+
         // Record modification.
         dateModified = new Date();
 
@@ -201,6 +213,13 @@ public class Comic extends DatastoreEntity implements Jsonable {
             for (String f : frames)
                 framesList.add(f);
             obj.add(JsonProperty.FRAMES.toString(), framesList);
+        }
+
+        if(tags != null) {
+            JsonArray tagsList = new JsonArray();
+            for (String s : tags)
+                tagsList.add(s);
+            obj.add(JsonProperty.TAGS.toString(), tagsList);
         }
 
         // Return the JsonObject.
@@ -241,7 +260,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.GLOBAL_CAPTION.toString(), this.globalCaption);
         entity.setProperty(JsonProperty.DATE_CREATED.toString(), this.dateCreated);
         entity.setProperty(JsonProperty.DATE_MODIFIED.toString(), this.dateModified);
-
+        entity.setProperty(JsonProperty.TAGS.toString(), this.tags);
         return entity;
     }
 
@@ -251,17 +270,41 @@ public class Comic extends DatastoreEntity implements Jsonable {
         // Read each of the properties from the entity.
         this.userGmail     = (String)       entity.getProperty(JsonProperty.OWNER_GMAIL.toString());
         this.title         = (String)       entity.getProperty(JsonProperty.TITLE.toString());
-        this.state         =                ComicState.fromString(
-                                                (String) entity.getProperty(JsonProperty.STATE.toString())
-                                            );
-        this.frames        = (List<String>) entity.getProperty(JsonProperty.FRAMES.toString());
-        this.globalCaption = (String)       entity.getProperty(JsonProperty.GLOBAL_CAPTION.toString());
-        this.dateCreated   = (Date)         entity.getProperty(JsonProperty.DATE_CREATED.toString());
-        this.dateModified  = (Date)         entity.getProperty(JsonProperty.DATE_MODIFIED.toString());
+
+
+        if(entity.hasProperty(JsonProperty.STATE.toString())) {
+            this.state = ComicState.fromString((String) entity.getProperty(JsonProperty.STATE.toString()));
+        }
+
+        if(entity.hasProperty(JsonProperty.FRAMES.toString())) {
+            this.frames = (List<String>) entity.getProperty(JsonProperty.FRAMES.toString());
+        } else {
+            this.frames  = new LinkedList<>();
+        }
+
+        if(entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
+            this.globalCaption = (String) entity.getProperty(JsonProperty.GLOBAL_CAPTION.toString());
+        }
+
+
+        if(entity.hasProperty(JsonProperty.DATE_CREATED.toString())) {
+            this.dateCreated = (Date) entity.getProperty(JsonProperty.DATE_CREATED.toString());
+        }
+
+        if(entity.hasProperty(JsonProperty.DATE_MODIFIED.toString())) {
+            this.dateModified = (Date) entity.getProperty(JsonProperty.DATE_MODIFIED.toString());
+        }
+
+        if(entity.hasProperty(JsonProperty.TAGS.toString())) {
+            this.tags = (List<String>) entity.getProperty(JsonProperty.TAGS.toString());
+        } else {
+            this.tags = new LinkedList<>();
+        }
 
     }
 
     public List<String> getFrames() {
         return frames;
     }
+
 }
