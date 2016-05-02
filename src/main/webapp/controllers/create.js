@@ -1,4 +1,4 @@
-app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$log', '$mdSidenav', 'auth',
+app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth',
     function ($scope, $http, $mdDialog, $mdSidenav, $log, auth) {
         'use strict';
 
