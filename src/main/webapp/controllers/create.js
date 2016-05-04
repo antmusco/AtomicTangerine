@@ -1,5 +1,5 @@
-app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth',
-    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth) {
+app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth', 'crud',
+    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud) {
         'use strict';
 
         $scope.comicTitle = '';
@@ -77,27 +77,20 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
         $scope.save = function () {
 
-            var svgFilename = $scope.comicTitle +'comic.svg';
-            if(typeof(Storage) !== "undefined") {
-                localStorage.setItem(svgFilename, $scope.canvas.toSVG());
-                console.info("Saved item!");
-            } else {
-                console.error("No Storage support!");
 
-            }
+            var data = {
+                REQUEST: "UPLOAD_FRAME",
+                REDIRECT_URL:'/#/create',
+                TITLE: $scope.comicTitle,
+                SVG_DATA: $scope.canvas.toSVG()
+            };
 
-            var reader = new FileReader();
-            var blob = new Blob([localStorage.getItem(svgFilename)], {type: 'image/svg+xml;charset=utf-8'});
-            var file = new File([blob], svgFilename);
-            // reader.onload = function (readerEvt) {
-                $("#submissionTypeDraft").val("COMIC_DRAFT");
-                $("#redirectAddressDraft").val("/#/create");
-                $("#comicTitleDraft").val($scope.comicTitle);
-                $("#comicFrameDraft").val(file);
-                $("#comicDraftForm").submit();
-            // };
+            crud.update('/comic', data).then(function success() {
+                $log.info('Saved comic!');
+            }, function error() {
+                $log.error('Did not save comic :(');
+            });
 
-            // reader.readAsBinaryString(file);
 
         };
         ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff

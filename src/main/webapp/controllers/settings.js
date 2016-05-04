@@ -1,10 +1,10 @@
-app.controller('settingsCtrl', ['$scope', '$rootScope', 'auth', function ($scope, $rootScope, auth) {
+app.controller('settingsCtrl', ['$scope', '$rootScope', 'auth', '$log', '$location',
+    function ($scope, $rootScope, auth, $log, $location) {
     'use strict';
 
     $scope.canvas = new fabric.Canvas('signCanvas');
     $scope.canvas.isDrawingMode = true;
     $scope.canvas.freeDrawingBrush.width = 3;
-
 
     $scope.jobDesc = 'Atomic Artist';
     // $scope.user = {
@@ -19,8 +19,17 @@ app.controller('settingsCtrl', ['$scope', '$rootScope', 'auth', function ($scope
 
 
     $scope.user = auth.getUser();
-    if ($scope.user.SIGNATURE != null) {
-        $scope.canvas.loadFromJSON(JSON.parse($scope.user.SIGNATURE), $scope.canvas.renderAll.bind($scope.canvas));
+
+    if($scope.user === undefined || $scope.user == null){
+        $location.path('#/main');
+    }
+
+    try{
+        if ($scope.user.SIGNATURE != null) {
+            $scope.canvas.loadFromJSON(JSON.parse($scope.user.SIGNATURE), $scope.canvas.renderAll.bind($scope.canvas));
+        }
+    }catch (e){
+        $log.error('No signature data');
     }
 
     $scope.updateUserSettings = function () {

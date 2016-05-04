@@ -1,5 +1,6 @@
-app.controller('profileCtrl', ['$scope', '$route', 'auth', '$http', '$log',
-    function ($scope, $route, auth, $http, $log) {
+app.controller('profileCtrl', ['$scope', '$route', 'auth',
+    '$http', '$log', '$location', '$mdToast',
+    function ($scope, $route, auth, $http, $log, $location, $mdToast) {
         'use strict';
 
         $scope.status = '  ';
@@ -11,6 +12,16 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth', '$http', '$log',
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             $scope.user = auth.getUser();
+            if($scope.user === undefined || $scope.user == null){
+                $location.path(current.$$route.originalPath);
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('You must log in to view your profile')
+                        .action('OK')
+                        .position('top right')
+                        .hideDelay(3000)
+                );
+            }
         });
 
         $http.get("/assets")
