@@ -76,14 +76,28 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             fileInput.click();
         };
         $scope.save = function () {
-            $("#submissionType").val("COMIC_DRAFT");
-            $("#redirectAddress").val("/#/create");
-            if ($scope.comicTitle == '') {
-                $scope.noTitle = true;
+
+            var svgFilename = $scope.comicTitle +'comic.svg';
+            if(typeof(Storage) !== "undefined") {
+                localStorage.setItem(svgFilename, $scope.canvas.toSVG());
+                console.info("Saved item!");
+            } else {
+                console.error("No Storage support!");
             }
-            $("#comicTitle").val($scope.comicTitle);
-            $("#comicFrame").val($scope.canvas.toSVG());
-            $("#comicFrameForm").submit();
+
+            var reader = new FileReader();
+            var blob = new Blob([localStorage.getItem(svgFilename)], {type: 'image/svg+xml;charset=utf-8'});
+            var file = new File([blob], svgFilename);
+            // reader.onload = function (readerEvt) {
+                $("#submissionTypeDraft").val("COMIC_DRAFT");
+                $("#redirectAddressDraft").val("/#/create");
+                $("#comicTitleDraft").val($scope.comicTitle);
+                $("#comicFrameDraft").val(file);
+                $("#comicDraftForm").submit();
+            // };
+
+            // reader.readAsBinaryString(file);
+
         };
         ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
 

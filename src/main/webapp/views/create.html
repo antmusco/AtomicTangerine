@@ -60,10 +60,19 @@
                 <md-tooltip> Text</md-tooltip>
                 <md-icon class="material-icons">text_format</md-icon>
             </md-button>
+
+            <form id="comicDraftForm" action="{{uploadUrl}}" method="post" class="ng-hide"
+                  enctype="multipart/form-data">
+                <input id="submissionTypeDraft" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
+                <input id="redirectAddressDraft" type="hidden" name="REDIRECT_URL" class="ng-hide">
+                <input id="comicTitleDraft" type="hidden" name="COMIC_TITLE" class="ng-hide">
+                <input id="comicFrameDraft" type="file" name="FILES" class="ng-hide">
+            </form>
             <md-button class="md-fab md-mini" ng-click="save()" aria-label="save">
                 <md-tooltip>Save</md-tooltip>
                 <md-icon class="material-icons">save</md-icon>
             </md-button>
+
             <form id="comicFrameForm" action="{{uploadUrl}}" method="post" class="ng-hide"
                   enctype="multipart/form-data">
                 <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
@@ -72,7 +81,7 @@
                 <input id="comicFrame" type="file" name="FILES" class="ng-hide">
             </form>
             <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
-                <md-tooltip> Upload</md-tooltip>
+                <md-tooltip>Upload</md-tooltip>
                 <md-icon class="material-icons">file_upload</md-icon>
             </md-button>
             <md-button class="md-fab md-mini" ng-click="publish()" aria-label="public">

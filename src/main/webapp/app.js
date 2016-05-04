@@ -15,6 +15,9 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
     }).when('/profile', {
         templateUrl: 'views/profile.html'
         //controller: 'profileCtrl'
+    }).when('/team',{
+        templateUrl: 'views/team.html'
+        //controller: 'teamCtrl'
     }).otherwise({
         redirectTo: '/main'
     });
