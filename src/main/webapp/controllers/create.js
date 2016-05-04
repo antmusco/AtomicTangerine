@@ -83,6 +83,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 console.info("Saved item!");
             } else {
                 console.error("No Storage support!");
+
             }
 
             var reader = new FileReader();

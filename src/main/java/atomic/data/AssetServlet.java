@@ -1,6 +1,7 @@
 package atomic.data;
 
 import atomic.comic.Comic;
+import atomic.comic.ComicNotFoundException;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
@@ -68,7 +69,7 @@ public class AssetServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        System.out.println("DO POST TRIGGERED");
+        //System.out.println("DO POST TRIGGERED");
 
         // Retrieve the submission requested.
         String submissionType = req.getParameter(JsonProperty.SUBMISSION_TYPE.toString());
@@ -96,6 +97,7 @@ public class AssetServlet extends HttpServlet {
         // Grab the List associated file information.
         Map<String, List<FileInfo>> uploads = blobstore.getFileInfos(req);
         List<FileInfo> fileInfos = uploads.get(JsonProperty.FILES.toString());
+        String assetURL = GOOGLE_STORAGE_ROOT + fileInfos.get(0).getGsObjectName().substring(3);
 
         // Make sure there are files to extract.
         if(fileInfos == null || fileInfos.size() == 0) {
@@ -106,27 +108,17 @@ public class AssetServlet extends HttpServlet {
         // Uploaded profile picture.
         if(submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {
 
-            // Retrieve the google cloud storage name for the object.
-            String gsObjectName = fileInfos.get(0).getGsObjectName();
-            String profilePicUrl = GOOGLE_STORAGE_ROOT + gsObjectName.substring(3);
-
-            user.setProfilePicUrl(profilePicUrl);
+            user.setProfilePicUrl(assetURL);
             user.saveEntity();
-
-            resp.sendRedirect(redirectUrl);
 
         // Uploaded comic frame.
         } else if(submissionType.equals(JsonProperty.COMIC_FRAME.toString())) {
 
-            // Retrieve the google cloud storage name for the object.
-            String gsObjectName = fileInfos.get(0).getGsObjectName();
-            String comicFrameUrl = GOOGLE_STORAGE_ROOT + gsObjectName.substring(3);
-
             String comicTitle = req.getParameter(JsonProperty.COMIC_FRAME.toString());
             Comic comic = null;
             try {
-                comic = new Comic(user.getGmail(), comicTitle);
-            } catch (NoUniqueKeyException e) {
+                comic = Comic.retrieveComic(user.getGmail(), comicTitle);
+            } catch (ComicNotFoundException | NoUniqueKeyException e) {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when getting the comic.");
                 return;
             }
@@ -148,16 +140,17 @@ public class AssetServlet extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid index selected.");
             } else if (comicIndex == frames.size()) {
                 // Frame uploaded!
-                frames.add(comicFrameUrl);
+                frames.add(assetURL);
             } else {
                 // Frame uploaded!
-                frames.set(comicIndex, comicFrameUrl);
+                frames.set(comicIndex, assetURL);
             }
 
             comic.saveEntity();
-            resp.sendRedirect(redirectUrl);
 
         }
+
+        resp.sendRedirect(redirectUrl);
 
         // I am purposely leaving the code below commented but in source control so that I can
         // refer to it as I write the new doPost method.
