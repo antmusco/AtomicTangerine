@@ -2,6 +2,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
     function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud) {
         'use strict';
 
+        var used_color = '';
+
         $scope.comicTitle = '';
         $scope.comicStarted = false;
         var canvas = document.getElementById("theCanvas");
@@ -148,7 +150,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             }
         };
 
+        $scope.colorPickerHelper = function(){
+            var ele = document.getElementById("pickColor");
+            var from_color_picker= ele.value;
+            $scope.canvas.freeDrawingBrush.color = from_color_picker;
+            $scope.pickedcolorstyle = {color: from_color_picker};
+        };
+
         $scope.pickColor = function (color) {
+
             $scope.canvas.freeDrawingBrush.color = color;
             $scope.pickedcolorstyle = {color: color};
         };

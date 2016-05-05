@@ -100,10 +100,22 @@
                 <md-tooltip>Color in Use</md-tooltip>
                 <md-icon ng-style="pickedcolorstyle" id="pickedcolor">palette</md-icon>
             </div>
-            <md-button class="md-fab md-mini" aria-label="colorize">
-                <md-tooltip> Color Picker</md-tooltip>
-                <md-icon class="material-icons">colorize</md-icon>
+
+            <div >
+
+                <input id="pickColor" type="color" value="#A8D8B9" >
+
+            </div>
+
+            <md-button class="md-fab md-mini" aria-label="done" ng-click="colorPickerHelper()">
+                <md-tooltip> Pick This Color</md-tooltip>
+                <md-icon class="material-icons">done</md-icon>
+
             </md-button>
+
+
+
+
             <md-button style="background: red" ng-click="pickColor('red')" class="md-fab md-mini"
                        aria-label="red">
                 <md-icon class="material-icons"></md-icon>
@@ -157,3 +169,4 @@
         </md-sidenav>
     </div>
 </div>
+
