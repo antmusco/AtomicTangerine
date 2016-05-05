@@ -82,6 +82,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             var data = {
                 REQUEST: "UPLOAD_FRAME",
+                USER_GMAIL: auth.getUser().GMAIL,
                 UPLOAD_URL: $scope.uploadUrl,
                 REDIRECT_URL: '/#/create',
                 TITLE: $scope.comicTitle,

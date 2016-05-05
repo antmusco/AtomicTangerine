@@ -85,8 +85,22 @@ public class AssetServlet extends HttpServlet {
         // Attempt to determine the current User.
         User user = null;
         try {
+
             user = User.getCurrentUser();
-        } catch (UserNotFoundException | NoUniqueKeyException n) {
+
+        } catch (UserNotFoundException unfe) {
+
+            try {
+                user = new User(req.getParameter(JsonProperty.USER_GMAIL.toString()));
+            } catch(NoUniqueKeyException nuke) {
+
+                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to get user.");
+                return;
+
+            }
+
+        } catch (NoUniqueKeyException nuke) {
+
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to get user.");
             return;
         }

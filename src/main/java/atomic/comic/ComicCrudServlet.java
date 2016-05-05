@@ -175,6 +175,11 @@ public class ComicCrudServlet extends CrudServlet {
             throw new IllegalArgumentException("Title required!");
         }
 
+        String gmail = null;
+        if(request.has(JsonProperty.USER_GMAIL.toString())) {
+            gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+        }
+
         // Grab the comic svg data.
         String svgData;
         if (request.has(JsonProperty.SVG_DATA.toString())) {
@@ -193,6 +198,7 @@ public class ComicCrudServlet extends CrudServlet {
                     .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
                     .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
                     .addTextBody(JsonProperty.TITLE.toString(), title)
+                    .addTextBody(JsonProperty.USER_GMAIL.toString(), gmail)
                     .build();
 
             post.setEntity(entity);
