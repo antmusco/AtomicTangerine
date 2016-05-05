@@ -20,6 +20,7 @@ public enum CrudProtocol {
 
     /**
      * Constructor which initializes the enumerated CrudProtocol requests.
+     *
      * @param request String representing the request.
      */
     CrudProtocol(String request) {
@@ -30,18 +31,23 @@ public enum CrudProtocol {
 
     /**
      * Static function which parses a request from a String parameter.
+     *
      * @param request The String representation of the request, such as what is submitted in JSON.
      * @return The appropriate CrudProtocol enum.
      */
     public static CrudProtocol getRequest(String request) {
 
         // Switch on the request String.
-        switch(request) {
+        switch (request) {
 
-            case "create": return CREATE;
-            case "retrieve": return RETRIEVE;
-            case "update": return UPDATE;
-            case "delete": return DELETE;
+            case "create":
+                return CREATE;
+            case "retrieve":
+                return RETRIEVE;
+            case "update":
+                return UPDATE;
+            case "delete":
+                return DELETE;
 
         }
 
@@ -52,6 +58,7 @@ public enum CrudProtocol {
 
     /**
      * Public method which returns the indicated protocol in it's String form.
+     *
      * @return The request as a String.
      */
     public String toString() {

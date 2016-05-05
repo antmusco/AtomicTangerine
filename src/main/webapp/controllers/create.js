@@ -81,15 +81,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             var data = {
                 REQUEST: "UPLOAD_FRAME",
                 UPLOAD_URL: $scope.uploadUrl,
-                REDIRECT_URL:'/#/create',
+                REDIRECT_URL: '/#/create',
                 TITLE: $scope.comicTitle,
                 SVG_DATA: $scope.canvas.toSVG()
             };
 
-            crud.update('/comic', data).then(function success() {
-                $log.info('Saved comic!');
-            }, function error() {
-                $log.error('Did not save comic :(');
+            crud.update('/comic', data).then(function success(resp) {
+                $log.info('Saved comic! \n\n' + resp.data.RESP + '\n\n');
+            }, function error(resp) {
+                $log.error('Did not save comic :( \n\n' + resp.data.RESP + '\n\n');
             });
 
 
@@ -100,15 +100,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             var user = auth.getUser();
-            if(user === null || user == undefined)return;
-            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', CREATED_DATE: (new Date()/1000)})
+            if (user === null || user == undefined)return;
+            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', CREATED_DATE: (new Date() / 1000)})
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {
                     $log.info(resp);
                 });
 
-            $http.post('/comic', {REQUEST:'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
+            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {
@@ -134,11 +134,11 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
 
         $scope.delete = function () {
-            if($scope.canvas.getActiveObject() != null) {
+            if ($scope.canvas.getActiveObject() != null) {
                 $scope.canvas.getActiveObject().remove();
             }
         };
-        
+
         $scope.draw = function () {
             $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
             if ($scope.canvas.isDrawingMode) {
@@ -181,17 +181,17 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
         $scope.addSignature = function () {
             var sign = JSON.parse(auth.getUser().SIGNATURE);
-            sign.objects.forEach(function(currentValue,index,arr){
+            sign.objects.forEach(function (currentValue, index, arr) {
                 currentValue.top += 450;
                 currentValue.left += 400;
             });
             var curCanvas = $scope.canvas.toJSON();
             var newCanvas = curCanvas.objects.concat(sign.objects);
             $scope.canvas.clear();
-            fabric.util.enlivenObjects(newCanvas, function(objects) {
+            fabric.util.enlivenObjects(newCanvas, function (objects) {
                 var origRenderOnAddRemove = canvas.renderOnAddRemove;
                 $scope.canvas.renderOnAddRemove = false;
-                objects.forEach(function(o) {
+                objects.forEach(function (o) {
                     $scope.canvas.add(o);
                 });
                 $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;

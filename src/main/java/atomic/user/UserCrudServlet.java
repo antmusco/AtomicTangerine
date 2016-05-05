@@ -1,6 +1,5 @@
 package atomic.user;
 
-import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
@@ -46,14 +45,14 @@ public class UserCrudServlet extends CrudServlet {
             // Grab the UserService.
             User user = User.getCurrentUser();
             response = successfulRequest();
-            ((JsonObject)response).add(JsonProperty.USER.toString(), user.toJson());
+            ((JsonObject) response).add(JsonProperty.USER.toString(), user.toJson());
 
         } catch (Exception e) {
 
             // Problem occurred while retrieving the user.
             System.err.println(e.getMessage());
             response = failedRequest();
-            ((JsonObject)response).add(JsonProperty.USER.toString(), null);
+            ((JsonObject) response).add(JsonProperty.USER.toString(), null);
 
         }
 

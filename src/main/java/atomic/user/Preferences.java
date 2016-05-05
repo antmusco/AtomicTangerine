@@ -18,11 +18,11 @@ import java.util.List;
  */
 public class Preferences extends DatastoreEntity implements Jsonable {
 
-    private String       userGmail;
-    private List<Key>    subscriptions;
+    private String userGmail;
+    private List<Key> subscriptions;
     private List<String> likeTags;
     private List<String> dislikeTags;
-    private List<Key>    favoriteComics;
+    private List<Key> favoriteComics;
 
     public Preferences(String userGmail) {
 
@@ -35,9 +35,9 @@ public class Preferences extends DatastoreEntity implements Jsonable {
 
         } catch (EntityNotFoundException ex) {
 
-            subscriptions  = new LinkedList<>();
-            likeTags       = new LinkedList<>();
-            dislikeTags    = new LinkedList<>();
+            subscriptions = new LinkedList<>();
+            likeTags = new LinkedList<>();
+            dislikeTags = new LinkedList<>();
             favoriteComics = new LinkedList<>();
 
         }
@@ -80,10 +80,10 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     @Override
     protected void fromEntity(Entity entity) {
 
-        this.userGmail      = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
-        this.subscriptions  = (List<Key>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
-        this.likeTags       = (List<String>) entity.getProperty(JsonProperty.LIKE_TAGS.toString());
-        this.dislikeTags    = (List<String>) entity.getProperty(JsonProperty.DISLIKE_TAGS.toString());
+        this.userGmail = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
+        this.subscriptions = (List<Key>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
+        this.likeTags = (List<String>) entity.getProperty(JsonProperty.LIKE_TAGS.toString());
+        this.dislikeTags = (List<String>) entity.getProperty(JsonProperty.DISLIKE_TAGS.toString());
         this.favoriteComics = (List<Key>) entity.getProperty(JsonProperty.FAVORITE_COMICS.toString());
 
     }
@@ -98,7 +98,7 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     @Override
     public void fromJson(JsonObject obj) throws NoUniqueKeyException {
 
-        if(obj.has(JsonProperty.USER_GMAIL.toString())) {
+        if (obj.has(JsonProperty.USER_GMAIL.toString())) {
 
         } else {
             throw new NoUniqueKeyException("Preferences - userGmail");
@@ -117,11 +117,11 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     }
 
     public static Preferences fromEmbeddedEntity(EmbeddedEntity embeddedEntity) throws NoUniqueKeyException {
-        if(embeddedEntity == null){
+        if (embeddedEntity == null) {
             System.out.println("TODO: PREFERENCES CLASS STILL BROKEN");
             return new Preferences("----");
         }
-        if(embeddedEntity.hasProperty(JsonProperty.USER_GMAIL.toString())) {
+        if (embeddedEntity.hasProperty(JsonProperty.USER_GMAIL.toString())) {
             Preferences newPreferences = new Preferences((String) embeddedEntity.getProperty(JsonProperty.USER_GMAIL.toString()));
 
             // In order to avoid duplicating code

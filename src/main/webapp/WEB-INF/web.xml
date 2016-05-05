@@ -28,6 +28,11 @@
         <servlet-class>atomic.data.AssetServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>comicServlet</servlet-name>
+        <servlet-class>atomic.comic.ComicCrudServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>assetServlet</servlet-name>
         <url-pattern>/assets/*</url-pattern>
@@ -46,6 +51,11 @@
     <servlet-mapping>
         <servlet-name>imageServlet</servlet-name>
         <url-pattern>/img/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>comicServlet</servlet-name>
+        <url-pattern>/comic/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

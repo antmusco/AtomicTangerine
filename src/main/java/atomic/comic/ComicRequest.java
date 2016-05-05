@@ -23,7 +23,7 @@ public enum ComicRequest {
      * Static operation which inserts all enum values into the request map.
      */
     static {
-        for(ComicRequest jp : ComicRequest.values()) {
+        for (ComicRequest jp : ComicRequest.values()) {
             requestMap.put(jp.toString(), jp);
         }
     }
@@ -45,7 +45,7 @@ public enum ComicRequest {
      */
     public static ComicRequest fromString(String request) {
 
-        if(requestMap.containsKey(request))
+        if (requestMap.containsKey(request))
             return requestMap.get(request);
         else
             throw new IllegalArgumentException("AssetRequest not found: " + request);
