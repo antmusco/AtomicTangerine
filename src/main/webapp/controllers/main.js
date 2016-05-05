@@ -17,14 +17,14 @@ app.controller('mainCtrl', ['$scope', '$timeout', function ($scope, $timeout) {
     $scope.message = "Main Ctrl Active ----- !";
     $scope.imagePath = $scope.comics[$scope.comics.length - 1];
     var counter = $scope.comics.length - 1;
-    $scope.next =function () {
+    $scope.next = function () {
         counter += 1;
         $scope.imagePath = $scope.comics[counter % $scope.comics.length];
     };
-    
+
     $scope.prev = function () {
         counter -= 1;
         $scope.imagePath = $scope.comics[counter % $scope.comics.length];
     };
-    
+
 }]);

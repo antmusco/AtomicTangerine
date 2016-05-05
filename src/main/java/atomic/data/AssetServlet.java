@@ -92,7 +92,7 @@ public class AssetServlet extends HttpServlet {
 
             try {
                 user = new User(req.getParameter(JsonProperty.USER_GMAIL.toString()));
-            } catch(NoUniqueKeyException nuke) {
+            } catch (NoUniqueKeyException nuke) {
 
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "An error occurred when trying to get user.");
                 return;

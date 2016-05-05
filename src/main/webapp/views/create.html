@@ -36,7 +36,7 @@
                 <md-tooltip>Brush</md-tooltip>
                 <md-icon class="material-icons">brush</md-icon>
             </md-button>
-            <md-input-container>
+            <md-input-container ng-hide="!canvas.isDrawingMode">
                 <label>Width</label>
                 <input ng-model="canvas.freeDrawingBrush.width" type="number" max="40" min="1" placeholder="1">
             </md-input-container>
@@ -56,30 +56,18 @@
                 <md-tooltip> Templates</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
-
             <md-input-container>
                 <label>Input Text</label>
-                <input id="addtext" type="text" >
+                <input id="addtext" type="text">
             </md-input-container>
-
-            <md-button class="md-fab md-mini" aria-label="text_format"  ng-click="addTexts()">
+            <md-button class="md-fab md-mini" aria-label="text_format" ng-click="addTexts()">
                 <md-tooltip> Add Text</md-tooltip>
                 <md-icon class="material-icons">text_format</md-icon>
             </md-button>
-
-            <form id="comicDraftForm" action="{{uploadUrl}}" method="post" class="ng-hide"
-                  enctype="multipart/form-data">
-                <input id="submissionTypeDraft" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
-                <input id="redirectAddressDraft" type="hidden" name="REDIRECT_URL" class="ng-hide">
-                <input id="comicTitleDraft" type="hidden" name="TITLE" class="ng-hide">
-                <input id="uploadURL" type="hidden" name="UPLOAD_URL" class="ng-hide">
-                <input id="comicFrameDraft" type="file" name="SVG_DATA" class="ng-hide">
-            </form>
             <md-button class="md-fab md-mini" ng-click="save()" aria-label="save">
                 <md-tooltip>Save</md-tooltip>
                 <md-icon class="material-icons">save</md-icon>
             </md-button>
-
             <form id="comicFrameForm" action="{{uploadUrl}}" method="post" class="ng-hide"
                   enctype="multipart/form-data">
                 <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
@@ -102,22 +90,13 @@
                 <md-tooltip>Color in Use</md-tooltip>
                 <md-icon ng-style="pickedcolorstyle" id="pickedcolor">palette</md-icon>
             </div>
-
-            <div >
-
-                <input id="pickColor" type="color" value="#A8D8B9" >
-
+            <div>
+                <input id="pickColor" type="color" value="#A8D8B9">
             </div>
-
             <md-button class="md-fab md-mini" aria-label="done" ng-click="colorPickerHelper()">
                 <md-tooltip> Pick This Color</md-tooltip>
                 <md-icon class="material-icons">done</md-icon>
-
             </md-button>
-
-
-
-
             <md-button style="background: red" ng-click="pickColor('red')" class="md-fab md-mini"
                        aria-label="red">
                 <md-icon class="material-icons"></md-icon>
@@ -152,7 +131,6 @@
             </md-button>
         </div>
     </div>
-
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
         <md-toolbar class="md-theme-light">
             <h1 class="md-toolbar-tools">Sidenav Right</h1>

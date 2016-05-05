@@ -126,15 +126,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             //     });
         });
 
-        $scope.addTexts = function (){
-           var element = document.getElementById("addtext");
+        $scope.addTexts = function () {
+            var element = document.getElementById("addtext");
             var row_text = element.value;
             var default_color = '#ffffff';
-            if (used_color != ''){
-                
+            if (used_color != '') {
+
                 default_color = used_color;
             }
-            var text = new fabric.Text(row_text,{left:100, top:200, fontFamily:'Bangers',fill:default_color});
+            var text = new fabric.Text(row_text, {left: 100, top: 200, fontFamily: 'Bangers', fill: default_color});
 
             $scope.canvas.add(text);
 
@@ -157,9 +157,9 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             }
         };
 
-        $scope.colorPickerHelper = function(){
+        $scope.colorPickerHelper = function () {
             var ele = document.getElementById("pickColor");
-            var from_color_picker= ele.value;
+            var from_color_picker = ele.value;
             $scope.canvas.freeDrawingBrush.color = from_color_picker;
             $scope.pickedcolorstyle = {color: from_color_picker};
             used_color = from_color_picker;
@@ -171,36 +171,35 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             $scope.canvas.freeDrawingBrush.color = color;
             $scope.pickedcolorstyle = {color: color};
 
-            used_color=color;
+            used_color = color;
         };
 
         $scope.drawshape = function (shape) {
 
             var shape_default = '#ffffff';
-            if (used_color != ''){
+            if (used_color != '') {
 
-                shape_default  = used_color;
+                shape_default = used_color;
             }
-
 
 
             if (shape == 'cir') {
                 var circle = new fabric.Circle({
-                    radius: 20, fill: shape_default ,
+                    radius: 20, fill: shape_default,
                     left: 400, top: 400
                 });
                 $scope.canvas.add(circle);
 
             } else if (shape === 'tri') {
                 var triangle = new fabric.Triangle({
-                    width: 20, height: 30, fill: shape_default ,
+                    width: 20, height: 30, fill: shape_default,
                     left: 200, top: 200
                 });
                 $scope.canvas.add(triangle);
 
             } else if (shape === 'rect') {
                 var rectangle = new fabric.Rect({
-                    fill: shape_default , width: 20,
+                    fill: shape_default, width: 20,
                     height: 40, angle: 0,
                     left: 300, top: 300
                 });
