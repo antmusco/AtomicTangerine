@@ -63,6 +63,7 @@ public enum JsonProperty {
     DATE_CREATED("DATE_CREATED"),
     DATE_MODIFIED("DATE_MODIFIED"),
     TAGS("TAGS"),
+    UPLOAD_URL("UPLOAD_URL"),
 
     // Comic State
     DRAFT("DRAFT"),

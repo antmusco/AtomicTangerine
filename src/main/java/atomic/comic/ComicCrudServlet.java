@@ -14,7 +14,24 @@ import com.google.gson.JsonArray;
 import com.google.appengine.repackaged.com.google.common.base.Flag;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -83,7 +100,11 @@ public class ComicCrudServlet extends CrudServlet {
                 String req = request.get(JsonProperty.REQUEST.toString()).getAsString();
 
                 // Request to update comic data.
-                if(req.equals(ComicRequest.UPDATE_COMIC.toString())) {
+                if(req.equals(ComicRequest.UPLOAD_FRAME.toString())){
+
+                    uploadNewFrame(request, response);
+
+                } else if(req.equals(ComicRequest.UPDATE_COMIC.toString())) {
 
                     // Instantiate and save entity.
                     new Comic(request.getAsJsonObject(JsonProperty.COMIC.toString()));
@@ -135,6 +156,67 @@ public class ComicCrudServlet extends CrudServlet {
 
         // Cannot delete comics as of yet.
         return unsupportedRequest();
+
+    }
+
+    protected void uploadNewFrame(JsonObject request, JsonObject response) {
+
+        // Grab the upload URL.
+        String uploadURL;
+        if(request.has(JsonProperty.UPLOAD_URL.toString())) {
+            uploadURL =  request.get(JsonProperty.UPLOAD_URL.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("Upload URL required!");
+        }
+
+        // Grab the redirect URL.
+        String redirectURL;
+        if(request.has(JsonProperty.REDIRECT_URL.toString())) {
+            redirectURL =  request.get(JsonProperty.REDIRECT_URL.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("Redirect required!");
+        }
+
+        // Grab the comic title.
+        String title;
+        if(request.has(JsonProperty.TITLE.toString())) {
+            title =  request.get(JsonProperty.TITLE.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("Title required!");
+        }
+
+        // Grab the comic svg data.
+        String svgData;
+        if(request.has(JsonProperty.SVG_DATA.toString())) {
+            svgData =  request.get(JsonProperty.SVG_DATA.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("SVG Data required!");
+        }
+
+        try {
+
+            CloseableHttpClient client = HttpClients.createDefault();
+            HttpPost post = new HttpPost(uploadURL);
+            final HttpEntity entity = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .addPart("file", new StringBody(svgData, ContentType.APPLICATION_SVG_XML))
+                    .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
+                    .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
+                    .addTextBody(JsonProperty.TITLE.toString(), title)
+                    .build();
+
+            post.setEntity(entity);
+
+            CloseableHttpResponse rsp = client.execute(post);
+
+            System.out.println(rsp.toString());
+
+        } catch (Exception e) {
+
+            System.err.println(e.getMessage());
+
+        }
+
 
     }
 

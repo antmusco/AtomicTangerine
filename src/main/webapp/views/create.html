@@ -65,8 +65,9 @@
                   enctype="multipart/form-data">
                 <input id="submissionTypeDraft" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
                 <input id="redirectAddressDraft" type="hidden" name="REDIRECT_URL" class="ng-hide">
-                <input id="comicTitleDraft" type="hidden" name="COMIC_TITLE" class="ng-hide">
-                <input id="comicFrameDraft" type="file" name="FILES" class="ng-hide">
+                <input id="comicTitleDraft" type="hidden" name="TITLE" class="ng-hide">
+                <input id="uploadURL" type="hidden" name="UPLOAD_URL" class="ng-hide">
+                <input id="comicFrameDraft" type="file" name="SVG_DATA" class="ng-hide">
             </form>
             <md-button class="md-fab md-mini" ng-click="save()" aria-label="save">
                 <md-tooltip>Save</md-tooltip>
@@ -77,7 +78,7 @@
                   enctype="multipart/form-data">
                 <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
                 <input id="redirectAddress" type="hidden" name="REDIRECT_URL" class="ng-hide">
-                <input id="comicTitle" type="hidden" name="COMIC_TITLE" class="ng-hide">
+                <input id="comicTitle" type="hidden" name="TITLE" class="ng-hide">
                 <input id="comicFrame" type="text" name="FILES" class="ng-hide">
                 <input id="frameIndex" type="hidden" name="FRAME_INDEX" class="ng-hide">
             </form>

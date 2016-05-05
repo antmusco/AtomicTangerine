@@ -10,6 +10,7 @@ import java.util.TreeMap;
  */
 public enum ComicRequest {
 
+    UPLOAD_FRAME("UPLOAD_FRAME"),
     UPDATE_COMIC("UPDATE_COMIC"),
     COMIC_LIST_CUSTOM("COMIC_LIST_CUSTOM"),
     COMIC_LIST_DEFAULT("COMIC_LIST_DEFAULT"),

@@ -80,6 +80,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             var data = {
                 REQUEST: "UPLOAD_FRAME",
+                UPLOAD_URL: $scope.uploadUrl,
                 REDIRECT_URL:'/#/create',
                 TITLE: $scope.comicTitle,
                 SVG_DATA: $scope.canvas.toSVG()
