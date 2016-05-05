@@ -108,13 +108,12 @@ public class AssetServlet extends HttpServlet {
         // Grab the List associated file information.
         Map<String, List<FileInfo>> uploads = blobstore.getFileInfos(req);
         List<FileInfo> fileInfos = uploads.get(JsonProperty.FILES.toString());
-        String assetURL = GOOGLE_STORAGE_ROOT + fileInfos.get(0).getGsObjectName().substring(3);
-
         // Make sure there are files to extract.
         if (fileInfos == null || fileInfos.size() == 0) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request contained no file information.");
             return;
         }
+        String assetURL = GOOGLE_STORAGE_ROOT + fileInfos.get(0).getGsObjectName().substring(3);
 
         // Uploaded profile picture.
         if (submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {

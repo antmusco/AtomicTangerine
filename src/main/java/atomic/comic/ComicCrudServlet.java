@@ -17,6 +17,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.InputStreamBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -189,15 +190,17 @@ public class ComicCrudServlet extends CrudServlet {
         }
 
         try {
+            final byte[] data = svgData.getBytes("UTF-8");
+            InputStreamBody inputStreamBody = new InputStreamBody(new ByteArrayInputStream(data), JsonProperty.TITLE.toString()){
+                @Override
+                public long getContentLength(){return data.length;}
+            };
 
             CloseableHttpClient client = HttpClients.createDefault();
             HttpPost post = new HttpPost(uploadURL);
             final HttpEntity entity = MultipartEntityBuilder.create()
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                    .addBinaryBody("file",
-                            (new ByteArrayInputStream(svgData.getBytes("UTF-8"))),
-                            ContentType.APPLICATION_ATOM_XML,
-                            "test.svg")
+                    .addPart("file", inputStreamBody)
                     .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
                     .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
                     .addTextBody(JsonProperty.TITLE.toString(), title)
@@ -289,9 +292,7 @@ public class ComicCrudServlet extends CrudServlet {
             }
 
         } else {
-
             // return 404 comics not found.
-
         }
 
     }

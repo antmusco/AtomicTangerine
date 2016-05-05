@@ -79,7 +79,6 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
         $scope.save = function () {
 
-
             var data = {
                 REQUEST: "UPLOAD_FRAME",
                 USER_GMAIL: auth.getUser().GMAIL,
@@ -110,20 +109,12 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 }, function (resp) {
                     $log.info(resp);
                 });
-
             $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {
                     $log.info(resp);
                 });
-
-            // $http.post('/comic', {REQUEST:'SINGLE_COMIC', USER_GMAIL: user.GMAIL})
-            //     .then(function (resp) {
-            //         $log.info(resp);
-            //     }, function (resp) {
-            //         $log.info(resp);
-            //     });
         });
 
         $scope.addTexts = function () {
@@ -131,13 +122,10 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             var row_text = element.value;
             var default_color = '#ffffff';
             if (used_color != '') {
-
                 default_color = used_color;
             }
             var text = new fabric.Text(row_text, {left: 100, top: 200, fontFamily: 'Bangers', fill: default_color});
-
             $scope.canvas.add(text);
-
             element.value = "";
         };
 
@@ -167,10 +155,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
 
         $scope.pickColor = function (color) {
-
             $scope.canvas.freeDrawingBrush.color = color;
             $scope.pickedcolorstyle = {color: color};
-
             used_color = color;
         };
 
@@ -178,10 +164,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             var shape_default = '#ffffff';
             if (used_color != '') {
-
                 shape_default = used_color;
             }
-
 
             if (shape == 'cir') {
                 var circle = new fabric.Circle({
@@ -233,7 +217,6 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 .then(function () {
                     $log.debug("toggle " + 'right' + " is done");
                 });
-
         };
 
         $scope.publish = function () {
