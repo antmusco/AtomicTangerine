@@ -123,10 +123,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             //     });
         });
 
-        $scope.lineWidth = '1';
-        $('#linewidth').on('change', function () {
-            $scope.lineWidth = $(this).val();
-        });
+        $scope.addTexts = function (){
+           var element = document.getElementById("addtext");
+            var row_text = element.value;
+            var text = new fabric.Text(row_text,{left:100, top:200, fontFamily:'Bangers'});
+            $scope.canvas.add(text);
+
+            element.value = "";
+        };
+
 
         $scope.delete = function () {
             if($scope.canvas.getActiveObject() != null) {
