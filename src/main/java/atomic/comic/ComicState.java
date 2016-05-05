@@ -2,7 +2,6 @@ package atomic.comic;
 
 import atomic.json.JsonProperty;
 
-import java.util.IllegalFormatCodePointException;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -19,6 +18,7 @@ public enum ComicState {
      */
     private String comicStateString;
     private static Map<String, ComicState> stateMap = new TreeMap<>();
+
     static {
         for (ComicState cs : ComicState.values()) {
             stateMap.put(cs.toString(), cs);
@@ -27,18 +27,22 @@ public enum ComicState {
 
     /**
      * Constructor to initialize the comic state string.
+     *
      * @param comicStateString The name of the comic state to initialize.
      */
-    ComicState(String comicStateString) { this.comicStateString = comicStateString; }
+    ComicState(String comicStateString) {
+        this.comicStateString = comicStateString;
+    }
 
     /**
      * Converts a String parameter to a ComicState enumeration value
+     *
      * @param comicStateString The String to convert to a ComicState.
      * @return The ComicState represented by the String.
      * @throws IllegalArgumentException If the indicated String could not be matched to a ComicState.
      */
     public static ComicState fromString(String comicStateString) {
-        if(stateMap.containsKey(comicStateString)) {
+        if (stateMap.containsKey(comicStateString)) {
             return stateMap.get(comicStateString);
         } else {
             throw new IllegalArgumentException("Comic State not found: " + comicStateString);

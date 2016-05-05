@@ -1,21 +1,22 @@
 package atomic.crud;
 
 // GSON library.
+
 import atomic.json.JsonProperty;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-// Java Servlet library.
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-// I/O library.
 import java.io.BufferedReader;
 import java.io.IOException;
+
+// Java Servlet library.
+// I/O library.
 
 /**
  * Primary servlet for entities which can be created, destroyed, updated, and deleted - the primary operations for
@@ -145,7 +146,7 @@ public abstract class CrudServlet extends HttpServlet {
             // Parse the JSON string into a JsonElement.
             return jsonParser.parse(builder.toString());
 
-        // Exception handling.
+            // Exception handling.
         } catch (JsonIOException jioe) {
 
             System.err.println("The retrieved request did not follow valid JSON syntax.");
@@ -164,7 +165,7 @@ public abstract class CrudServlet extends HttpServlet {
     /**
      * Simply writes the parameter JsonElement to the indicated HttpResponse.
      *
-     * @param json The JsonElement tree to write as a response.
+     * @param json     The JsonElement tree to write as a response.
      * @param response The HttpResponse which will received the Json as a string.
      */
     protected void writeJsonToResponse(JsonElement json, HttpServletResponse response)
@@ -178,6 +179,7 @@ public abstract class CrudServlet extends HttpServlet {
 
     /**
      * Creates a JsonObject indicating that the operation is unsupported.
+     *
      * @return A JsonObject with a single field: "RESULT" : "UNSUPPORTED".
      */
     protected JsonElement unsupportedRequest() {
@@ -190,6 +192,7 @@ public abstract class CrudServlet extends HttpServlet {
 
     /**
      * Creates a JsonObject indicating that the operation completed successfully.
+     *
      * @return A JsonObject with a single field: "RESULT" : "SUCCESS".
      */
     protected JsonElement successfulRequest() {
@@ -202,6 +205,7 @@ public abstract class CrudServlet extends HttpServlet {
 
     /**
      * Creates a JsonObject indicating that the operation failed.
+     *
      * @return A JsonObject with a single field: "RESULT" : "FAILED".
      */
     protected JsonElement failedRequest() {

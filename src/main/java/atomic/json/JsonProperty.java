@@ -77,7 +77,7 @@ public enum JsonProperty {
      * Static operation which inserts all enum values into the property map.
      */
     static {
-        for(JsonProperty jp : JsonProperty.values()) {
+        for (JsonProperty jp : JsonProperty.values()) {
             propertyMap.put(jp.toString(), jp);
         }
     }
@@ -99,7 +99,7 @@ public enum JsonProperty {
      */
     public static JsonProperty fromString(String property) {
 
-        if(propertyMap.containsKey(property))
+        if (propertyMap.containsKey(property))
             return propertyMap.get(property);
         else
             throw new IllegalArgumentException("JsonProperty not found: " + property);

@@ -20,7 +20,7 @@ public enum AssetRequest {
      * Static operation which inserts all enum values into the request map.
      */
     static {
-        for(AssetRequest jp : AssetRequest.values()) {
+        for (AssetRequest jp : AssetRequest.values()) {
             requestMap.put(jp.toString(), jp);
         }
     }
@@ -42,7 +42,7 @@ public enum AssetRequest {
      */
     public static AssetRequest fromString(String request) {
 
-        if(requestMap.containsKey(request))
+        if (requestMap.containsKey(request))
             return requestMap.get(request);
         else
             throw new IllegalArgumentException("AssetRequest not found: " + request);

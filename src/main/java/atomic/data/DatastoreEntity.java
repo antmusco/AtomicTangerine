@@ -1,6 +1,5 @@
 package atomic.data;
 
-import atomic.crud.CrudResult;
 import com.google.appengine.api.datastore.*;
 
 import java.util.List;
@@ -19,6 +18,7 @@ public abstract class DatastoreEntity {
 
     /**
      * Initializes the entity_kind.
+     *
      * @param entityKind The type of entity to assign to the  current object.
      */
     protected DatastoreEntity(EntityKind entityKind) {
@@ -53,24 +53,28 @@ public abstract class DatastoreEntity {
 
     /**
      * Function which produces a Key for this DatastoreEntity.
+     *
      * @return The Key for this DatastoreEntity.
      */
     protected abstract Key generateKey();
 
     /**
      * Write the current values of the object to the Entity parameter.
+     *
      * @returns The entity which was created using the current state of the object.
      */
     public abstract Entity toEntity();
 
     /**
      * Read values from an Entity and update this object's state.
+     *
      * @param entity
      */
     protected abstract void fromEntity(Entity entity);
 
     /**
      * Static function which executes a query on behalf of the Datastore. Limit is set to DEFAULT_QUERY_LIMIT.
+     *
      * @param q Query to execute.
      * @return A list of Entities which match the query criteria.
      */
@@ -82,7 +86,8 @@ public abstract class DatastoreEntity {
 
     /**
      * Static function which executes a query on behalf of the Datastore.
-     * @param q Query to execute.
+     *
+     * @param q     Query to execute.
      * @param limit Limits the number of Entities returned.
      * @return A list of Entities which match the query criteria.
      */

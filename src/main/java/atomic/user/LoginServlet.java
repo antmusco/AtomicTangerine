@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 /**
  * A simple CRUD servlet which only supports request. `Retrieve` returns a login or logout link, depending on whether
  * the user is currently logged in or not. No other CRUD operation is supported (`Create`, `Update`, `Delete`).
+ *
  * @author Anthony G. Musco
  */
 public class LoginServlet extends CrudServlet {
@@ -20,6 +21,7 @@ public class LoginServlet extends CrudServlet {
 
     /**
      * Returns a login or logout link, depending on whether the user is currently logged in or not.
+     *
      * @param json Request parameter, which is ignored for this function.
      * @return A JsonObject containing a login or logout link.
      */
@@ -33,12 +35,12 @@ public class LoginServlet extends CrudServlet {
         UserService service = UserServiceFactory.getUserService();
 
         // If the user is not logged in, return login url.
-        if(service.getCurrentUser() == null) {
+        if (service.getCurrentUser() == null) {
 
             String loginLink = service.createLoginURL("/");
             response.addProperty("LOGIN", loginLink);
 
-        // Otherwise, return logout url.
+            // Otherwise, return logout url.
         } else {
 
             String logoutLink = service.createLogoutURL("/");
