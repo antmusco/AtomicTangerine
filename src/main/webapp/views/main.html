@@ -1,7 +1,7 @@
 <div ng-controller="mainCtrl">
     <md-content class="md-padding" layout-xs="column" layout="column" layout-align="center">
         <div flex-xs flex-gt-xs="50" layout="row" layout-align="center center">
-            <md-button class="md-icon-button" aria-label="arrow_back">
+            <md-button ng-click="prev()" class="md-icon-button" aria-label="arrow_back">
                 <md-icon class="material-icons">arrow_back</md-icon>
             </md-button>
             <md-card style="max-width: 500px;">
@@ -30,7 +30,7 @@
                     </p>
                 </md-card-content>
             </md-card>
-            <md-button class="md-icon-button" aria-label="arrow_forward">
+            <md-button ng-click="next()" class="md-icon-button" aria-label="arrow_forward">
                 <md-icon class="material-icons">arrow_forward</md-icon>
             </md-button>
         </div>

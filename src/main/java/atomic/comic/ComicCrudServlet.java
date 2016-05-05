@@ -22,6 +22,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.StringBufferInputStream;
+import java.io.StringReader;
 import java.util.Date;
 import java.util.List;
 
@@ -194,7 +197,10 @@ public class ComicCrudServlet extends CrudServlet {
             HttpPost post = new HttpPost(uploadURL);
             final HttpEntity entity = MultipartEntityBuilder.create()
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                    .addPart("file", new StringBody(svgData, ContentType.APPLICATION_SVG_XML))
+                    .addBinaryBody("file",
+                            (new ByteArrayInputStream(svgData.getBytes("UTF-8"))),
+                            ContentType.APPLICATION_ATOM_XML,
+                            "test.svg")
                     .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
                     .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
                     .addTextBody(JsonProperty.TITLE.toString(), title)
