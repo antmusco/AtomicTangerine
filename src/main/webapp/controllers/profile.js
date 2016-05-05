@@ -12,7 +12,7 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             $scope.user = auth.getUser();
-            if($scope.user === undefined || $scope.user == null){
+            if ($scope.user === undefined || $scope.user == null) {
                 $location.path(current.$$route.originalPath);
                 $mdToast.show(
                     $mdToast.simple()

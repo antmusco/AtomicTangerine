@@ -6,32 +6,22 @@ import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
-import atomic.user.User;
-import atomic.user.UserNotFoundException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.gson.JsonArray;
-import com.google.appengine.repackaged.com.google.common.base.Flag;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -53,14 +43,14 @@ public class ComicCrudServlet extends CrudServlet {
 
             // Make sure gmail is specified, and capture it.
             String userGmail;
-            if(obj.has(JsonProperty.USER_GMAIL.toString()))
+            if (obj.has(JsonProperty.USER_GMAIL.toString()))
                 userGmail = obj.get(JsonProperty.USER_GMAIL.toString()).getAsString();
             else
                 return failedRequest();
 
             // Make sure title is specified, and capture it.
             String title;
-            if(obj.has(JsonProperty.TITLE.toString()))
+            if (obj.has(JsonProperty.TITLE.toString()))
                 title = obj.get(JsonProperty.TITLE.toString()).getAsString();
             else
                 return failedRequest();
@@ -95,36 +85,36 @@ public class ComicCrudServlet extends CrudServlet {
         try {
 
             // Determine what the request was.
-            if(request.has(JsonProperty.REQUEST.toString())) {
+            if (request.has(JsonProperty.REQUEST.toString())) {
 
                 String req = request.get(JsonProperty.REQUEST.toString()).getAsString();
 
                 // Request to update comic data.
-                if(req.equals(ComicRequest.UPLOAD_FRAME.toString())){
+                if (req.equals(ComicRequest.UPLOAD_FRAME.toString())) {
 
                     uploadNewFrame(request, response);
 
-                } else if(req.equals(ComicRequest.UPDATE_COMIC.toString())) {
+                } else if (req.equals(ComicRequest.UPDATE_COMIC.toString())) {
 
                     // Instantiate and save entity.
                     new Comic(request.getAsJsonObject(JsonProperty.COMIC.toString()));
 
-                // Request to retrieve a list of comics.
-                } else if(req.equals(ComicRequest.COMIC_LIST_DEFAULT.toString())) {
+                    // Request to retrieve a list of comics.
+                } else if (req.equals(ComicRequest.COMIC_LIST_DEFAULT.toString())) {
 
                     processDefaultComicListRequest(request, response);
 
-                // Request to retrieve a custom list of comics.
-                } else if(req.equals(ComicRequest.COMIC_LIST_CUSTOM.toString())) {
+                    // Request to retrieve a custom list of comics.
+                } else if (req.equals(ComicRequest.COMIC_LIST_CUSTOM.toString())) {
 
                     //processCustomComicListRequest(request, response);
 
-                // Request to retrieve a single comic.
-                } else if(req.equals(ComicRequest.SINGLE_COMIC.toString())) {
+                    // Request to retrieve a single comic.
+                } else if (req.equals(ComicRequest.SINGLE_COMIC.toString())) {
 
                     processSingleComicRequest(request, response);
 
-                // Request is unsupported
+                    // Request is unsupported
                 } else {
 
                     System.err.println("Unsupported request: " + req);
@@ -163,32 +153,32 @@ public class ComicCrudServlet extends CrudServlet {
 
         // Grab the upload URL.
         String uploadURL;
-        if(request.has(JsonProperty.UPLOAD_URL.toString())) {
-            uploadURL =  request.get(JsonProperty.UPLOAD_URL.toString()).getAsString();
+        if (request.has(JsonProperty.UPLOAD_URL.toString())) {
+            uploadURL = request.get(JsonProperty.UPLOAD_URL.toString()).getAsString();
         } else {
             throw new IllegalArgumentException("Upload URL required!");
         }
 
         // Grab the redirect URL.
         String redirectURL;
-        if(request.has(JsonProperty.REDIRECT_URL.toString())) {
-            redirectURL =  request.get(JsonProperty.REDIRECT_URL.toString()).getAsString();
+        if (request.has(JsonProperty.REDIRECT_URL.toString())) {
+            redirectURL = request.get(JsonProperty.REDIRECT_URL.toString()).getAsString();
         } else {
             throw new IllegalArgumentException("Redirect required!");
         }
 
         // Grab the comic title.
         String title;
-        if(request.has(JsonProperty.TITLE.toString())) {
-            title =  request.get(JsonProperty.TITLE.toString()).getAsString();
+        if (request.has(JsonProperty.TITLE.toString())) {
+            title = request.get(JsonProperty.TITLE.toString()).getAsString();
         } else {
             throw new IllegalArgumentException("Title required!");
         }
 
         // Grab the comic svg data.
         String svgData;
-        if(request.has(JsonProperty.SVG_DATA.toString())) {
-            svgData =  request.get(JsonProperty.SVG_DATA.toString()).getAsString();
+        if (request.has(JsonProperty.SVG_DATA.toString())) {
+            svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
         } else {
             throw new IllegalArgumentException("SVG Data required!");
         }
@@ -209,7 +199,7 @@ public class ComicCrudServlet extends CrudServlet {
 
             CloseableHttpResponse rsp = client.execute(post);
 
-            System.out.println(rsp.toString());
+            response.addProperty("RESP", EntityUtils.toString(rsp.getEntity()));
 
         } catch (Exception e) {
 
@@ -246,7 +236,7 @@ public class ComicCrudServlet extends CrudServlet {
                     .setFilter(dateFilter)
                     .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
-        // Generation criteria - User gmail.
+            // Generation criteria - User gmail.
         } else if (request.has(JsonProperty.USER_GMAIL.toString())) {
 
             // Grab the gmail.
@@ -299,24 +289,25 @@ public class ComicCrudServlet extends CrudServlet {
 
     /**
      * Process a request to retrieve a single comic.
-     * @param request The request which contains the gmail and title of the comic to retrieve.
+     *
+     * @param request  The request which contains the gmail and title of the comic to retrieve.
      * @param response Response which contains the comic, if retrieval was successful.
-     * @throws NoUniqueKeyException Thrown if either the gmail or title was missing from the request.
+     * @throws NoUniqueKeyException   Thrown if either the gmail or title was missing from the request.
      * @throws ComicNotFoundException Thrown if the comic does not exist in the datastore.
      */
     protected void processSingleComicRequest(JsonObject request, JsonObject response) throws NoUniqueKeyException,
-        ComicNotFoundException {
+            ComicNotFoundException {
 
         // Make sure gmail is specified, and capture it.
         String userGmail;
-        if(request.has(JsonProperty.USER_GMAIL.toString()))
+        if (request.has(JsonProperty.USER_GMAIL.toString()))
             userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
         else
             throw new NoUniqueKeyException("Cannot find comic. Missing comic creator gmail.");
 
         // Make sure title is specified, and capture it.
         String title;
-        if(request.has(JsonProperty.TITLE.toString()))
+        if (request.has(JsonProperty.TITLE.toString()))
             title = request.get(JsonProperty.TITLE.toString()).getAsString();
         else
             throw new NoUniqueKeyException("Cannot find comic. Missing comic title.");

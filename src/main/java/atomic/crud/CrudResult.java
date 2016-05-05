@@ -15,12 +15,16 @@ public enum CrudResult {
 
     /**
      * Constructor which initializes the result String member.
+     *
      * @param result The String representing this result.
      */
-    CrudResult(String result) {  this.result = result; }
+    CrudResult(String result) {
+        this.result = result;
+    }
 
     /**
      * Public method which returns the indicated result in it's String form.
+     *
      * @return The result as a String.
      */
     public String toString() {

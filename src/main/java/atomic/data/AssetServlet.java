@@ -12,18 +12,15 @@ import com.google.appengine.api.blobstore.FileInfo;
 import com.google.appengine.api.blobstore.UploadOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gson.JsonObject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Asset handling servlet.
@@ -41,21 +38,21 @@ public class AssetServlet extends HttpServlet {
     private static final DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     protected void sendUploadUrl(HttpServletRequest req, HttpServletResponse resp, String errorMessage)
-        throws ServletException, IOException {
+            throws ServletException, IOException {
 
         UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(BUCKET_NAME);
         String uploadUrl = blobstore.createUploadUrl("/assets", options);
 
         req.setAttribute("uploadUrl", uploadUrl);
-        if(errorMessage != null) {
+        if (errorMessage != null) {
             req.setAttribute("error", errorMessage);
         }
-        
+
     }
 
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException{
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         UploadOptions options = UploadOptions.Builder.withGoogleStorageBucketName(BUCKET_NAME);
         String uploadUrl = blobstore.createUploadUrl("/assets", options);
 
@@ -100,19 +97,19 @@ public class AssetServlet extends HttpServlet {
         String assetURL = GOOGLE_STORAGE_ROOT + fileInfos.get(0).getGsObjectName().substring(3);
 
         // Make sure there are files to extract.
-        if(fileInfos == null || fileInfos.size() == 0) {
+        if (fileInfos == null || fileInfos.size() == 0) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Request contained no file information.");
             return;
         }
 
         // Uploaded profile picture.
-        if(submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {
+        if (submissionType.equals(JsonProperty.PROFILE_PIC.toString())) {
 
             user.setProfilePicUrl(assetURL);
             user.saveEntity();
 
-        // Uploaded comic frame.
-        } else if(submissionType.equals(JsonProperty.COMIC_FRAME.toString())) {
+            // Uploaded comic frame.
+        } else if (submissionType.equals(JsonProperty.COMIC_FRAME.toString())) {
 
             String comicTitle = req.getParameter(JsonProperty.COMIC_FRAME.toString());
             Comic comic = null;
@@ -124,7 +121,7 @@ public class AssetServlet extends HttpServlet {
             }
 
             List<String> frames = comic.getFrames();
-            if(frames == null) {
+            if (frames == null) {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Frames was null for some reason.");
                 return;
             }
@@ -136,7 +133,7 @@ public class AssetServlet extends HttpServlet {
             }
 
             int comicIndex = Integer.parseInt(comicIndexStr);
-            if(comicIndex > frames.size()) {
+            if (comicIndex > frames.size()) {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid index selected.");
             } else if (comicIndex == frames.size()) {
                 // Frame uploaded!

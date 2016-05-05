@@ -6,9 +6,8 @@ import atomic.json.JsonProperty;
 import atomic.json.Jsonable;
 import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.datastore.*;
-import com.google.appengine.api.images.ImagesServicePb;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Date;
@@ -74,8 +73,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
      * and saved to the datastore.
      *
      * @param userGmail Email of the owner of this Comic. This String is unique among users.
-     * @param title Title of the Comic. While this String is not unique among all Comics in the datastore, it is unique
-     *              for EACH User.
+     * @param title     Title of the Comic. While this String is not unique among all Comics in the datastore, it is unique
+     *                  for EACH User.
      * @throws NoUniqueKeyException Thrown if either of the parameters are null.
      */
     private Comic(String userGmail, String title) throws NoUniqueKeyException {
@@ -83,7 +82,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         super(EntityKind.COMIC);
 
         // Ensure that a unique key has been passed.
-        if(userGmail == null)
+        if (userGmail == null)
             throw new NoUniqueKeyException("Comic - userGmail");
         else if (title == null)
             throw new NoUniqueKeyException(("Comic - title"));
@@ -103,7 +102,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             this.frames = new LinkedList<>();
             this.state = ComicState.DRAFT;
             this.dateCreated = new Date();
-            this.dateModified = (Date)dateCreated.clone();
+            this.dateModified = (Date) dateCreated.clone();
             this.tags = new LinkedList<>();
             // Put the entity in the datastore.
             saveEntity();
@@ -137,40 +136,40 @@ public class Comic extends DatastoreEntity implements Jsonable {
     @Override
     public void fromJson(JsonObject obj) throws NoUniqueKeyException {
 
-        if(obj.has(JsonProperty.USER_GMAIL.toString())) {
+        if (obj.has(JsonProperty.USER_GMAIL.toString())) {
             userGmail = obj.get(JsonProperty.USER_GMAIL.toString()).getAsString();
         } else {
             throw new NoUniqueKeyException("Comic - userGmail");
         }
 
-        if(obj.has(JsonProperty.TITLE.toString())) {
+        if (obj.has(JsonProperty.TITLE.toString())) {
             title = obj.get(JsonProperty.TITLE.toString()).getAsString();
         } else {
             throw new NoUniqueKeyException("Comic - title");
         }
 
-        if(obj.has(JsonProperty.GLOBAL_CAPTION.toString())) {
+        if (obj.has(JsonProperty.GLOBAL_CAPTION.toString())) {
             globalCaption = obj.get(JsonProperty.GLOBAL_CAPTION.toString()).getAsString();
         }
 
-        if(obj.has(JsonProperty.STATE.toString())) {
+        if (obj.has(JsonProperty.STATE.toString())) {
             state = ComicState.fromString(obj.get(JsonProperty.STATE.toString()).getAsString());
         }
 
-        if(obj.has(JsonProperty.FRAMES.toString())) {
+        if (obj.has(JsonProperty.FRAMES.toString())) {
             JsonArray framesList = obj.get(JsonProperty.FRAMES.toString()).getAsJsonArray();
 
-            for(JsonElement c : framesList) {
+            for (JsonElement c : framesList) {
                 framesList.add(c.getAsString());
             }
 
         }
 
-        if(obj.has(JsonProperty.TAGS.toString())) {
+        if (obj.has(JsonProperty.TAGS.toString())) {
 
             JsonArray tagsList = obj.get(JsonProperty.TAGS.toString()).getAsJsonArray();
 
-            for(JsonElement t : tagsList) {
+            for (JsonElement t : tagsList) {
                 tagsList.add(t.getAsString());
             }
 
@@ -194,11 +193,11 @@ public class Comic extends DatastoreEntity implements Jsonable {
         obj.addProperty(JsonProperty.USER_GMAIL.toString(), userGmail);
         obj.addProperty(JsonProperty.TITLE.toString(), title);
 
-        if(globalCaption != null) {
+        if (globalCaption != null) {
             obj.addProperty(JsonProperty.GLOBAL_CAPTION.toString(), globalCaption);
         }
 
-        if(state != null) {
+        if (state != null) {
             obj.addProperty(JsonProperty.STATE.toString(), state.toString());
         }
 
@@ -206,14 +205,14 @@ public class Comic extends DatastoreEntity implements Jsonable {
         obj.addProperty(JsonProperty.DATE_MODIFIED.toString(), dateModified.getTime());
 
         // The frames property will be a JsonArray of assetIDs.
-        if(frames != null) {
+        if (frames != null) {
             JsonArray framesList = new JsonArray();
             for (String f : frames)
                 framesList.add(f);
             obj.add(JsonProperty.FRAMES.toString(), framesList);
         }
 
-        if(tags != null) {
+        if (tags != null) {
             JsonArray tagsList = new JsonArray();
             for (String s : tags)
                 tagsList.add(s);
@@ -266,34 +265,34 @@ public class Comic extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.userGmail     = (String)       entity.getProperty(JsonProperty.OWNER_GMAIL.toString());
-        this.title         = (String)       entity.getProperty(JsonProperty.TITLE.toString());
+        this.userGmail = (String) entity.getProperty(JsonProperty.OWNER_GMAIL.toString());
+        this.title = (String) entity.getProperty(JsonProperty.TITLE.toString());
 
 
-        if(entity.hasProperty(JsonProperty.STATE.toString())) {
+        if (entity.hasProperty(JsonProperty.STATE.toString())) {
             this.state = ComicState.fromString((String) entity.getProperty(JsonProperty.STATE.toString()));
         }
 
-        if(entity.hasProperty(JsonProperty.FRAMES.toString())) {
+        if (entity.hasProperty(JsonProperty.FRAMES.toString())) {
             this.frames = (List<String>) entity.getProperty(JsonProperty.FRAMES.toString());
         } else {
-            this.frames  = new LinkedList<>();
+            this.frames = new LinkedList<>();
         }
 
-        if(entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
+        if (entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
             this.globalCaption = (String) entity.getProperty(JsonProperty.GLOBAL_CAPTION.toString());
         }
 
 
-        if(entity.hasProperty(JsonProperty.DATE_CREATED.toString())) {
+        if (entity.hasProperty(JsonProperty.DATE_CREATED.toString())) {
             this.dateCreated = (Date) entity.getProperty(JsonProperty.DATE_CREATED.toString());
         }
 
-        if(entity.hasProperty(JsonProperty.DATE_MODIFIED.toString())) {
+        if (entity.hasProperty(JsonProperty.DATE_MODIFIED.toString())) {
             this.dateModified = (Date) entity.getProperty(JsonProperty.DATE_MODIFIED.toString());
         }
 
-        if(entity.hasProperty(JsonProperty.TAGS.toString())) {
+        if (entity.hasProperty(JsonProperty.TAGS.toString())) {
             this.tags = (List<String>) entity.getProperty(JsonProperty.TAGS.toString());
         } else {
             this.tags = new LinkedList<>();
@@ -308,13 +307,14 @@ public class Comic extends DatastoreEntity implements Jsonable {
     /**
      * Static function which creates a new comic with the indicated gmail and title. The function first checks to ensure
      * that no other comics with the given unique key exist - if one does then an exception is thrown.
+     *
      * @param gmail Gmail of the user creating the comic.
      * @param title Title fo the comic to create (must be unique per user).
      * @throws ComicAlreadyExistsException Thrown if a comic with the given <gmail, title> pair already exists.
-     * @throws NoUniqueKeyException Thrown if gmail or title are empty or illegal.
+     * @throws NoUniqueKeyException        Thrown if gmail or title are empty or illegal.
      */
     public static void makeNewComic(String gmail, String title) throws ComicAlreadyExistsException,
-        NoUniqueKeyException {
+            NoUniqueKeyException {
 
         // Make filter to ensure that a comic with the given key does not already exist.
         Query.Filter comicFilter = new Query.FilterPredicate(
@@ -325,7 +325,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         // Execute query to ensure no other comics exist with the specified key.
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if(!DatastoreEntity.executeQuery(q).isEmpty())
+        if (!DatastoreEntity.executeQuery(q).isEmpty())
             throw new ComicAlreadyExistsException(gmail, title);
 
         // Create new comic.
@@ -335,6 +335,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     /**
      * Factory method used to retrieve a comic.
+     *
      * @param gmail
      * @param title
      * @return
@@ -351,7 +352,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         // Execute query to ensure comic exist with the specified key.
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if(DatastoreEntity.executeQuery(q).isEmpty())
+        if (DatastoreEntity.executeQuery(q).isEmpty())
             throw new ComicNotFoundException(gmail, title);
 
         return new Comic(gmail, title);

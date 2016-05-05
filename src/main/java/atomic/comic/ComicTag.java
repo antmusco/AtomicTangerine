@@ -8,5 +8,4 @@ package atomic.comic;
 public class ComicTag {
 
 
-
 }
