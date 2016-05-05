@@ -56,14 +56,16 @@
                 <md-tooltip> Templates</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" aria-label="text_format"  ng-click="addTexts()">
-                <md-tooltip> Add Text</md-tooltip>
-                <md-icon class="material-icons">text_format</md-icon>
-            </md-button>
+
             <md-input-container>
                 <label>Input Text</label>
                 <input id="addtext" type="text" >
             </md-input-container>
+
+            <md-button class="md-fab md-mini" aria-label="text_format"  ng-click="addTexts()">
+                <md-tooltip> Add Text</md-tooltip>
+                <md-icon class="material-icons">text_format</md-icon>
+            </md-button>
 
             <form id="comicDraftForm" action="{{uploadUrl}}" method="post" class="ng-hide"
                   enctype="multipart/form-data">
