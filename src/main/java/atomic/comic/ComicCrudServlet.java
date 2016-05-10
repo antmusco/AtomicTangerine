@@ -17,11 +17,11 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -175,6 +175,11 @@ public class ComicCrudServlet extends CrudServlet {
             throw new IllegalArgumentException("Title required!");
         }
 
+        String gmail = null;
+        if (request.has(JsonProperty.USER_GMAIL.toString())) {
+            gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+        }
+
         // Grab the comic svg data.
         String svgData;
         if (request.has(JsonProperty.SVG_DATA.toString())) {
@@ -189,10 +194,14 @@ public class ComicCrudServlet extends CrudServlet {
             HttpPost post = new HttpPost(uploadURL);
             final HttpEntity entity = MultipartEntityBuilder.create()
                     .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                    .addPart("file", new StringBody(svgData, ContentType.APPLICATION_SVG_XML))
+                    .addBinaryBody("file",
+                            (new ByteArrayInputStream(svgData.getBytes("UTF-8"))),
+                            ContentType.APPLICATION_ATOM_XML,
+                            "test.svg")
                     .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
                     .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
                     .addTextBody(JsonProperty.TITLE.toString(), title)
+                    .addTextBody(JsonProperty.USER_GMAIL.toString(), gmail)
                     .build();
 
             post.setEntity(entity);
