@@ -3,6 +3,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         'use strict';
 
         var used_color = '';
+        var usingPaint = 0;
 
         $scope.comicTitle = '';
         $scope.comicStarted = false;
@@ -142,10 +143,26 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
 
         $scope.delete = function () {
+
+
             if ($scope.canvas.getActiveObject() != null) {
-                $scope.canvas.getActiveObject().remove();
+
+                 $scope.canvas.getActiveObject().remove();
+             }else{
+                 $scope.canvas.getActiveGroup().forEachObject(function(elem) {
+                    elem.remove();
+                     
+
+                });
+
+
             }
+
         };
+        $scope.Paint= function () {
+            usingPaint=1;
+            $scope.paintStyle = {background: '#808080'};
+        }
 
         $scope.draw = function () {
             $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
