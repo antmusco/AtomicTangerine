@@ -44,7 +44,7 @@
                 <md-tooltip>Delete</md-tooltip>
                 <md-icon class="material-icons">delete</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" aria-label="format_color_fill">
+            <md-button ng-click="Paint()" ng-style="paintStyle" class="md-fab md-mini" aria-label="format_color_fill">
                 <md-tooltip>Paint Bucket</md-tooltip>
                 <md-icon class="material-icons">format_color_fill</md-icon>
             </md-button>
@@ -56,11 +56,11 @@
                 <md-tooltip> Templates</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
-            <md-input-container>
+            <md-input-container ng-show="show">
                 <label>Input Text</label>
                 <input id="addtext" type="text">
             </md-input-container>
-            <md-button class="md-fab md-mini" aria-label="text_format" ng-click="addTexts()">
+            <md-button class="md-fab md-mini" aria-label="text_format" ng-click="addTexts(); show=!show">
                 <md-tooltip> Add Text</md-tooltip>
                 <md-icon class="material-icons">text_format</md-icon>
             </md-button>
