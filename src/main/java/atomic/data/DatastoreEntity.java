@@ -56,7 +56,16 @@ public abstract class DatastoreEntity {
      *
      * @return The Key for this DatastoreEntity.
      */
-    protected abstract Key generateKey();
+    protected Key generateKey() {
+        return KeyFactory.createKey(this.entityKind.toString(), this.generateKeyString());
+    }
+
+    /**
+     * Function which produces a String which represents a Key for this particular DatastoreEntity.
+     *
+     * @return The String that represents a Key for this DatastoreEntity.
+     */
+    protected abstract String generateKeyString();
 
     /**
      * Write the current values of the object to the Entity parameter.

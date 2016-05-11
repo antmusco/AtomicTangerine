@@ -229,8 +229,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
      ******************************************************************************************************************/
 
     @Override
-    protected Key generateKey() {
-        return KeyFactory.createKey(this.entityKind.toString(), this.userGmail + "_" + this.title);
+    protected String generateKeyString() {
+        return this.userGmail + "_" + this.title;
     }
 
     @Override
