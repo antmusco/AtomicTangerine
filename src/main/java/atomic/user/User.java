@@ -238,13 +238,13 @@ public class User extends DatastoreEntity implements Jsonable {
      ***********************************************************************/
 
     /**
-     * Generates a key based on the EntityKind and gmail string.
+     * Generates a String based on the EntityKind and gmail string.
      *
-     * @return A Key representing this unique User.
+     * @return A String representing this unique User.
      */
     @Override
-    protected Key generateKey() {
-        return KeyFactory.createKey(this.entityKind.toString(), this.gmail);
+    protected String generateKeyString() {
+        return this.gmail;
     }
 
     /**

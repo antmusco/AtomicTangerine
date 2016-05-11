@@ -1,5 +1,6 @@
 package atomic.data;
 
+import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.datastore.*;
 
 import java.util.List;
@@ -56,7 +57,20 @@ public abstract class DatastoreEntity {
      *
      * @return The Key for this DatastoreEntity.
      */
-    protected abstract Key generateKey();
+    protected Key generateKey() {
+        String keyString = this.generateKeyString();
+        if(keyString == null || keyString.equals("")) {
+            throw new IllegalArgumentException("Could not generate a unique key string based on result of generateKeyString().");
+        }
+        return KeyFactory.createKey(this.entityKind.toString(), this.generateKeyString());
+    }
+
+    /**
+     * Function which produces a String which represents a Key for this particular DatastoreEntity.
+     *
+     * @return The String that represents a Key for this DatastoreEntity.
+     */
+    protected abstract String generateKeyString();
 
     /**
      * Write the current values of the object to the Entity parameter.
