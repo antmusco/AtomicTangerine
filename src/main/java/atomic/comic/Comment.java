@@ -166,9 +166,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
      ******************************************************************************************************************/
 
     @Override
-    protected Key generateKey() {
-        String keystring = commentorUserGmail + "_" + comicUserGmail + "_" + comicTitle + "_" + datePosted.getTime();
-        return KeyFactory.createKey(this.entityKind.toString(), keystring);
+    protected String generateKeyString() {
+        return commentorUserGmail + "_" + comicUserGmail + "_" + comicTitle + "_" + datePosted.getTime();
     }
 
     @Override
