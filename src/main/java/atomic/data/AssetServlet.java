@@ -12,6 +12,7 @@ import com.google.appengine.api.blobstore.FileInfo;
 import com.google.appengine.api.blobstore.UploadOptions;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Text;
 import com.google.gson.JsonObject;
 
 import javax.servlet.ServletException;
@@ -133,7 +134,7 @@ public class AssetServlet extends HttpServlet {
                 return;
             }
 
-            List<String> frames = comic.getFrames();
+            List<Text> frames = comic.getFrames();
             if (frames == null) {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Frames was null for some reason.");
                 return;
@@ -150,10 +151,10 @@ public class AssetServlet extends HttpServlet {
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Invalid index selected.");
             } else if (comicIndex == frames.size()) {
                 // Frame uploaded!
-                frames.add(assetURL);
+                frames.add(new Text(assetURL));
             } else {
                 // Frame uploaded!
-                frames.set(comicIndex, assetURL);
+                frames.set(comicIndex, new Text(assetURL));
             }
 
             comic.saveEntity();

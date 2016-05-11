@@ -44,7 +44,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
      * the asset associated with the frame (via the `AssetServlet`), as well as the content information stored with the
      * frame in the datastore (i.e. the `assetID` for each frame is also it's Entity's unique Key).
      */
-    private List<String> frames;
+    private List<Text> frames;
     /**
      * The current state of this Comic. If DRAFT, then the Comic is only visible to the owning User. If PUBLISHED, this
      * Comic is available for viewing for all other Users.
@@ -94,6 +94,9 @@ public class Comic extends DatastoreEntity implements Jsonable {
         try {
 
             fromEntity(retrieveEntity());
+
+            if(this.frames == null) this.frames = new LinkedList<>();
+            if(this.tags == null) this.tags = new LinkedList<>();
 
         } catch (EntityNotFoundException ex) {
 
@@ -207,8 +210,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
         // The frames property will be a JsonArray of assetIDs.
         if (frames != null) {
             JsonArray framesList = new JsonArray();
-            for (String f : frames)
-                framesList.add(f);
+            for (Text f : frames)
+                framesList.add(f.toString());
             obj.add(JsonProperty.FRAMES.toString(), framesList);
         }
 
@@ -250,7 +253,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         }
 
         // Write each of the properties to the entity.
-        entity.setProperty(JsonProperty.OWNER_GMAIL.toString(), this.userGmail);
+        entity.setProperty(JsonProperty.USER_GMAIL.toString(), this.userGmail);
         entity.setProperty(JsonProperty.TITLE.toString(), this.title);
         entity.setProperty(JsonProperty.STATE.toString(), this.state.toString());
         entity.setProperty(JsonProperty.FRAMES.toString(), this.frames);
@@ -265,7 +268,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.userGmail = (String) entity.getProperty(JsonProperty.OWNER_GMAIL.toString());
+        this.userGmail = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
         this.title = (String) entity.getProperty(JsonProperty.TITLE.toString());
 
 
@@ -274,7 +277,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         }
 
         if (entity.hasProperty(JsonProperty.FRAMES.toString())) {
-            this.frames = (List<String>) entity.getProperty(JsonProperty.FRAMES.toString());
+            this.frames = (List<Text>) entity.getProperty(JsonProperty.FRAMES.toString());
         } else {
             this.frames = new LinkedList<>();
         }
@@ -300,7 +303,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
-    public List<String> getFrames() {
+    public List<Text> getFrames() {
         return frames;
     }
 
@@ -325,8 +328,11 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         // Execute query to ensure no other comics exist with the specified key.
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if (!DatastoreEntity.executeQuery(q).isEmpty())
+
+        List<Entity> entities = DatastoreEntity.executeQuery(q);
+        if (!entities.isEmpty()) {
             throw new ComicAlreadyExistsException(gmail, title);
+        }
 
         // Create new comic.
         new Comic(gmail, title);
@@ -361,8 +367,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
         Query.Filter comicFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
 
         // Execute query to ensure comic exist with the specified key.
+        List<Entity> allResults = DatastoreEntity.executeQuery(new Query(EntityKind.COMIC.toString()));
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if (DatastoreEntity.executeQuery(q).isEmpty())
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+        if (result.isEmpty())
             throw new ComicNotFoundException(gmail, title);
 
         // Create the comic and return in.

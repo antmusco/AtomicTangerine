@@ -10,6 +10,7 @@ import atomic.user.User;
 import atomic.user.UserNotFoundException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Text;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -184,9 +185,9 @@ public class ComicCrudServlet extends CrudServlet {
             Comic comic = Comic.retrieveComic(userGmail, title);
 
             if(frameIndex == comic.getFrames().size()) {
-                comic.getFrames().add(svgData);
+                comic.getFrames().add(new Text(svgData));
             } else if (frameIndex < comic.getFrames().size()) {
-                comic.getFrames().set(frameIndex, svgData);
+                comic.getFrames().set(frameIndex, new Text(svgData));
             } else {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
             }
@@ -318,7 +319,7 @@ public class ComicCrudServlet extends CrudServlet {
 
                 JsonObject titleAndSvg = new JsonObject();
                 titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTile());
-                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0));
+                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).toString());
                 comicArray.add(titleAndSvg);
 
             }
