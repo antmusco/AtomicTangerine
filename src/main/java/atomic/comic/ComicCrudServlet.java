@@ -6,23 +6,15 @@ import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
+import atomic.user.User;
+import atomic.user.UserNotFoundException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Text;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.mime.HttpMultipartMode;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.InputStreamBody;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
 
-import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -101,21 +93,25 @@ public class ComicCrudServlet extends CrudServlet {
                     new Comic(request.getAsJsonObject(JsonProperty.COMIC.toString()));
 
                     // Request to retrieve a list of comics.
-                } else if (req.equals(ComicRequest.COMIC_LIST_DEFAULT.toString())) {
+                } else if (req.equals(ComicRequest.GET_COMIC_LIST_DEFAULT.toString())) {
 
                     processDefaultComicListRequest(request, response);
 
                     // Request to retrieve a custom list of comics.
-                } else if (req.equals(ComicRequest.COMIC_LIST_CUSTOM.toString())) {
+                } else if (req.equals(ComicRequest.GET_COMIC_LIST_CUSTOM.toString())) {
 
                     //processCustomComicListRequest(request, response);
 
                     // Request to retrieve a single comic.
-                } else if (req.equals(ComicRequest.SINGLE_COMIC.toString())) {
+                } else if (req.equals(ComicRequest.GET_SINGLE_COMIC.toString())) {
 
                     processSingleComicRequest(request, response);
 
                     // Request is unsupported
+                } else if (req.equals(ComicRequest.GET_USER_COMICS.toString())) {
+
+                    processUserComicsRequest(request, response);
+
                 } else {
 
                     System.err.println("Unsupported request: " + req);
@@ -132,9 +128,9 @@ public class ComicCrudServlet extends CrudServlet {
 
             }
 
-        } catch (ComicNotFoundException | NoUniqueKeyException nuke) {
+        } catch (Exception e) {
 
-            System.err.println(nuke.getMessage());
+            System.err.println(e.getMessage());
 
         }
 
@@ -150,76 +146,58 @@ public class ComicCrudServlet extends CrudServlet {
 
     }
 
+    /**
+     * Appends or updates a frame in the comic given a user gmail, a title, and a frame index.
+     * @param request JSON data which should contain the user gmail, the title, the frame index, and the svg data.
+     * @param response The response which will return CrudResult.SUCCESS on successful upload.
+     */
     protected void uploadNewFrame(JsonObject request, JsonObject response) {
 
-        // Grab the upload URL.
-        String uploadURL;
-        if (request.has(JsonProperty.UPLOAD_URL.toString())) {
-            uploadURL = request.get(JsonProperty.UPLOAD_URL.toString()).getAsString();
+        String userGmail;
+        if(request.has(JsonProperty.USER_GMAIL.toString())) {
+            userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
         } else {
-            throw new IllegalArgumentException("Upload URL required!");
+            throw new IllegalArgumentException("Request must include user gmail");
         }
 
-        // Grab the redirect URL.
-        String redirectURL;
-        if (request.has(JsonProperty.REDIRECT_URL.toString())) {
-            redirectURL = request.get(JsonProperty.REDIRECT_URL.toString()).getAsString();
-        } else {
-            throw new IllegalArgumentException("Redirect required!");
-        }
-
-        // Grab the comic title.
         String title;
-        if (request.has(JsonProperty.TITLE.toString())) {
+        if(request.has(JsonProperty.TITLE.toString())) {
             title = request.get(JsonProperty.TITLE.toString()).getAsString();
         } else {
-            throw new IllegalArgumentException("Title required!");
+            throw new IllegalArgumentException("Request must include title");
         }
 
-        String gmail = null;
-        if (request.has(JsonProperty.USER_GMAIL.toString())) {
-            gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
-        }
-
-        // Grab the comic svg data.
         String svgData;
-        if (request.has(JsonProperty.SVG_DATA.toString())) {
+        if(request.has(JsonProperty.SVG_DATA.toString())) {
             svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
         } else {
-            throw new IllegalArgumentException("SVG Data required!");
+            throw new IllegalArgumentException("Request must include svg data");
+        }
+
+        int frameIndex;
+        if(request.has(JsonProperty.FRAME_INDEX.toString())) {
+            frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
+        } else {
+            throw new IllegalArgumentException("Request must include svg data");
         }
 
         try {
-            final byte[] data = svgData.getBytes("UTF-8");
-            InputStreamBody inputStreamBody = new InputStreamBody(new ByteArrayInputStream(data), JsonProperty.TITLE.toString()){
-                @Override
-                public long getContentLength(){return data.length;}
-            };
+            Comic comic = Comic.retrieveComic(userGmail, title);
 
-            CloseableHttpClient client = HttpClients.createDefault();
-            HttpPost post = new HttpPost(uploadURL);
-            final HttpEntity entity = MultipartEntityBuilder.create()
-                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
-                    .addPart("file", inputStreamBody)
-                    .addTextBody(JsonProperty.SUBMISSION_TYPE.toString(), ComicRequest.UPLOAD_FRAME.toString())
-                    .addTextBody(JsonProperty.REDIRECT_URL.toString(), redirectURL)
-                    .addTextBody(JsonProperty.TITLE.toString(), title)
-                    .addTextBody(JsonProperty.USER_GMAIL.toString(), gmail)
-                    .build();
+            if(frameIndex == comic.getFrames().size()) {
+                comic.getFrames().add(new Text(svgData));
+            } else if (frameIndex < comic.getFrames().size()) {
+                comic.getFrames().set(frameIndex, new Text(svgData));
+            } else {
+                throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
+            }
 
-            post.setEntity(entity);
+            comic.saveEntity();
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
 
-            CloseableHttpResponse rsp = client.execute(post);
-
-            response.addProperty("RESP", EntityUtils.toString(rsp.getEntity()));
-
-        } catch (Exception e) {
-
+        } catch (NoUniqueKeyException | ComicNotFoundException e) {
             System.err.println(e.getMessage());
-
         }
-
-
     }
 
     protected void processDefaultComicListRequest(JsonObject request, JsonObject response) {
@@ -327,6 +305,30 @@ public class ComicCrudServlet extends CrudServlet {
         response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
         response.add(JsonProperty.COMIC.toString(), comic.toJson());
 
+    }
+
+    private void processUserComicsRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            User currentUser = User.getCurrentUser();
+            List<Comic> comics = Comic.retrieveUserComics(currentUser.getGmail());
+
+            JsonArray comicArray = new JsonArray();
+            for(Comic c : comics) {
+
+                JsonObject titleAndSvg = new JsonObject();
+                titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTile());
+                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                comicArray.add(titleAndSvg);
+
+            }
+            response.add(JsonProperty.DRAFTS.toString(), comicArray);
+
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 }

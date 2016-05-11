@@ -44,7 +44,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
      * the asset associated with the frame (via the `AssetServlet`), as well as the content information stored with the
      * frame in the datastore (i.e. the `assetID` for each frame is also it's Entity's unique Key).
      */
-    private List<String> frames;
+    private List<Text> frames;
     /**
      * The current state of this Comic. If DRAFT, then the Comic is only visible to the owning User. If PUBLISHED, this
      * Comic is available for viewing for all other Users.
@@ -95,6 +95,9 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
             fromEntity(retrieveEntity());
 
+            if(this.frames == null) this.frames = new LinkedList<>();
+            if(this.tags == null) this.tags = new LinkedList<>();
+
         } catch (EntityNotFoundException ex) {
 
             // Entity doesn't exist yet, init default values
@@ -127,7 +130,6 @@ public class Comic extends DatastoreEntity implements Jsonable {
         saveEntity();
 
     }
-
 
     /*******************************************************************************************************************
      * Jsonable Methods
@@ -207,8 +209,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
         // The frames property will be a JsonArray of assetIDs.
         if (frames != null) {
             JsonArray framesList = new JsonArray();
-            for (String f : frames)
-                framesList.add(f);
+            for (Text f : frames)
+                framesList.add(f.toString());
             obj.add(JsonProperty.FRAMES.toString(), framesList);
         }
 
@@ -229,8 +231,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
      ******************************************************************************************************************/
 
     @Override
-    protected Key generateKey() {
-        return KeyFactory.createKey(this.entityKind.toString(), this.userGmail + "_" + this.title);
+    protected String generateKeyString() {
+        return this.userGmail + "_" + this.title;
     }
 
     @Override
@@ -250,7 +252,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         }
 
         // Write each of the properties to the entity.
-        entity.setProperty(JsonProperty.OWNER_GMAIL.toString(), this.userGmail);
+        entity.setProperty(JsonProperty.USER_GMAIL.toString(), this.userGmail);
         entity.setProperty(JsonProperty.TITLE.toString(), this.title);
         entity.setProperty(JsonProperty.STATE.toString(), this.state.toString());
         entity.setProperty(JsonProperty.FRAMES.toString(), this.frames);
@@ -265,7 +267,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         // Read each of the properties from the entity.
-        this.userGmail = (String) entity.getProperty(JsonProperty.OWNER_GMAIL.toString());
+        this.userGmail = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
         this.title = (String) entity.getProperty(JsonProperty.TITLE.toString());
 
 
@@ -274,7 +276,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         }
 
         if (entity.hasProperty(JsonProperty.FRAMES.toString())) {
-            this.frames = (List<String>) entity.getProperty(JsonProperty.FRAMES.toString());
+            this.frames = (List<Text>) entity.getProperty(JsonProperty.FRAMES.toString());
         } else {
             this.frames = new LinkedList<>();
         }
@@ -282,7 +284,6 @@ public class Comic extends DatastoreEntity implements Jsonable {
         if (entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
             this.globalCaption = (String) entity.getProperty(JsonProperty.GLOBAL_CAPTION.toString());
         }
-
 
         if (entity.hasProperty(JsonProperty.DATE_CREATED.toString())) {
             this.dateCreated = (Date) entity.getProperty(JsonProperty.DATE_CREATED.toString());
@@ -300,7 +301,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
-    public List<String> getFrames() {
+    public List<Text> getFrames() {
         return frames;
     }
 
@@ -325,8 +326,11 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         // Execute query to ensure no other comics exist with the specified key.
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if (!DatastoreEntity.executeQuery(q).isEmpty())
+
+        List<Entity> entities = DatastoreEntity.executeQuery(q);
+        if (!entities.isEmpty()) {
             throw new ComicAlreadyExistsException(gmail, title);
+        }
 
         // Create new comic.
         new Comic(gmail, title);
@@ -336,27 +340,82 @@ public class Comic extends DatastoreEntity implements Jsonable {
     /**
      * Factory method used to retrieve a comic.
      *
-     * @param gmail
-     * @param title
-     * @return
-     * @throws NoUniqueKeyException
+     * @param gmail Gmail of the user who created the comic.
+     * @param title Title of the comic.
+     * @return The Comic if it could be found, otherwise an exception is thrown.
+     * @throws NoUniqueKeyException Thrown if no comic exists with the indicated user and gmail.
      */
     public static Comic retrieveComic(String gmail, String title) throws NoUniqueKeyException, ComicNotFoundException {
 
         // Make filter to locate a comic with the indicated title.
-        Query.Filter comicFilter = new Query.FilterPredicate(
+        Query.Filter titleFilter = new Query.FilterPredicate(
                 JsonProperty.TITLE.toString(),
                 Query.FilterOperator.EQUAL,
                 title
         );
 
+        // Make filter to locate comics with the user gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                gmail
+        );
+
+        // Combine both filters in to one.
+        Query.Filter comicFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
+
         // Execute query to ensure comic exist with the specified key.
+        List<Entity> allResults = DatastoreEntity.executeQuery(new Query(EntityKind.COMIC.toString()));
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
-        if (DatastoreEntity.executeQuery(q).isEmpty())
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+        if (result.isEmpty())
             throw new ComicNotFoundException(gmail, title);
 
+        // Create the comic and return in.
         return new Comic(gmail, title);
 
     }
 
+    /**
+     * Factory method which returns a list of all comics created by a specific user.
+     *
+     * @param gmail Gmail of the user to retrieve comics for.
+     * @return A list of Comics created by a specific user (may be empty if user has not created any comics).
+     */
+    public static List<Comic> retrieveUserComics(String gmail) {
+
+        // Make filter to locate comics with the user gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                gmail
+        );
+
+        // Execute query to ensure comic exist with the specified key.
+        Query q = new Query(EntityKind.COMIC.toString()).setFilter(userFilter);
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+
+        // Generate the list of comics (may be empty if user has not created any comics).
+        List<Comic> comics = new LinkedList<>();
+        try {
+            for (Entity e : result) {
+
+                String title = (String) e.getProperty(JsonProperty.TITLE.toString());
+                comics.add(new Comic(gmail, title));
+
+            }
+        } catch(NoUniqueKeyException nuke) {
+
+            System.err.println(nuke.getMessage());
+
+        }
+
+        // Return the list of comics.
+        return comics;
+
+    }
+
+    public String getTile() {
+        return title;
+    }
 }

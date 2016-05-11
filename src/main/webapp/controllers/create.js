@@ -30,35 +30,64 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $mdDialog.show(confirm).then(function yes() {
                     $scope.canvas.clear();
                     $scope.comicStarted = true;
-                    $http.get()
-                        .then(function s() {
 
-                        })
                 });
             } else {
                 $scope.comicStarted = true;
+                var data = {
+                    REQUEST:'COMIC_CREATE',
+                    USER_GMAIL:auth.getUser().GMAIL,
+                    TITLE: $scope.comicTitle
+                };
+                crud.create('/comic', data)
+                    .then(function yes() {
+                        $log.info('comic created');
+                    }, function no() {
+                        $log.error('comic failed to create');
+                    });
                 $scope.canvas = new fabric.Canvas('theCanvas');
             }
         };
         ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
-        $('#comicFrame').unbind('change').on('change', function () {
-            if ($(this).get(0).files.length > 0) {
-                var file = $(this).get(0).files[0];
-                var reader = new FileReader();
-                reader.onload = function (readerEvt) {
-                    $("#submissionType").val("COMIC_FRAME");
-                    $("#redirectAddress").val("/#/create");
-                    if ($scope.comicTitle == '') {
-                        $scope.comicTitle = 'NO TITLE!!!';
-                        return;
-                    }
-                    $("#comicTitle").val($scope.comicTitle);
-                    // We don't touch the comic Frame input as it contains the file
-                    $("#comicFrameForm").submit();
-                    return $scope.getUpload();
-                };
-                reader.readAsBinaryString(file);
-            }
+        $('#comicFrame').on('change', function (e) {
+            var reader = new FileReader();
+            reader.onload = function (event) {
+                var imgObj = new Image();
+                imgObj.src = event.target.result;
+                imgObj.onload = function () {
+                    var image = new fabric.Image(imgObj);
+                    image.set({
+                        left: 20,
+                        top: 20,
+                        angle: 0,
+                        padding: 5,
+                        cornersize: 10
+                    });
+                    $scope.canvas.add(image);
+                    $scope.canvas.renderAll();
+                }
+            };
+            reader.readAsDataURL(e.target.files[0]);
+
+
+
+            // if ($(this).get(0).files.length > 0) {
+            //     var file = $(this).get(0).files[0];
+            //     var reader = new FileReader();
+            //     reader.onload = function (readerEvt) {
+            //         $("#submissionType").val("COMIC_FRAME");
+            //         $("#redirectAddress").val("/#/create");
+            //         if ($scope.comicTitle == '') {
+            //             $scope.comicTitle = 'NO TITLE!!!';
+            //             return;
+            //         }
+            //         $("#comicTitle").val($scope.comicTitle);
+            //         // We don't touch the comic Frame input as it contains the file
+            //         $("#comicFrameForm").submit();
+            //         return $scope.getUpload();
+            //     };
+            //     reader.readAsBinaryString(file);
+            // }
         });
         $scope.getUpload = function () {
             $http.get("/comic/frames")
@@ -83,9 +112,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             var data = {
                 REQUEST: "UPLOAD_FRAME",
                 USER_GMAIL: auth.getUser().GMAIL,
-                UPLOAD_URL: $scope.uploadUrl,
-                REDIRECT_URL: '/#/create',
                 TITLE: $scope.comicTitle,
+                FRAME_INDEX: 0,
                 SVG_DATA: $scope.canvas.toSVG({suppressPreamble: true})
             };
 
@@ -99,7 +127,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
 
         $scope.openTemplateSideBar = function () {
-            $scope.drafts = crud.update('/comic', {REQUEST:'USER_COMICS'}).
+            $scope.drafts = crud.update('/comic', {REQUEST:'GET_USER_COMICS'}).
                 then(function (resp) {
                     $scope.drafts = resp.DRAFTS;
             }, function () {

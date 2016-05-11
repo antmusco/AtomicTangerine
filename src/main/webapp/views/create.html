@@ -73,7 +73,7 @@
                 <input id="submissionType" type="hidden" name="SUBMISSION_TYPE" class="ng-hide">
                 <input id="redirectAddress" type="hidden" name="REDIRECT_URL" class="ng-hide">
                 <input id="comicTitle" type="hidden" name="TITLE" class="ng-hide">
-                <input id="comicFrame" type="text" name="FILES" class="ng-hide">
+                <input id="comicFrame" type="file" name="FILES" class="ng-hide">
                 <input id="frameIndex" type="hidden" name="FRAME_INDEX" class="ng-hide">
             </form>
             <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
@@ -138,7 +138,7 @@
         <md-content ng-controller="RightCtrl" layout-padding>
             <div ng-repeat="comic in drafts">
                 <md-button>
-                    {{comic.SVG}}
+                    {{comic.SVG_DATA}}
                 </md-button>
                 <label>{{comic.TITLE}}</label>
             </div>

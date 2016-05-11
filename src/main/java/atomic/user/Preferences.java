@@ -53,8 +53,8 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     }
 
     @Override
-    protected Key generateKey() {
-        return KeyFactory.createKey(this.entityKind.toString(), this.userGmail);
+    protected String generateKeyString() {
+        return this.userGmail;
     }
 
     @Override

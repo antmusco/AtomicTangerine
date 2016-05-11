@@ -64,9 +64,16 @@ public enum JsonProperty {
     DATE_MODIFIED("DATE_MODIFIED"),
     TAGS("TAGS"),
     UPLOAD_URL("UPLOAD_URL"),
+    FRAME_INDEX("FRAME_INDEX"),
+
+    // COMMENT
+    COMMENT("COMMENT"),
+    COMMENTOR_GMAIL("COMMENTOR_GMAIL"),
+    DATE_POSTED("DATE_POSTED"),
 
     // Comic State
     DRAFT("DRAFT"),
+    DRAFTS("DRAFTS"),
     PUBLISHED("PUBLISHED");
 
     private String property;
