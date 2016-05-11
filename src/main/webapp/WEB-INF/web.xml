@@ -33,6 +33,11 @@
         <servlet-class>atomic.comic.ComicCrudServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>commentServlet</servlet-name>
+        <servlet-class>atomic.comment.CommentCrudServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>assetServlet</servlet-name>
         <url-pattern>/assets/*</url-pattern>
@@ -56,6 +61,11 @@
     <servlet-mapping>
         <servlet-name>comicServlet</servlet-name>
         <url-pattern>/comic/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>commentServlet</servlet-name>
+        <url-pattern>/comment/*</url-pattern>
     </servlet-mapping>
 
 </web-app>

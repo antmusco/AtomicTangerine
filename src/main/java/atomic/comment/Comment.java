@@ -1,4 +1,4 @@
-package atomic.comic;
+package atomic.comment;
 
 import atomic.data.DatastoreEntity;
 import atomic.data.EntityKind;
@@ -7,12 +7,12 @@ import atomic.json.Jsonable;
 import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query;
 import com.google.gson.JsonObject;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Class which represents a comment on a comic.
@@ -45,6 +45,22 @@ public class Comment extends DatastoreEntity implements Jsonable {
      * String containing the comment itself.
      */
     private String comment;
+    private String commentorGmail;
+
+    /**
+     * Private constructor used for building Comments in-house.
+     */
+    private Comment() {
+
+        super(EntityKind.COMIC);
+
+        this.commentorUserGmail = null;
+        this.comicUserGmail = null;
+        this.comicTitle = null;
+        this.datePosted = null;
+        this.comment = null;
+
+    }
 
     /**
      * Constructor which initializes all data values for this comment.
@@ -54,7 +70,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
      * @param datePosted Date the comment was posted.
      * @throws NoUniqueKeyException Thrown if any of the parameters are null.
      */
-    public Comment(String commentorUserGmail, String comicUserGmail, String comicTitle, Date datePosted)
+    private Comment(String commentorUserGmail, String comicUserGmail, String comicTitle, Date datePosted)
         throws NoUniqueKeyException {
 
         super(EntityKind.COMMENT);
@@ -73,7 +89,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
             throw new NoUniqueKeyException("Comment - datePosted");
         }
 
-        // Set the properties of the comment.
+        // Set the required keys for the Comment.
         this.commentorUserGmail = commentorUserGmail;
         this.comicUserGmail = comicUserGmail;
         this.comicTitle = comicTitle;
@@ -94,6 +110,15 @@ public class Comment extends DatastoreEntity implements Jsonable {
 
     }
 
+    /**
+     * Posts a new Comment on a Comic.
+     * @param commentorGmail Gmail of the user who wishes to post the Comment.
+     * @param userGmail Gmail of the user who created the Comic.
+     * @param comicTitle Title of the Comic.
+     * @param comment Comment to be posted.
+     * @return The constructed Comment object which was posted.
+     * @throws NoUniqueKeyException Thrown if any of the parameters are null.
+     */
     public static Comment postNewComment(String commentorGmail, String userGmail, String comicTitle, String comment)
         throws NoUniqueKeyException {
 
@@ -102,6 +127,70 @@ public class Comment extends DatastoreEntity implements Jsonable {
         c.saveEntity();
         return c;
 
+    }
+
+    /**
+     * Retrieves a list of Comments for a particular Comic (indicated by the userGmail and comicTitle pair).
+     * @param userGmail Gmail of the user who created the comic.
+     * @param comicTitle Title of the comic.
+     * @return A list of Comments for the specified comic.
+     */
+    public static List<Comment> getCommentsForComic(String userGmail, String comicTitle) {
+
+        // Filter based on gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                userGmail
+        );
+
+        // Filter based on title.
+        Query.Filter titleFilter = new Query.FilterPredicate(
+                JsonProperty.TITLE.toString(),
+                Query.FilterOperator.EQUAL,
+                comicTitle
+        );
+
+        // Filter combining gmail and title (sorted by date descending).
+        Query.Filter commentFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
+        Query q = new Query(EntityKind.COMIC.toString())
+                .setFilter(commentFilter)
+                .addSort(JsonProperty.DATE_POSTED.toString(),
+                        Query.SortDirection.DESCENDING);
+
+        // Execute the query and assemble the results.
+        List<Entity> results = DatastoreEntity.executeQuery(q);
+
+        // Return results.
+        return Comment.listOfEntitiesToListOfComments(results);
+
+    }
+
+    /**
+     * Generates a List of Comments posted by a particular user.
+     * @param userGmail Gmail of the user to search for.
+     * @return A List of the Comments posted by the particular user.
+     */
+    public static List<Comment> getCommentsFromUser(String userGmail) {
+
+        // Filter based on gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                userGmail
+        );
+
+        // Filter combining gmail and title (sorted by date descending).
+        Query q = new Query(EntityKind.COMIC.toString())
+                .setFilter(userFilter)
+                .addSort(JsonProperty.DATE_POSTED.toString(),
+                        Query.SortDirection.DESCENDING);
+
+        // Execute the query and assemble the results.
+        List<Entity> results = DatastoreEntity.executeQuery(q);
+
+        // Return results.
+        return Comment.listOfEntitiesToListOfComments(results);
     }
 
     /*******************************************************************************************************************
@@ -203,4 +292,35 @@ public class Comment extends DatastoreEntity implements Jsonable {
 
     }
 
+    private static List<Comment> listOfEntitiesToListOfComments(List<Entity> entites) {
+
+        List<Comment> comments = new LinkedList<>();
+        for(Entity e : entites) {
+
+            Comment c = new Comment();
+            c.comicUserGmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());;
+            c.comicTitle = (String) e.getProperty(JsonProperty.TITLE.toString());;
+            c.commentorUserGmail = (String) e.getProperty(JsonProperty.COMMENTOR_GMAIL.toString());
+            c.datePosted = (Date) e.getProperty(JsonProperty.DATE_POSTED.toString());
+            c.comment = (String) e.getProperty(JsonProperty.COMMENT.toString());
+
+            comments.add(c);
+
+        }
+
+        return comments;
+
+    }
+
+    public String getCommentorGmail() {
+        return commentorGmail;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public Date getDatePosted() {
+        return datePosted;
+    }
 }
