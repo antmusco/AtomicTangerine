@@ -3,8 +3,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         'use strict';
 
         var used_color = '';
-        var usingPaint = 0;
-
+        var entering = true;
+        
         $scope.comicTitle = '';
         $scope.comicStarted = false;
         var canvas = document.getElementById("theCanvas");
@@ -130,7 +130,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         $scope.addTexts = function () {
             var element = document.getElementById("addtext");
             var row_text = element.value;
-            var default_color = '#ffffff';
+            var default_color = '#000000';
             if (used_color != '') {
 
                 default_color = used_color;
@@ -150,20 +150,32 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
                  $scope.canvas.getActiveObject().remove();
              }else{
+                var group = new fabric.Group();
                  $scope.canvas.getActiveGroup().forEachObject(function(elem) {
-                    elem.remove();
-                     
+                     $scope.canvas.remove(elem);
+
+
 
                 });
 
+                $scope.canvas.renderAll();
 
             }
 
         };
         $scope.Paint= function () {
-            usingPaint=1;
-            $scope.paintStyle = {background: '#808080'};
+
+
+
+            if($scope.canvas.getActiveObject() != null){
+                var object = $scope.canvas.getActiveObject();
+                alert(object);
+                object.fill =used_color;
+                $scope.canvas.renderAll();
+            }
+
         }
+
 
         $scope.draw = function () {
             $scope.canvas.isDrawingMode = !$scope.canvas.isDrawingMode;
@@ -193,7 +205,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
         $scope.drawshape = function (shape) {
 
-            var shape_default = '#ffffff';
+            var shape_default = '#000000';
             if (used_color != '') {
 
                 shape_default = used_color;
