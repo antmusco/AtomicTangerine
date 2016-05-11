@@ -136,16 +136,12 @@
             <h1 class="md-toolbar-tools">Sidenav Right</h1>
         </md-toolbar>
         <md-content ng-controller="RightCtrl" layout-padding>
-            <form>
-                <md-input-container>
-                    <label for="testInput">Test input</label>
-                    <input type="text" id="testInput"
-                           ng-model="data" md-autofocus>
-                </md-input-container>
-            </form>
-            <md-button ng-click="close()" class="md-primary">
-                Close Sidenav Right
-            </md-button>
+            <div ng-repeat="comic in drafts">
+                <md-button>
+                    {{comic.SVG}}
+                </md-button>
+                <label>{{comic.TITLE}}</label>
+            </div>
         </md-content>
     </md-sidenav>
 </div>

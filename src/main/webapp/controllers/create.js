@@ -86,7 +86,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 UPLOAD_URL: $scope.uploadUrl,
                 REDIRECT_URL: '/#/create',
                 TITLE: $scope.comicTitle,
-                SVG_DATA: $scope.canvas.toSVG()
+                SVG_DATA: $scope.canvas.toSVG({suppressPreamble: true})
             };
 
             crud.update('/comic', data).then(function success(resp) {
@@ -97,9 +97,27 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
 
         };
-        ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
 
-        ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
+        $scope.openTemplateSideBar = function () {
+            $scope.drafts = crud.update('/comic', {REQUEST:'USER_COMICS'}).
+                then(function (resp) {
+                    $scope.drafts = resp.DRAFTS;
+            }, function () {
+                $scope.drafts = [];
+            });
+            $mdSidenav('right').toggle()
+                .then(function () {
+                    $log.debug("toggle " + 'right' + " is done");
+                });
+        };
+
+        $scope.publish = function () {
+            $log.info('publish clicked');
+        };
+        
+////////////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
+
+////////////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             var user = auth.getUser();
@@ -110,7 +128,9 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 }, function (resp) {
                     $log.info(resp);
                 });
-            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', USER_GMAIL: user.GMAIL})
+
+
+            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', USER_GMAIL: auth.getUser().GMAIL})
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {
@@ -162,7 +182,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $scope.canvas.renderAll();
             }
 
-        }
+        };
 
 
         $scope.draw = function () {
@@ -173,6 +193,10 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $scope.buttonStyle = {background: '#ab2323'};
             }
         };
+
+        $('#pickColor').unbind('change').on('change', function () {
+
+        });
 
         $scope.colorPickerHelper = function () {
             var ele = document.getElementById("pickColor");
@@ -239,17 +263,6 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;
                 $scope.canvas.renderAll();
             });
-        };
-
-        $scope.openTemplateSideBar = function () {
-            $mdSidenav('right').toggle()
-                .then(function () {
-                    $log.debug("toggle " + 'right' + " is done");
-                });
-        };
-
-        $scope.publish = function () {
-            $log.info('publish clicked');
         };
 
         ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
