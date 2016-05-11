@@ -12,6 +12,7 @@ public enum EntityKind {
 
     USER(JsonProperty.USER.toString()),
     COMIC(JsonProperty.COMIC.toString()),
+    COMMENT(JsonProperty.COMMENT.toString()),
     PREFERENCES(JsonProperty.PREFERENCES.toString());
 
     /**

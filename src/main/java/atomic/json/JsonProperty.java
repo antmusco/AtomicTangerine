@@ -66,6 +66,11 @@ public enum JsonProperty {
     UPLOAD_URL("UPLOAD_URL"),
     FRAME_INDEX("FRAME_INDEX"),
 
+    // COMMENT
+    COMMENT("COMMENT"),
+    COMMENTOR_GMAIL("COMMENTOR_GMAIL"),
+    DATE_POSTED("DATE_POSTED"),
+
     // Comic State
     DRAFT("DRAFT"),
     DRAFTS("DRAFTS"),

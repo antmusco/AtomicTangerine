@@ -131,7 +131,6 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
-
     /*******************************************************************************************************************
      * Jsonable Methods
      ******************************************************************************************************************/
@@ -285,7 +284,6 @@ public class Comic extends DatastoreEntity implements Jsonable {
         if (entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
             this.globalCaption = (String) entity.getProperty(JsonProperty.GLOBAL_CAPTION.toString());
         }
-
 
         if (entity.hasProperty(JsonProperty.DATE_CREATED.toString())) {
             this.dateCreated = (Date) entity.getProperty(JsonProperty.DATE_CREATED.toString());
