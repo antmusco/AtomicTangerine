@@ -319,7 +319,7 @@ public class ComicCrudServlet extends CrudServlet {
 
                 JsonObject titleAndSvg = new JsonObject();
                 titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTile());
-                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).toString());
+                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
                 comicArray.add(titleAndSvg);
 
             }
