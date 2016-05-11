@@ -43,7 +43,7 @@ public abstract class DatastoreEntity {
      * Takes this object and updates it in the datastore. If it does not exist yet in the datastore, it inserts it into
      * the datastore.
      */
-    protected void saveEntity() {
+    public void saveEntity() {
 
         Entity entity = toEntity();
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();

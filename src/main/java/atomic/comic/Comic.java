@@ -336,27 +336,80 @@ public class Comic extends DatastoreEntity implements Jsonable {
     /**
      * Factory method used to retrieve a comic.
      *
-     * @param gmail
-     * @param title
-     * @return
-     * @throws NoUniqueKeyException
+     * @param gmail Gmail of the user who created the comic.
+     * @param title Title of the comic.
+     * @return The Comic if it could be found, otherwise an exception is thrown.
+     * @throws NoUniqueKeyException Thrown if no comic exists with the indicated user and gmail.
      */
     public static Comic retrieveComic(String gmail, String title) throws NoUniqueKeyException, ComicNotFoundException {
 
         // Make filter to locate a comic with the indicated title.
-        Query.Filter comicFilter = new Query.FilterPredicate(
+        Query.Filter titleFilter = new Query.FilterPredicate(
                 JsonProperty.TITLE.toString(),
                 Query.FilterOperator.EQUAL,
                 title
         );
+
+        // Make filter to locate comics with the user gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                gmail
+        );
+
+        // Combine both filters in to one.
+        Query.Filter comicFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
 
         // Execute query to ensure comic exist with the specified key.
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
         if (DatastoreEntity.executeQuery(q).isEmpty())
             throw new ComicNotFoundException(gmail, title);
 
+        // Create the comic and return in.
         return new Comic(gmail, title);
 
     }
 
+    /**
+     * Factory method which returns a list of all comics created by a specific user.
+     *
+     * @param gmail Gmail of the user to retrieve comics for.
+     * @return A list of Comics created by a specific user (may be empty if user has not created any comics).
+     */
+    public static List<Comic> retrieveUserComics(String gmail) {
+
+        // Make filter to locate comics with the user gmail.
+        Query.Filter userFilter = new Query.FilterPredicate(
+                JsonProperty.USER_GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                gmail
+        );
+
+        // Execute query to ensure comic exist with the specified key.
+        Query q = new Query(EntityKind.COMIC.toString()).setFilter(userFilter);
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+
+        // Generate the list of comics (may be empty if user has not created any comics).
+        List<Comic> comics = new LinkedList<>();
+        try {
+            for (Entity e : result) {
+
+                String title = (String) e.getProperty(JsonProperty.TITLE.toString());
+                comics.add(new Comic(gmail, title));
+
+            }
+        } catch(NoUniqueKeyException nuke) {
+
+            System.err.println(nuke.getMessage());
+
+        }
+
+        // Return the list of comics.
+        return comics;
+
+    }
+
+    public String getTile() {
+        return title;
+    }
 }

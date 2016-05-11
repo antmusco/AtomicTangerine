@@ -64,9 +64,11 @@ public enum JsonProperty {
     DATE_MODIFIED("DATE_MODIFIED"),
     TAGS("TAGS"),
     UPLOAD_URL("UPLOAD_URL"),
+    FRAME_INDEX("FRAME_INDEX"),
 
     // Comic State
     DRAFT("DRAFT"),
+    DRAFTS("DRAFTS"),
     PUBLISHED("PUBLISHED");
 
     private String property;
