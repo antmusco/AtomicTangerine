@@ -5,8 +5,8 @@
                 <md-icon class="material-icons">arrow_back</md-icon>
             </md-button>
             <md-card style="max-width: 500px;">
-                <img style="max-width: 500px;max-height: 500px;" ng-src="{{imagePath}}" class="md-card-image"
-                     alt="Washed Out">
+                <div ng-bind-html="imagePath">
+                </div>
                 <md-card-title>
                     <md-card-title-text>
                         <span class="md-headline">Atomic Bunny Comic!</span>
