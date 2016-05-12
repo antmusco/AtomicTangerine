@@ -72,6 +72,8 @@ public enum JsonProperty {
     FRAME_INDEX("FRAME_INDEX"),
     COMIC_VOTE("COMIC_VOTE"),
     SCORE("SCORE"),
+    THUMBNAIL("THUMBNAIL"),
+    THUMBNAILS("THUMBNAILS"),
 
     // COMMENT
     COMMENTS("COMMENTS"),

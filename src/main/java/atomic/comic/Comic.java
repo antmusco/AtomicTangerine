@@ -177,6 +177,15 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         }
 
+        if (obj.has(JsonProperty.THUMBNAILS.toString())) {
+            JsonArray framesList = obj.get(JsonProperty.THUMBNAILS.toString()).getAsJsonArray();
+
+            for (JsonElement c : framesList) {
+                framesList.add(c.getAsString());
+            }
+
+        }
+
         if (obj.has(JsonProperty.TAGS.toString())) {
 
             JsonArray tagsList = obj.get(JsonProperty.TAGS.toString()).getAsJsonArray();
@@ -226,6 +235,13 @@ public class Comic extends DatastoreEntity implements Jsonable {
             for (Text f : frames)
                 framesList.add(f.toString());
             obj.add(JsonProperty.FRAMES.toString(), framesList);
+        }
+
+        if (thumbnails != null) {
+            JsonArray framesList = new JsonArray();
+            for (Text f : thumbnails)
+                framesList.add(f.toString());
+            obj.add(JsonProperty.THUMBNAILS.toString(), framesList);
         }
 
         if (tags != null) {
@@ -324,6 +340,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     public List<Text> getFrames() {
         return frames;
+    }
+
+    public List<Text> getThumbnails() {
+        return thumbnails;
     }
 
     /**

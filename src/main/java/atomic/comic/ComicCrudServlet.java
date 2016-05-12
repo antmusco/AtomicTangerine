@@ -179,6 +179,13 @@ public class ComicCrudServlet extends CrudServlet {
             throw new IllegalArgumentException("Request must include svg data");
         }
 
+        String thumbnailData;
+        if(request.has(JsonProperty.THUMBNAIL.toString())) {
+            thumbnailData = request.get(JsonProperty.THUMBNAIL.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("Request must include svg data");
+        }
+
         int frameIndex;
         if(request.has(JsonProperty.FRAME_INDEX.toString())) {
             frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
@@ -191,8 +198,10 @@ public class ComicCrudServlet extends CrudServlet {
 
             if(frameIndex == comic.getFrames().size()) {
                 comic.getFrames().add(new Text(svgData));
+                comic.getThumbnails().add(new Text(thumbnailData));
             } else if (frameIndex < comic.getFrames().size()) {
                 comic.getFrames().set(frameIndex, new Text(svgData));
+                comic.getThumbnails().add(new Text(thumbnailData));
             } else {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
             }
@@ -285,6 +294,7 @@ public class ComicCrudServlet extends CrudServlet {
                     comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
                     comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
                     comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                    comicObj.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                     comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
                     comicArray.add(comicObj);
                 }
