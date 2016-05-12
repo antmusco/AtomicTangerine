@@ -153,7 +153,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
 
         // Filter combining gmail and title (sorted by date descending).
         Query.Filter commentFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
-        Query q = new Query(EntityKind.COMIC.toString())
+        Query q = new Query(EntityKind.COMMENT.toString())
                 .setFilter(commentFilter)
                 .addSort(JsonProperty.DATE_POSTED.toString(),
                         Query.SortDirection.DESCENDING);
@@ -275,7 +275,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.COMMENTOR_GMAIL.toString(), this.commentorUserGmail);
         entity.setProperty(JsonProperty.USER_GMAIL.toString(), this.comicUserGmail);
         entity.setProperty(JsonProperty.TITLE.toString(), this.comicTitle);
-        entity.setProperty(JsonProperty.DATE_POSTED.toString(), this.datePosted.getTime());
+        entity.setProperty(JsonProperty.DATE_POSTED.toString(), this.datePosted);
         entity.setProperty(JsonProperty.COMMENT.toString(), this.comment);
         return entity;
 

@@ -55,6 +55,8 @@ public enum JsonProperty {
 
     // COMICS
     COMIC("COMIC"),
+    COMICS("COMICS"),
+    COMIC_ID_STRING("COMIC_ID_STRING"),
     OWNER_GMAIL("OWNER_GMAIL"),
     TITLE("TITLE"),
     STATE("STATE"),
