@@ -1,5 +1,5 @@
-app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth', 'crud',
-    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud) {
+app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth', 'crud', '$sce',
+    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud, $sce) {
         'use strict';
 
         var used_color = '';
@@ -131,14 +131,24 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         $scope.openTemplateSideBar = function () {
             $scope.drafts = crud.update('/comic', {REQUEST:'GET_USER_COMICS'}).
                 then(function (resp) {
-                    $scope.drafts = resp.DRAFTS;
+                    $scope.drafts = resp.data.DRAFTS;
+                    var templateContainer = $("#comicTemplateContainer");
+                    $scope.drafts.forEach(function (comic) {
+                        comic.SVG_DATA.setAttribute('width', '300px');
+                        comic.SVG_DATA.setAttribute('height', '150px');
+                        templateContainer.append(
+                            '<div style="display:block;width:300px;height:150px">'
+                            + comic.SVG_DATA +
+                            '</div>');
+                        templateContainer.append('<p>' + comic.TITLE + '</p>');
+                    });
+                $mdSidenav('right').toggle()
+                    .then(function () {
+                        $log.debug("toggle " + 'right' + " is done");
+                    });
             }, function () {
                 $scope.drafts = [];
             });
-            $mdSidenav('right').toggle()
-                .then(function () {
-                    $log.debug("toggle " + 'right' + " is done");
-                });
         };
 
         $scope.publish = function () {
@@ -207,7 +217,6 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             if($scope.canvas.getActiveObject() != null){
                 var object = $scope.canvas.getActiveObject();
-                alert(object);
                 object.fill =used_color;
                 $scope.canvas.renderAll();
             }
@@ -225,17 +234,21 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
 
         $('#pickColor').unbind('change').on('change', function () {
-
-        });
-
-        $scope.colorPickerHelper = function () {
-            var ele = document.getElementById("pickColor");
-            var from_color_picker = ele.value;
+            var from_color_picker = this.value;
             $scope.canvas.freeDrawingBrush.color = from_color_picker;
             $scope.pickedcolorstyle = {color: from_color_picker};
             used_color = from_color_picker;
 
-        };
+        });
+
+        // $scope.colorPickerHelper = function () {
+        //     var ele = document.getElementById("pickColor");
+        //     var from_color_picker = ele.value;
+        //     $scope.canvas.freeDrawingBrush.color = from_color_picker;
+        //     $scope.pickedcolorstyle = {color: from_color_picker};
+        //     used_color = from_color_picker;
+        //
+        // };
 
         $scope.pickColor = function (color) {
             $scope.canvas.freeDrawingBrush.color = color;

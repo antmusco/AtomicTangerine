@@ -1,4 +1,4 @@
-var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate']);
+var app = angular.module('atomicApp', ['ngRoute', 'ngMaterial', 'ngAnimate', 'ngSanitize']);
 
 app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', function ($routeProvider, $mdThemingProvider, $locationProvider) {
     'use strict';

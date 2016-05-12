@@ -136,11 +136,7 @@
             <h1 class="md-toolbar-tools">Sidenav Right</h1>
         </md-toolbar>
         <md-content ng-controller="RightCtrl" layout-padding>
-            <div ng-repeat="comic in drafts">
-                <md-button>
-                    {{comic.SVG_DATA}}
-                </md-button>
-                <label>{{comic.TITLE}}</label>
+            <div id="comicTemplateContainer">
             </div>
         </md-content>
     </md-sidenav>
