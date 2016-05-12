@@ -10,6 +10,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
             $scope.user = auth.getUser();
             $scope.userIsLoggedIn = ($scope.user !== undefined && $scope.user !== null);
         });
+
+
         $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', DATE_CREATED: (new Date()).getTime() })
             .then(function (resp) {
                 $scope.comics = resp.data.COMICS;
@@ -33,6 +35,16 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
             }, function (resp) {
                 $log.info(resp);
             });
+
+        $("#submitCommentButton").click(function() {
+            $http.put('/comment',
+                {
+                    COMMENTOR_GMAIL: "commentor-gmail",
+                    USER_GMAIL: "user-gmail",
+                    TITLE: "comic-title",
+                    COMMENT: $scope.newComment
+                })
+        });
 
     }
 ]);
