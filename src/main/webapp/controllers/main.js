@@ -11,9 +11,23 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
             $scope.userIsLoggedIn = ($scope.user !== undefined && $scope.user !== null);
         });
 
+        $scope.commentList = [];
 
         $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', DATE_CREATED: (new Date()).getTime() })
             .then(function (resp) {
+
+                $scope.updateComments = function() {
+                    $http.post('/comment',
+                        {
+                            REQUEST: 'GET_COMMENTS_FOR_COMIC',
+                            USER_GMAIL: $scope.currentComic.USER_GMAIL,
+                            TITLE: $scope.currentComic.TITLE
+                        })
+                        .then(function(resp) {
+                            $scope.commentList = resp.data.COMMENTS;
+                        });
+                };
+
                 $scope.comics = resp.data.COMICS;
                 $scope.message = "Main Ctrl Active ----- !";
                 $scope.counter = $scope.comics.length - 1;
@@ -23,23 +37,21 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                     $scope.counter = ($scope.counter + 1) % $scope.comics.length;
                     $scope.currentComic = $scope.comics[$scope.counter];
                     $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
+                    $scope.updateComments();
                 };
 
                 $scope.prev = function () {
-                    $scope.counter = ($scope.counter - 1) % $scope.comics.length;
+                    if($scope.counter > 0) {
+                        $scope.counter = ($scope.counter - 1) % $scope.comics.length;
+                    } else {
+                        $scope.counter = $scope.comics.length - 1;
+                    }
                     $scope.currentComic = $scope.comics[$scope.counter];
                     $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
+                    $scope.updateComments();
                 };
+                $scope.updateComments();
 
-                $http.post('/comment',
-                    {
-                        REQUEST: 'GET_COMMENTS_FOR_COMIC',
-                        USER_GMAIL: $scope.currentComic.USER_GMAIL,
-                        TITLE: $scope.currentComic.TITLE
-                    })
-                    .then(function(resp) {
-                        $log.info(resp);
-                    });
 
                 $log.info(resp);
             }, function (resp) {

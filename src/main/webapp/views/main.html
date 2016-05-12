@@ -48,6 +48,20 @@
                     <md-button id="submitCommentButton">Submit</md-button>
                 </md-card-actions>
             </md-card>
+            <div ng-repeat="comment in commentList">
+                <md-card style="max-width: 500px" ng-show="userIsLoggedIn">
+                    <md-card-title>
+                        {{comment.COMMENTOR_GMAIL}}
+                    </md-card-title>
+                    <md-card-content>
+                        {{comment.COMMENT}}
+                    </md-card-content>
+                    <md-card-actions layout="row" layout-align="center center">
+                        <md-button>Up Vote</md-button>
+                        <md-button>Down Vote</md-button>
+                    </md-card-actions>
+                </md-card>
+            </div>
         </div>
     </md-content>
 
