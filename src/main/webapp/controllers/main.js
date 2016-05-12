@@ -31,6 +31,16 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                     $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
                 };
 
+                $http.post('/comment',
+                    {
+                        REQUEST: 'GET_COMMENTS_FOR_COMIC',
+                        USER_GMAIL: $scope.currentComic.USER_GMAIL,
+                        TITLE: $scope.currentComic.TITLE
+                    })
+                    .then(function(resp) {
+                        $log.info(resp);
+                    });
+
                 $log.info(resp);
             }, function (resp) {
                 $log.info(resp);

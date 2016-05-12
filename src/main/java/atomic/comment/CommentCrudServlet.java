@@ -187,10 +187,7 @@ public class CommentCrudServlet extends CrudServlet {
         for(Comment c : comments) {
 
             // Create the Comment Json object.
-            JsonObject commentObj = new JsonObject();
-            commentObj.addProperty(JsonProperty.COMMENTOR_GMAIL.toString(), c.getCommentorGmail());
-            commentObj.addProperty(JsonProperty.COMMENT.toString(), c.getComment());
-            commentObj.addProperty(JsonProperty.DATE_POSTED.toString(), c.getDatePosted().getTime());
+            JsonObject commentObj = c.toJson();
 
             // Add the Comment to the array.
             commentArray.add(commentObj);
