@@ -11,6 +11,7 @@ import atomic.user.UserNotFoundException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -111,6 +112,10 @@ public class ComicCrudServlet extends CrudServlet {
                 } else if (req.equals(ComicRequest.GET_USER_COMICS.toString())) {
 
                     processUserComicsRequest(request, response);
+
+                } else if (req.equals(ComicRequest.VOTE_FOR_COMIC.toString())) {
+
+                    processVoteRequest(request, response);
 
                 } else {
 
@@ -329,6 +334,114 @@ public class ComicCrudServlet extends CrudServlet {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    private void processVoteRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            // Retrieve the current user.
+            User user = User.getCurrentUser();
+
+            // Retrieve the comic creator gmail from the request.
+            String creatorGmail;
+            if(request.has(JsonProperty.USER_GMAIL.toString())) {
+                creatorGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include creator's gmail.");
+            }
+
+            // Retrieve the comic title from the request.
+            String title;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include comic's title.");
+            }
+
+            // Retrieve the vote type from the request.
+            ComicVote vote;
+            if(request.has(JsonProperty.COMIC_VOTE.toString())) {
+                vote = ComicVote.fromString(request.get(JsonProperty.COMIC_VOTE.toString()).getAsString());
+            } else {
+                throw new IllegalArgumentException("Vote request must include vote type.");
+            }
+
+            // Retrieve the comic to upvote and generate it's keystring.
+            Comic comicToUpvote = Comic.retrieveComic(creatorGmail, title);
+            String comicKeyString = comicToUpvote.generateKeyString();
+
+            // Check to see if the comic was previously upvoted by this user.
+            if(user.getUpvotedComics().contains(comicKeyString)) {
+
+                switch (vote) {
+                    // Do nothing, comic already upvoted.
+                    case UPVOTE:
+                        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+                        return;
+                    // Remove vote from upvoted list and add it to downvoted list (double decrement).
+                    case DOWNVOTE:
+                        user.getUpvotedComics().remove(comicKeyString);
+                        comicToUpvote.decrementScore();
+                        user.getDownvotedComics().add(comicKeyString);
+                        comicToUpvote.decrementScore();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsuppoted vote type.");
+                }
+
+            // Check to see if the comic was previously downvoted by this user.
+            } else if (user.getDownvotedComics().contains(comicKeyString)) {
+
+                switch(vote) {
+                    // Remove vote from downvoted list and add it to upvoted list (double increment).
+                    case UPVOTE:
+                        user.getDownvotedComics().remove(comicKeyString);
+                        comicToUpvote.incrementScore();
+                        user.getUpvotedComics().add(comicKeyString);
+                        comicToUpvote.incrementScore();
+                        break;
+                    // Do nothing, comic already downvoted.
+                    case DOWNVOTE:
+                        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+                        return;
+                    default:
+                        throw new IllegalArgumentException("Unsuppoted vote type.");
+                }
+
+            // First time a user is voting on the comic.
+            } else {
+
+                switch(vote) {
+                    case UPVOTE:
+                        user.getUpvotedComics().add(comicKeyString);
+                        comicToUpvote.incrementScore();
+                        break;
+                    case DOWNVOTE:
+                        user.getDownvotedComics().add(comicKeyString);
+                        comicToUpvote.decrementScore();
+                        break;
+                }
+
+            }
+
+            // Save the user and the entity.
+            user.saveEntity();
+            comicToUpvote.saveEntity();
+
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.addProperty(JsonProperty.SCORE.toString(), comicToUpvote.getScore());
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+
+    }
+
+    private void processUpvoteRequest(JsonObject request, JsonObject response) {
+
     }
 
 }

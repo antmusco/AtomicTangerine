@@ -59,6 +59,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
      */
     private Date dateCreated;
     /**
+     * Score representing the number of upvotes a comic has recieved.
+     */
+    private long score;
+    /**
      * List of tags associated with the comic.
      */
     private List<String> tags;
@@ -107,6 +111,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             this.dateCreated = new Date();
             this.dateModified = (Date) dateCreated.clone();
             this.tags = new LinkedList<>();
+            this.score = 0L;
             // Put the entity in the datastore.
             saveEntity();
 
@@ -177,6 +182,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         }
 
+        if (obj.has(JsonProperty.SCORE.toString())) {
+            score = obj.get(JsonProperty.SCORE.toString()).getAsLong();
+        }
+
         // Record modification.
         dateModified = new Date();
 
@@ -221,6 +230,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
             obj.add(JsonProperty.TAGS.toString(), tagsList);
         }
 
+        obj.addProperty(JsonProperty.SCORE.toString(), score);
+
         // Return the JsonObject.
         return obj;
 
@@ -260,6 +271,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.DATE_CREATED.toString(), this.dateCreated);
         entity.setProperty(JsonProperty.DATE_MODIFIED.toString(), this.dateModified);
         entity.setProperty(JsonProperty.TAGS.toString(), this.tags);
+        entity.setProperty(JsonProperty.SCORE.toString(), this.score);
         return entity;
     }
 
@@ -297,6 +309,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
             this.tags = (List<String>) entity.getProperty(JsonProperty.TAGS.toString());
         } else {
             this.tags = new LinkedList<>();
+        }
+
+        if(entity.hasProperty(JsonProperty.SCORE.toString())) {
+            this.score = (long) entity.getProperty(JsonProperty.SCORE.toString());
         }
 
     }
@@ -417,5 +433,18 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     public String getTile() {
         return title;
+    }
+
+
+    public void decrementScore() {
+        score--;
+    }
+
+    public void incrementScore() {
+        score++;
+    }
+
+    public long getScore() {
+        return score;
     }
 }

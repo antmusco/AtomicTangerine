@@ -39,6 +39,10 @@ public class User extends DatastoreEntity implements Jsonable {
     private String profilePicUrl;
     private Text signature;
 
+    // Lists of Comic KeyStrings.
+    private List<String> upvotedComics;
+    private List<String> downvotedComics;
+
     /**
      * Static utility function which grabs the user that is currently logged in and returns it to the caller.
      *
@@ -81,6 +85,8 @@ public class User extends DatastoreEntity implements Jsonable {
         try {
 
             fromEntity(retrieveEntity());
+            if (createdComics == null) createdComics = new LinkedList<>();
+            if (signature == null) signature = new Text("{}");
 
         } catch (EntityNotFoundException ex) {
 
@@ -174,6 +180,24 @@ public class User extends DatastoreEntity implements Jsonable {
         if (obj.has(JsonProperty.SIGNATURE.toString())) {
             signature = new Text(obj.get(JsonProperty.SIGNATURE.toString()).getAsString());
         }
+        if (obj.has(JsonProperty.UPVOTED_COMICS.toString())) {
+            upvotedComics = new LinkedList<>();
+            JsonArray upvotedList = obj.get(JsonProperty.UPVOTED_COMICS.toString()).getAsJsonArray();
+
+            for (JsonElement c : upvotedList) {
+                upvotedList.add(c.getAsString());
+            }
+
+        }
+        if (obj.has(JsonProperty.DOWNVOTED_COMICS.toString())) {
+            downvotedComics = new LinkedList<>();
+            JsonArray downvotedList = obj.get(JsonProperty.DOWNVOTED_COMICS.toString()).getAsJsonArray();
+
+            for (JsonElement c : downvotedList) {
+                downvotedList.add(c.getAsString());
+            }
+
+        }
         saveEntity();
 
     }
@@ -228,6 +252,20 @@ public class User extends DatastoreEntity implements Jsonable {
             obj.addProperty(JsonProperty.SIGNATURE.toString(), signature.getValue());
         }
 
+        if(upvotedComics != null) {
+            JsonArray upvotedComicsList = new JsonArray();
+            for (String s : upvotedComics)
+                upvotedComicsList.add(s);
+            obj.add(JsonProperty.UPVOTED_COMICS.toString(), upvotedComicsList);
+        }
+
+        if(downvotedComics != null) {
+            JsonArray downvotedComicsList = new JsonArray();
+            for (String s : downvotedComics)
+                downvotedComicsList.add(s);
+            obj.add(JsonProperty.DOWNVOTED_COMICS.toString(), downvotedComicsList);
+        }
+
         // Return the JsonObject.
         return obj;
 
@@ -279,6 +317,8 @@ public class User extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.CREATED_COMICS.toString(), this.createdComics);
         entity.setProperty(JsonProperty.PROFILE_PIC_URL.toString(), this.profilePicUrl);
         entity.setUnindexedProperty(JsonProperty.SIGNATURE.toString(), this.signature);
+        entity.setProperty(JsonProperty.UPVOTED_COMICS.toString(), this.upvotedComics);
+        entity.setProperty(JsonProperty.DOWNVOTED_COMICS.toString(), this.downvotedComics);
 
         return entity;
 
@@ -304,7 +344,8 @@ public class User extends DatastoreEntity implements Jsonable {
         this.createdComics = (List<String>) entity.getProperty(JsonProperty.CREATED_COMICS.toString());
         this.profilePicUrl = (String) entity.getProperty(JsonProperty.PROFILE_PIC_URL.toString());
         this.signature = (Text) entity.getProperty(JsonProperty.SIGNATURE.toString());
-
+        this.upvotedComics = (List<String>) entity.getProperty(JsonProperty.UPVOTED_COMICS.toString());
+        this.downvotedComics = (List<String>) entity.getProperty(JsonProperty.DOWNVOTED_COMICS.toString());
 
         // Extract the Preferences entity.
         try {
@@ -315,16 +356,19 @@ public class User extends DatastoreEntity implements Jsonable {
 
     }
 
-
-    public String getProfilePicUrl() {
-        return profilePicUrl;
-    }
-
     public void setProfilePicUrl(String profilePicUrl) {
         this.profilePicUrl = profilePicUrl;
     }
 
     public String getGmail() {
         return gmail;
+    }
+
+    public List<String> getUpvotedComics() {
+        return upvotedComics;
+    }
+
+    public List<String> getDownvotedComics() {
+        return downvotedComics;
     }
 }
