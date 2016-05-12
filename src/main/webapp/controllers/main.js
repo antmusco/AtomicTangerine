@@ -65,7 +65,11 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                     USER_GMAIL: $scope.currentComic.USER_GMAIL,
                     TITLE: $scope.currentComic.TITLE,
                     COMMENT: $scope.newComment
-                })
+                }).then(function (resp) {
+                    $scope.newComment = '';
+                    $scope.updateComments();
+                }
+            );
         });
 
     }
