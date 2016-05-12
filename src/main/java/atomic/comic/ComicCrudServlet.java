@@ -7,11 +7,9 @@ import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
-import atomic.user.UserNotFoundException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Text;
-import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -400,8 +398,8 @@ public class ComicCrudServlet extends CrudServlet {
 
             // Retrieve the vote type from the request.
             ComicVote vote;
-            if(request.has(JsonProperty.COMIC_VOTE.toString())) {
-                vote = ComicVote.fromString(request.get(JsonProperty.COMIC_VOTE.toString()).getAsString());
+            if(request.has(JsonProperty.VOTE.toString())) {
+                vote = ComicVote.fromString(request.get(JsonProperty.VOTE.toString()).getAsString());
             } else {
                 throw new IllegalArgumentException("Vote request must include vote type.");
             }

@@ -12,7 +12,8 @@ public enum CommentRequest {
 
     GET_COMMENTS_FOR_COMIC("GET_COMMENTS_FOR_COMIC"),
     GET_COMMENTS_FOR_USER("GET_COMMENTS_FOR_USER"),
-    DELETE_COMMENT("DELETE_COMMENT");
+    DELETE_COMMENT("DELETE_COMMENT"),
+    VOTE("VOTE");
 
     private String request;
     private static Map<String, CommentRequest> requestMap = new TreeMap<>();

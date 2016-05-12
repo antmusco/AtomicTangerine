@@ -70,7 +70,7 @@ public enum JsonProperty {
     TAGS("TAGS"),
     UPLOAD_URL("UPLOAD_URL"),
     FRAME_INDEX("FRAME_INDEX"),
-    COMIC_VOTE("COMIC_VOTE"),
+    VOTE("VOTE"),
     SCORE("SCORE"),
 
     // COMMENT
@@ -78,6 +78,8 @@ public enum JsonProperty {
     COMMENT("COMMENT"),
     COMMENTOR_GMAIL("COMMENTOR_GMAIL"),
     DATE_POSTED("DATE_POSTED"),
+    UPVOTERS("UPVOTERS"),
+    DOWNVOTERS("DOWNVOTERS"),
 
     // Comic State
     DRAFT("DRAFT"),

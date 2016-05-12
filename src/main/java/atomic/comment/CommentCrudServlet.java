@@ -1,19 +1,10 @@
 package atomic.comment;
 
-import atomic.comic.Comic;
-import atomic.comic.ComicAlreadyExistsException;
-import atomic.comic.ComicNotFoundException;
-import atomic.comic.ComicRequest;
 import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
-import atomic.data.DatastoreEntity;
-import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
-import com.google.appengine.api.datastore.Entity;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Text;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -107,6 +98,10 @@ public class CommentCrudServlet extends CrudServlet {
                 } else if (req.equals(CommentRequest.GET_COMMENTS_FOR_USER.toString())) {
 
                     processCommentsForUserRequest(request, response);
+                } else if (req.equals(CommentRequest.VOTE.toString())) {
+
+                    processVoteRequest(request, response);
+
                 }
 
                 return response;
@@ -195,6 +190,80 @@ public class CommentCrudServlet extends CrudServlet {
         }
 
         return commentArray;
+
+    }
+
+    private void processVoteRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            // Grab the current user.
+            User currentUser = User.getCurrentUser();
+
+            // Retrieve the commentor gmail.
+            String commentorUserGmail;
+            if(request.has(JsonProperty.COMMENTOR_GMAIL.toString())) {
+                commentorUserGmail = request.get(JsonProperty.COMMENTOR_GMAIL.toString()).getAsString();
+            } else {
+                throw new NoUniqueKeyException("Comment - commentorUserGmail");
+            }
+
+            // Retrieve the comic creator user gmail.
+            String comicUserGmail;
+            if(request.has(JsonProperty.USER_GMAIL.toString())) {
+                comicUserGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            } else {
+                throw new NoUniqueKeyException("Comment - comicUserGmail");
+            }
+
+            // Retrieve the comic title.
+            String comicTitle;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                comicTitle = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new NoUniqueKeyException("Comment - comicTitle");
+            }
+
+            // Retrieve the date posted.
+            Date datePosted;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                datePosted = new Date(request.get(JsonProperty.DATE_POSTED.toString()).getAsLong());
+            } else {
+                throw new NoUniqueKeyException("Comment - datePosted");
+            }
+
+            // Retrieve the vote.
+            CommentVote vote;
+            if(request.has(JsonProperty.VOTE.toString())) {
+                vote = CommentVote.fromString(request.get(JsonProperty.VOTE.toString()).getAsString());
+            } else {
+                throw new IllegalArgumentException("Request must have a vote");
+            }
+
+            // Construct the comment from the request parameters.
+            Comment commentToVote = Comment.retrieveComment(commentorUserGmail, comicUserGmail, comicTitle,
+                    datePosted);
+
+            // Apply the vote.
+            switch(vote) {
+                case UPVOTE:
+                    commentToVote.upvote(currentUser.getGmail());
+                    break;
+                case DOWNVOTE:
+                    commentToVote.downvote(currentUser.getGmail());
+                    break;
+            }
+
+            // Save the entity.
+            commentToVote.saveEntity();
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.COMMENT.toString(), commentToVote.toJson());
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
 
     }
 

@@ -8,6 +8,9 @@ import atomic.json.NoUniqueKeyException;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Query;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.Date;
@@ -45,7 +48,16 @@ public class Comment extends DatastoreEntity implements Jsonable {
      * String containing the comment itself.
      */
     private String comment;
-    private String commentorGmail;
+
+    /**
+     * List of gmails indicating users that have upvoted this comment.
+     */
+    private List<String> upvoters;
+
+    /**
+     * List of gmails indicating users that have downvoted this comment.
+     */
+    private List<String> downvoters;
 
     /**
      * Private constructor used for building Comments in-house.
@@ -59,6 +71,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
         this.comicTitle = null;
         this.datePosted = null;
         this.comment = null;
+        this.upvoters = new LinkedList<>();
+        this.downvoters = new LinkedList<>();
 
     }
 
@@ -94,6 +108,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
         this.comicUserGmail = comicUserGmail;
         this.comicTitle = comicTitle;
         this.datePosted = datePosted;
+        this.upvoters = new LinkedList<>();
+        this.downvoters = new LinkedList<>();
 
         // Attempt to retrieve the user from the datastore.
         try {
@@ -107,6 +123,29 @@ public class Comment extends DatastoreEntity implements Jsonable {
             saveEntity();
 
         }
+
+    }
+
+    /**
+     * Retrieves a comic from it's primary keys.
+     * @param commentorGmail
+     * @param userGmail
+     * @param comicTitle
+     * @param datePosted
+     * @return
+     */
+    public static Comment retrieveComment(String commentorGmail, String userGmail, String comicTitle, Date datePosted)
+        throws EntityNotFoundException {
+
+        Comment c = new Comment();
+        c.commentorUserGmail = commentorGmail;
+        c.comicUserGmail = userGmail;
+        c.comicTitle = comicTitle;
+        c.datePosted = datePosted;
+
+        c.fromEntity(c.retrieveEntity());
+
+        return c;
 
     }
 
@@ -210,6 +249,16 @@ public class Comment extends DatastoreEntity implements Jsonable {
         obj.addProperty(JsonProperty.DATE_POSTED.toString(), datePosted.getTime());
         obj.addProperty(JsonProperty.COMMENT.toString(), comment);
 
+        JsonArray upvotersArray = new JsonArray();
+        for(String g : upvoters) upvotersArray.add(g);
+        obj.add(JsonProperty.UPVOTERS.toString(), upvotersArray);
+
+        JsonArray downvotersArray = new JsonArray();
+        for(String g : downvoters) downvotersArray.add(g);
+        obj.add(JsonProperty.DOWNVOTERS.toString(), downvotersArray);
+
+        obj.addProperty(JsonProperty.SCORE.toString(), (upvoters.size() - downvoters.size()));
+
         // Return the JsonObject.
         return obj;
 
@@ -246,6 +295,22 @@ public class Comment extends DatastoreEntity implements Jsonable {
             comment = obj.get(JsonProperty.COMMENT.toString()).getAsString();
         }
 
+        if (obj.has(JsonProperty.UPVOTERS.toString())) {
+            upvoters = new LinkedList<>();
+            JsonArray upvoterArray = obj.get(JsonProperty.UPVOTERS.toString()).getAsJsonArray();
+            for(JsonElement e : upvoterArray) {
+                upvoters.add(e.getAsString());
+            }
+        }
+
+        if (obj.has(JsonProperty.DOWNVOTERS.toString())) {
+            downvoters = new LinkedList<>();
+            JsonArray downvoterArray = obj.get(JsonProperty.DOWNVOTERS.toString()).getAsJsonArray();
+            for(JsonElement e : downvoterArray) {
+                downvoters.add(e.getAsString());
+            }
+        }
+
         saveEntity();
 
     }
@@ -277,6 +342,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.TITLE.toString(), this.comicTitle);
         entity.setProperty(JsonProperty.DATE_POSTED.toString(), this.datePosted);
         entity.setProperty(JsonProperty.COMMENT.toString(), this.comment);
+        entity.setProperty(JsonProperty.UPVOTERS.toString(), this.upvoters);
+        entity.setProperty(JsonProperty.DOWNVOTERS.toString(), this.downvoters);
         return entity;
 
     }
@@ -289,6 +356,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
         this.comicTitle = (String) entity.getProperty(JsonProperty.TITLE.toString());
         this.datePosted = (Date) entity.getProperty(JsonProperty.DATE_POSTED.toString());
         this.comment = (String) entity.getProperty(JsonProperty.COMMENT.toString());
+        this.upvoters = (List<String>) entity.getProperty(JsonProperty.UPVOTERS.toString());
+        this.downvoters = (List<String>) entity.getProperty(JsonProperty.DOWNVOTERS.toString());
 
     }
 
@@ -298,12 +367,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
         for(Entity e : entites) {
 
             Comment c = new Comment();
-            c.comicUserGmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());;
-            c.comicTitle = (String) e.getProperty(JsonProperty.TITLE.toString());;
-            c.commentorUserGmail = (String) e.getProperty(JsonProperty.COMMENTOR_GMAIL.toString());
-            c.datePosted = (Date) e.getProperty(JsonProperty.DATE_POSTED.toString());
-            c.comment = (String) e.getProperty(JsonProperty.COMMENT.toString());
-
+            c.fromEntity(e);
             comments.add(c);
 
         }
@@ -312,8 +376,32 @@ public class Comment extends DatastoreEntity implements Jsonable {
 
     }
 
-    public String getCommentorGmail() {
-        return commentorGmail;
+    public void upvote(String gmail) {
+
+        if(downvoters.contains(gmail)) {
+            downvoters.remove(gmail);
+        }
+
+        if(!upvoters.contains(gmail)) {
+            upvoters.add(gmail);
+        }
+
+    }
+
+    public void downvote(String gmail) {
+
+        if(upvoters.contains(gmail)) {
+            upvoters.remove(gmail);
+        }
+
+        if(!downvoters.contains(gmail)) {
+            downvoters.add(gmail);
+        }
+
+    }
+
+    public String getCommentorUserGmail() {
+        return commentorUserGmail;
     }
 
     public String getComment() {
