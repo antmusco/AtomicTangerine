@@ -108,15 +108,15 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             fileInput.click();
         };
         $scope.save = function () {
-
-            $log.info($scope.canvas.toDataURL("image/png"));
+            
 
             var data = {
                 REQUEST: "UPLOAD_FRAME",
                 USER_GMAIL: auth.getUser().GMAIL,
                 TITLE: $scope.comicTitle,
                 FRAME_INDEX: 0,
-                SVG_DATA: $scope.canvas.toSVG({suppressPreamble: true})
+                SVG_DATA: $scope.canvas.toSVG({suppressPreamble: true}),
+                THUMBNAIL: $scope.canvas.toDataURL("image/png")
             };
 
             crud.update('/comic', data).then(function success(resp) {
@@ -132,23 +132,14 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             $scope.drafts = crud.update('/comic', {REQUEST:'GET_USER_COMICS'}).
                 then(function (resp) {
                     $scope.drafts = resp.data.DRAFTS;
-                    var templateContainer = $("#comicTemplateContainer");
-                    $scope.drafts.forEach(function (comic) {
-                        comic.SVG_DATA.setAttribute('width', '300px');
-                        comic.SVG_DATA.setAttribute('height', '150px');
-                        templateContainer.append(
-                            '<div style="display:block;width:300px;height:150px">'
-                            + comic.SVG_DATA +
-                            '</div>');
-                        templateContainer.append('<p>' + comic.TITLE + '</p>');
-                    });
-                $mdSidenav('right').toggle()
-                    .then(function () {
-                        $log.debug("toggle " + 'right' + " is done");
-                    });
-            }, function () {
-                $scope.drafts = [];
-            });
+                    $mdSidenav('right').toggle()
+                        .then(function () {
+                            $log.debug("toggle " + 'right' + " is done");
+                        });
+                }, function () {
+                    $scope.drafts = [];
+                }
+            );
         };
 
         $scope.publish = function () {
