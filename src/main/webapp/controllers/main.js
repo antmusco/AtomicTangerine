@@ -20,16 +20,19 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', funct
         .then(function (resp) {
             $scope.comics = resp.data.COMICS;
             $scope.message = "Main Ctrl Active ----- !";
-            $scope.imagePath = $sce.trustAsHtml($scope.comics[$scope.comics.length - 1].SVG_DATA);
             $scope.counter = $scope.comics.length - 1;
+            $scope.currentComic = $scope.comics[$scope.counter];
+            $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
             $scope.next = function () {
-                $scope.counter += 1;
-                $scope.imagePath = $sce.trustAsHtml($scope.comics[$scope.counter % $scope.comics.length].SVG_DATA);
+                $scope.counter = ($scope.counter + 1) % $scope.comics.length;
+                $scope.currentComic = $scope.comics[$scope.counter];
+                $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
             };
 
             $scope.prev = function () {
-                $scope.counter -= 1;
-                $scope.imagePath = $sce.trustAsHtml($scope.comics[$scope.counter % $scope.comics.length].SVG_DATA);
+                $scope.counter = ($scope.counter - 1) % $scope.comics.length;
+                $scope.currentComic = $scope.comics[$scope.counter];
+                $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
             };
 
             $log.info(resp);

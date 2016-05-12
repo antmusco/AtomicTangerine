@@ -4,12 +4,12 @@
             <md-button ng-click="prev()" class="md-icon-button" aria-label="arrow_back">
                 <md-icon class="material-icons">arrow_back</md-icon>
             </md-button>
-            <md-card style="max-width: 500px;">
-                <div ng-bind-html="imagePath">
+            <md-card style="max-width: 1000px;" align="center">
+                <div ng-bind-html="currentComicSvg">
                 </div>
                 <md-card-title>
                     <md-card-title-text>
-                        <span class="md-headline">Atomic Bunny Comic!</span>
+                        <span class="md-headline">{{currentComic.TITLE}}</span>
                     </md-card-title-text>
                 </md-card-title>
                 <md-card-actions layout="row" layout-align="start center">

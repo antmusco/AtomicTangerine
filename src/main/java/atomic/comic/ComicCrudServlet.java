@@ -277,6 +277,7 @@ public class ComicCrudServlet extends CrudServlet {
                 comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
                 comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
                 comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
                 comicArray.add(comicObj);
             }
 
