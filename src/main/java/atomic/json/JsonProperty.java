@@ -16,6 +16,7 @@ public enum JsonProperty {
     // Header properties.
     REQUEST("REQUEST"),
     RESULT("RESULT"),
+    REASON("REASON"),
 
     // Login Servlet.
     LOGIN("LOGIN"),

@@ -1,8 +1,12 @@
 package atomic.user;
 
+import atomic.comic.ComicRequest;
+import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -64,14 +68,36 @@ public class UserCrudServlet extends CrudServlet {
     protected JsonElement update(JsonElement json) {
 
         // Retrieve the user as a JSON.
-        JsonObject obj = json.getAsJsonObject();
+        JsonObject request = json.getAsJsonObject();
+        JsonObject response = new JsonObject();
 
         // Attempt to update the user.
         try {
 
-            // Simply construct a user from the Json passed.
-            JsonObject userObj = obj.getAsJsonObject(JsonProperty.USER.toString());
-            new User(userObj);
+            // Determine what the request was.
+            if (request.has(JsonProperty.REQUEST.toString())) {
+
+                String req = request.get(JsonProperty.REQUEST.toString()).getAsString();
+
+                // Request to update comic data.
+                if (req.equals(UserRequest.SUBSCRIBE.toString()) ||
+                        req.equals(UserRequest.UNSUBSCRIBE.toString())) {
+
+                    processSubscribeRequest(request, response, UserRequest.fromString(req));
+
+                } else if (req.equals(UserRequest.GET_SUBSCRIPTION_LIST.toString())) {
+
+                    processGetSubscriptionListRequest(request, response);
+
+                }
+
+            } else {
+
+                // Simply construct a user from the Json passed.
+                JsonObject userObj = request.getAsJsonObject(JsonProperty.USER.toString());
+                new User(userObj);
+
+            }
 
             // Successful update.
             return successfulRequest();
@@ -82,7 +108,6 @@ public class UserCrudServlet extends CrudServlet {
 
         }
 
-
     }
 
     @Override
@@ -90,6 +115,65 @@ public class UserCrudServlet extends CrudServlet {
 
         // Cannot delete users as of yet.
         return unsupportedRequest();
+
+    }
+
+    private void processSubscribeRequest(JsonObject request, JsonObject response, UserRequest which) {
+
+        try {
+
+            User currentUser = User.getCurrentUser();
+
+            String userGmail;
+            if (request.has(JsonProperty.USER_GMAIL.toString())) {
+                userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Request must include user gmail.");
+            }
+
+            if(which == UserRequest.SUBSCRIBE) {
+                currentUser.subscribeTo(userGmail);
+            } else {
+                currentUser.unsubscribeFrom(userGmail);
+            }
+
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+
+        } catch (Exception e) {
+
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+            response.addProperty(JsonProperty.REASON.toString(), e.getMessage());
+            System.err.println(e.getMessage());
+
+        }
+
+
+    }
+
+    private void processGetSubscriptionListRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            User currentUser = User.getCurrentUser();
+            Preferences currentUserPreferences = currentUser.getPreferences();
+
+            JsonArray subscriptionList = new JsonArray();
+            for(String s : currentUserPreferences.getSubscriptions()) {
+
+                subscriptionList.add(s);
+
+            }
+
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.SUBSCRIPTIONS.toString(), subscriptionList);
+
+        } catch (Exception e) {
+
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+            response.addProperty(JsonProperty.REASON.toString(), e.getMessage());
+            System.err.println(e.getMessage());
+
+        }
 
     }
 

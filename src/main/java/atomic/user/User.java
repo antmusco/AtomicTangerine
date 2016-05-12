@@ -371,4 +371,18 @@ public class User extends DatastoreEntity implements Jsonable {
     public List<String> getDownvotedComics() {
         return downvotedComics;
     }
+
+    public void subscribeTo(String userGmail) {
+        preferences.addSubscription(userGmail);
+        saveEntity();
+    }
+
+    public void unsubscribeFrom(String userGmail) {
+        preferences.removeSubscribtion(userGmail);
+        saveEntity();
+    }
+
+    public Preferences getPreferences() {
+        return preferences;
+    }
 }

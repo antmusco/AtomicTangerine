@@ -19,7 +19,7 @@ import java.util.List;
 public class Preferences extends DatastoreEntity implements Jsonable {
 
     private String userGmail;
-    private List<Key> subscriptions;
+    private List<String> subscriptions;
     private List<String> likeTags;
     private List<String> dislikeTags;
     private List<Key> favoriteComics;
@@ -52,6 +52,18 @@ public class Preferences extends DatastoreEntity implements Jsonable {
 
     }
 
+    public void addSubscription(String userGmail) {
+
+        subscriptions.add(userGmail);
+        saveEntity();
+
+    }
+
+    public void removeSubscribtion(String userGmail) {
+        subscriptions.remove(userGmail);
+        saveEntity();
+    }
+
     @Override
     protected String generateKeyString() {
         return this.userGmail;
@@ -81,7 +93,7 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     protected void fromEntity(Entity entity) {
 
         this.userGmail = (String) entity.getProperty(JsonProperty.USER_GMAIL.toString());
-        this.subscriptions = (List<Key>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
+        this.subscriptions = (List<String>) entity.getProperty(JsonProperty.SUBSCRIPTIONS.toString());
         this.likeTags = (List<String>) entity.getProperty(JsonProperty.LIKE_TAGS.toString());
         this.dislikeTags = (List<String>) entity.getProperty(JsonProperty.DISLIKE_TAGS.toString());
         this.favoriteComics = (List<Key>) entity.getProperty(JsonProperty.FAVORITE_COMICS.toString());
@@ -132,5 +144,9 @@ public class Preferences extends DatastoreEntity implements Jsonable {
         } else {
             throw new NoUniqueKeyException(JsonProperty.USER_GMAIL.toString());
         }
+    }
+
+    public List<String> getSubscriptions() {
+        return subscriptions;
     }
 }
