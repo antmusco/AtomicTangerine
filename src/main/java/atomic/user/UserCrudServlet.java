@@ -141,13 +141,10 @@ public class UserCrudServlet extends CrudServlet {
 
         } catch (Exception e) {
 
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-            response.addProperty(JsonProperty.REASON.toString(), e.getMessage());
-            System.err.println(e.getMessage());
+            processGeneralException(response, e);
 
         }
-
-
+        
     }
 
     private void processGetSubscriptionListRequest(JsonObject request, JsonObject response) {
@@ -169,9 +166,7 @@ public class UserCrudServlet extends CrudServlet {
 
         } catch (Exception e) {
 
-            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-            response.addProperty(JsonProperty.REASON.toString(), e.getMessage());
-            System.err.println(e.getMessage());
+            processGeneralException(response, e);
 
         }
 

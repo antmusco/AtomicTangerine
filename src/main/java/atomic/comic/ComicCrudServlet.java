@@ -200,96 +200,105 @@ public class ComicCrudServlet extends CrudServlet {
             comic.saveEntity();
             response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
 
-        } catch (NoUniqueKeyException | ComicNotFoundException e) {
-            System.err.println(e.getMessage());
+        } catch (Exception  e) {
+
+            processGeneralException(response, e);
+
         }
     }
 
     protected void processDefaultComicListRequest(JsonObject request, JsonObject response) {
 
-        // Query to construct.
-        Query q = null;
+        try {
+            // Query to construct.
+            Query q = null;
 
-        // All requests must have a generation criteria.
+            // All requests must have a generation criteria.
 
-        // Generation criteria - Date created.
-        if (request.has(JsonProperty.DATE_CREATED.toString())) {
+            // Generation criteria - Date created.
+            if (request.has(JsonProperty.DATE_CREATED.toString())) {
 
-            // Get the start date timestamp.
-            long timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsLong();
-            Date lastDateCreated = new Date(timestamp);
+                // Get the start date timestamp.
+                long timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsLong();
+                Date lastDateCreated = new Date(timestamp);
 
-            // Generate the filter.
-            Query.Filter dateFilter = new Query.FilterPredicate(
-                    JsonProperty.DATE_CREATED.toString(),      // Comics which were created...
-                    Query.FilterOperator.LESS_THAN_OR_EQUAL,   // on or before...
-                    lastDateCreated                            // last date created.
-            );
+                // Generate the filter.
+                Query.Filter dateFilter = new Query.FilterPredicate(
+                        JsonProperty.DATE_CREATED.toString(),      // Comics which were created...
+                        Query.FilterOperator.LESS_THAN_OR_EQUAL,   // on or before...
+                        lastDateCreated                            // last date created.
+                );
 
-            // Construct the query.
-            q = new Query(EntityKind.COMIC.toString())
-                    .setFilter(dateFilter)
-                    .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
+                // Construct the query.
+                q = new Query(EntityKind.COMIC.toString())
+                        .setFilter(dateFilter)
+                        .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
-        // Generation criteria - User gmail.
-        } else if (request.has(JsonProperty.USER_GMAIL.toString())) {
+                // Generation criteria - User gmail.
+            } else if (request.has(JsonProperty.USER_GMAIL.toString())) {
 
-            // Grab the gmail.
-            String gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+                // Grab the gmail.
+                String gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
 
-            // Generate the filter.
-            Query.Filter userFilter = new Query.FilterPredicate(
-                    JsonProperty.USER_GMAIL.toString(),       // Comics created by...
-                    Query.FilterOperator.EQUAL,               // user with...
-                    gmail                                     // indicated gmail.
-            );
+                // Generate the filter.
+                Query.Filter userFilter = new Query.FilterPredicate(
+                        JsonProperty.USER_GMAIL.toString(),       // Comics created by...
+                        Query.FilterOperator.EQUAL,               // user with...
+                        gmail                                     // indicated gmail.
+                );
 
-            // Construct the query.
-            q = new Query(EntityKind.COMIC.toString())
-                    .setFilter(userFilter)
-                    .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
+                // Construct the query.
+                q = new Query(EntityKind.COMIC.toString())
+                        .setFilter(userFilter)
+                        .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
-        }
-
-        // Make sure a query was generated.
-        if (q == null) throw new IllegalArgumentException("Comic list cannot be generated.");
-
-        // Execute the query and generate the results.
-        List<Entity> results = DatastoreEntity.executeQuery(q);
-        if (!results.isEmpty()) {
-
-            // Add field indicating the end of the date ranges.
-            Entity lastEntity = results.get(results.size() - 1);
-            Date dateOfLast = (Date) lastEntity.getProperty(JsonProperty.DATE_CREATED.toString());
-            response.addProperty(JsonProperty.DATE_CREATED.toString(), dateOfLast.getTime());
-
-            // Add the list of comic keys to the JSON response.
-            JsonArray comicArray = new JsonArray();
-            for (Entity e : results) {
-                String gmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());
-                String title = (String) e.getProperty(JsonProperty.TITLE.toString());
-                Comic c = null;
-                try {
-                    c = Comic.retrieveComic(gmail, title);
-                } catch (NoUniqueKeyException nuke) {
-                    nuke.printStackTrace();
-                    return;
-                } catch (ComicNotFoundException cnfe) {
-                    cnfe.printStackTrace();
-                    return;
-                }
-                JsonObject comicObj = new JsonObject();
-                comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
-                comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
-                comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
-                comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
-                comicArray.add(comicObj);
             }
 
-            response.add(JsonProperty.COMICS.toString(), comicArray);
+            // Make sure a query was generated.
+            if (q == null) throw new IllegalArgumentException("Comic list cannot be generated.");
 
-        } else {
-            // return 404 comics not found.
+            // Execute the query and generate the results.
+            List<Entity> results = DatastoreEntity.executeQuery(q);
+            if (!results.isEmpty()) {
+
+                // Add field indicating the end of the date ranges.
+                Entity lastEntity = results.get(results.size() - 1);
+                Date dateOfLast = (Date) lastEntity.getProperty(JsonProperty.DATE_CREATED.toString());
+                response.addProperty(JsonProperty.DATE_CREATED.toString(), dateOfLast.getTime());
+
+                // Add the list of comic keys to the JSON response.
+                JsonArray comicArray = new JsonArray();
+                for (Entity e : results) {
+                    String gmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());
+                    String title = (String) e.getProperty(JsonProperty.TITLE.toString());
+                    Comic c = null;
+                    try {
+                        c = Comic.retrieveComic(gmail, title);
+                    } catch (NoUniqueKeyException nuke) {
+                        nuke.printStackTrace();
+                        return;
+                    } catch (ComicNotFoundException cnfe) {
+                        cnfe.printStackTrace();
+                        return;
+                    }
+                    JsonObject comicObj = new JsonObject();
+                    comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
+                    comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
+                    comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                    comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
+                    comicArray.add(comicObj);
+                }
+
+                response.add(JsonProperty.COMICS.toString(), comicArray);
+
+            } else {
+                // return 404 comics not found.
+            }
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
         }
 
     }
@@ -302,27 +311,34 @@ public class ComicCrudServlet extends CrudServlet {
      * @throws NoUniqueKeyException   Thrown if either the gmail or title was missing from the request.
      * @throws ComicNotFoundException Thrown if the comic does not exist in the datastore.
      */
-    protected void processSingleComicRequest(JsonObject request, JsonObject response) throws NoUniqueKeyException,
-            ComicNotFoundException {
+    protected void processSingleComicRequest(JsonObject request, JsonObject response) {
 
         // Make sure gmail is specified, and capture it.
-        String userGmail;
-        if (request.has(JsonProperty.USER_GMAIL.toString()))
-            userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
-        else
-            throw new NoUniqueKeyException("Cannot find comic. Missing comic creator gmail.");
+        try {
 
-        // Make sure title is specified, and capture it.
-        String title;
-        if (request.has(JsonProperty.TITLE.toString()))
-            title = request.get(JsonProperty.TITLE.toString()).getAsString();
-        else
-            throw new NoUniqueKeyException("Cannot find comic. Missing comic title.");
+            String userGmail;
+            if (request.has(JsonProperty.USER_GMAIL.toString()))
+                userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            else
+                throw new NoUniqueKeyException("Cannot find comic. Missing comic creator gmail.");
 
-        // Retrieve comic from the datastore and return it as a JSON.
-        Comic comic = Comic.retrieveComic(userGmail, title);
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-        response.add(JsonProperty.COMIC.toString(), comic.toJson());
+            // Make sure title is specified, and capture it.
+            String title;
+            if (request.has(JsonProperty.TITLE.toString()))
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            else
+                throw new NoUniqueKeyException("Cannot find comic. Missing comic title.");
+
+            // Retrieve comic from the datastore and return it as a JSON.
+            Comic comic = Comic.retrieveComic(userGmail, title);
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.COMIC.toString(), comic.toJson());
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
 
     }
 
@@ -346,7 +362,9 @@ public class ComicCrudServlet extends CrudServlet {
 
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+
+            processGeneralException(response, e);
+
         }
     }
 
@@ -447,14 +465,10 @@ public class ComicCrudServlet extends CrudServlet {
             response.addProperty(JsonProperty.SCORE.toString(), comicToUpvote.getScore());
 
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+
+            processGeneralException(response, e);
+
         }
-
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-
-    }
-
-    private void processUpvoteRequest(JsonObject request, JsonObject response) {
 
     }
 

@@ -216,6 +216,14 @@ public abstract class CrudServlet extends HttpServlet {
 
     }
 
+    protected void processGeneralException(JsonObject response, Exception e) {
+
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        response.addProperty(JsonProperty.RESULT.toString(), e.getMessage());
+        System.err.println(e.getMessage());
+
+    }
+
     protected abstract JsonElement create(JsonElement json);
 
     protected abstract JsonElement retrieve(JsonElement json);
