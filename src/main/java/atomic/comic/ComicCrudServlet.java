@@ -183,7 +183,7 @@ public class ComicCrudServlet extends CrudServlet {
         if(request.has(JsonProperty.THUMBNAIL.toString())) {
             thumbnailData = request.get(JsonProperty.THUMBNAIL.toString()).getAsString();
         } else {
-            throw new IllegalArgumentException("Request must include svg data");
+            throw new IllegalArgumentException("Request must include thumbnail");
         }
 
         int frameIndex;
