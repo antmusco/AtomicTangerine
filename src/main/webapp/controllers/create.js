@@ -109,6 +109,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
         $scope.save = function () {
 
+            $log.info($scope.canvas.toDataURL("image/png"));
+
             var data = {
                 REQUEST: "UPLOAD_FRAME",
                 USER_GMAIL: auth.getUser().GMAIL,
@@ -150,7 +152,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             var user = auth.getUser();
             if (user === null || user == undefined)return;
-            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', CREATED_DATE: (new Date() / 1000)})
+            $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', DATE_CREATED: (new Date()).getTime() })
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {
@@ -158,7 +160,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 });
 
 
-            $http.post('/comic', {REQUEST: 'COMIC_LIST_DEFAULT', USER_GMAIL: auth.getUser().GMAIL})
+            $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', USER_GMAIL: auth.getUser().GMAIL})
                 .then(function (resp) {
                     $log.info(resp);
                 }, function (resp) {

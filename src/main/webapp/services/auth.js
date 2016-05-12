@@ -26,6 +26,9 @@ app.service('auth', function auth(crud, $q) {
     };
 
     authobj.getUser = function () {
+        if(currentUser === undefined || currentUser === null){
+            authobj.getUserFromServer();
+        }
         return currentUser;
     };
 

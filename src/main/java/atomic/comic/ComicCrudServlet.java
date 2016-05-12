@@ -231,7 +231,7 @@ public class ComicCrudServlet extends CrudServlet {
                     .setFilter(dateFilter)
                     .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
-            // Generation criteria - User gmail.
+        // Generation criteria - User gmail.
         } else if (request.has(JsonProperty.USER_GMAIL.toString())) {
 
             // Grab the gmail.
@@ -268,11 +268,25 @@ public class ComicCrudServlet extends CrudServlet {
             for (Entity e : results) {
                 String gmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());
                 String title = (String) e.getProperty(JsonProperty.TITLE.toString());
+                Comic c = null;
+                try {
+                    c = Comic.retrieveComic(gmail, title);
+                } catch (NoUniqueKeyException nuke) {
+                    nuke.printStackTrace();
+                    return;
+                } catch (ComicNotFoundException cnfe) {
+                    cnfe.printStackTrace();
+                    return;
+                }
                 JsonObject comicObj = new JsonObject();
                 comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
-                comicObj.addProperty(JsonProperty.TITLE.toString(), title);
+                comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
+                comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
                 comicArray.add(comicObj);
             }
+
+            response.add(JsonProperty.COMICS.toString(), comicArray);
 
         } else {
             // return 404 comics not found.
@@ -323,7 +337,7 @@ public class ComicCrudServlet extends CrudServlet {
             for(Comic c : comics) {
 
                 JsonObject titleAndSvg = new JsonObject();
-                titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTile());
+                titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
                 titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
                 comicArray.add(titleAndSvg);
 

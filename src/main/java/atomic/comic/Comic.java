@@ -46,6 +46,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
      */
     private List<Text> frames;
     /**
+     * List of base64 encoded thumbnails. The thumbnail at index i corresponds to the frame at index i.
+     */
+    private List<Text> thumbnails;
+    /**
      * The current state of this Comic. If DRAFT, then the Comic is only visible to the owning User. If PUBLISHED, this
      * Comic is available for viewing for all other Users.
      */
@@ -107,6 +111,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             // Entity doesn't exist yet, init default values
             this.globalCaption = null;
             this.frames = new LinkedList<>();
+            this.thumbnails = new LinkedList<>();
             this.state = ComicState.DRAFT;
             this.dateCreated = new Date();
             this.dateModified = (Date) dateCreated.clone();
@@ -431,7 +436,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
-    public String getTile() {
+    public String getTitle() {
         return title;
     }
 
