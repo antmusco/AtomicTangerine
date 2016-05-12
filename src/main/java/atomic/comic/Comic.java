@@ -452,4 +452,8 @@ public class Comic extends DatastoreEntity implements Jsonable {
     public long getScore() {
         return score;
     }
+
+    public void publish() {
+        state = ComicState.PUBLISHED;
+    }
 }

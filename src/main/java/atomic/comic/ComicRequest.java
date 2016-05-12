@@ -16,7 +16,8 @@ public enum ComicRequest {
     GET_COMIC_LIST_DEFAULT("GET_COMIC_LIST_DEFAULT"),
     GET_USER_COMICS("GET_USER_COMICS"),
     GET_SINGLE_COMIC("GET_SINGLE_COMIC"),
-    VOTE_FOR_COMIC("VOTE_FOR_COMIC");
+    VOTE_FOR_COMIC("VOTE_FOR_COMIC"),
+    PUBLISH_COMIC("PUBLISH_COMIC");
 
     private String request;
     private static Map<String, ComicRequest> requestMap = new TreeMap<>();

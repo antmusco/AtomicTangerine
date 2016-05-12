@@ -86,7 +86,7 @@ public class ComicCrudServlet extends CrudServlet {
                 // Request to update comic data.
                 if (req.equals(ComicRequest.UPLOAD_FRAME.toString())) {
 
-                    uploadNewFrame(request, response);
+                    processUploadNewFrameRequest(request, response);
 
                 } else if (req.equals(ComicRequest.UPDATE_COMIC.toString())) {
 
@@ -117,6 +117,10 @@ public class ComicCrudServlet extends CrudServlet {
 
                     processVoteRequest(request, response);
 
+                } else if (req.equals(ComicRequest.PUBLISH_COMIC.toString())) {
+
+                    processPublishComicRequest(request, response);
+
                 } else {
 
                     System.err.println("Unsupported request: " + req);
@@ -144,7 +148,7 @@ public class ComicCrudServlet extends CrudServlet {
     }
 
     @Override
-    protected JsonElement delete(JsonElement json) {
+    protected JsonElement delete(JsonElement json){
 
         // Cannot delete comics as of yet.
         return unsupportedRequest();
@@ -156,39 +160,41 @@ public class ComicCrudServlet extends CrudServlet {
      * @param request JSON data which should contain the user gmail, the title, the frame index, and the svg data.
      * @param response The response which will return CrudResult.SUCCESS on successful upload.
      */
-    protected void uploadNewFrame(JsonObject request, JsonObject response) {
-
-        String userGmail;
-        if(request.has(JsonProperty.USER_GMAIL.toString())) {
-            userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
-        } else {
-            throw new IllegalArgumentException("Request must include user gmail");
-        }
-
-        String title;
-        if(request.has(JsonProperty.TITLE.toString())) {
-            title = request.get(JsonProperty.TITLE.toString()).getAsString();
-        } else {
-            throw new IllegalArgumentException("Request must include title");
-        }
-
-        String svgData;
-        if(request.has(JsonProperty.SVG_DATA.toString())) {
-            svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
-        } else {
-            throw new IllegalArgumentException("Request must include svg data");
-        }
-
-        int frameIndex;
-        if(request.has(JsonProperty.FRAME_INDEX.toString())) {
-            frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
-        } else {
-            throw new IllegalArgumentException("Request must include svg data");
-        }
+    protected void processUploadNewFrameRequest(JsonObject request, JsonObject response) {
 
         try {
-            Comic comic = Comic.retrieveComic(userGmail, title);
 
+            // Grab the current user.
+            User currentUser = User.getCurrentUser();
+
+            // Grab the title of the comic to upload a frame to.
+            String title;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Request must include title");
+            }
+
+            // Grab the embedded SVG data.
+            String svgData;
+            if(request.has(JsonProperty.SVG_DATA.toString())) {
+                svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Request must include svg data");
+            }
+
+            // Grab the indicated frame index.
+            int frameIndex;
+            if(request.has(JsonProperty.FRAME_INDEX.toString())) {
+                frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
+            } else {
+                throw new IllegalArgumentException("Request must include svg data");
+            }
+
+            // Retrieve the comic using the gmail of the current user and the title.
+            Comic comic = Comic.retrieveComic(currentUser.getGmail(), title);
+
+            // Overwrite or append.
             if(frameIndex == comic.getFrames().size()) {
                 comic.getFrames().add(new Text(svgData));
             } else if (frameIndex < comic.getFrames().size()) {
@@ -197,6 +203,7 @@ public class ComicCrudServlet extends CrudServlet {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
             }
 
+            // Save the entity and return success.
             comic.saveEntity();
             response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
 
@@ -463,6 +470,40 @@ public class ComicCrudServlet extends CrudServlet {
 
             response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
             response.addProperty(JsonProperty.SCORE.toString(), comicToUpvote.getScore());
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
+
+    }
+
+
+    private void processPublishComicRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            // Grab the current user.
+            User currentUser = User.getCurrentUser();
+
+            // Upload the frame.
+            processUploadNewFrameRequest(request, response);
+
+            // Retrieve the comic title from the request.
+            String title;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include comic's title.");
+            }
+
+            Comic comicToPublish = Comic.retrieveComic(currentUser.getGmail(), title);
+            comicToPublish.publish();
+            comicToPublish.saveEntity();
+
+            // Property is set during the `processUploadNewFrameRequest()`
+            //response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
 
         } catch (Exception e) {
 
