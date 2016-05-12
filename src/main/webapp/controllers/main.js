@@ -39,9 +39,9 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
         $("#submitCommentButton").click(function() {
             $http.put('/comment',
                 {
-                    COMMENTOR_GMAIL: "commentor-gmail",
-                    USER_GMAIL: "user-gmail",
-                    TITLE: "comic-title",
+                    COMMENTOR_GMAIL: $scope.user.GMAIL,
+                    USER_GMAIL: $scope.currentComic.USER_GMAIL,
+                    TITLE: $scope.currentComic.TITLE,
                     COMMENT: $scope.newComment
                 })
         });
