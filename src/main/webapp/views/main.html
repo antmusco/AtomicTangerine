@@ -34,22 +34,21 @@
                 <md-icon class="material-icons">arrow_forward</md-icon>
             </md-button>
         </div>
-        <!--<md-card>-->
-        <!--<md-card-content>-->
-        <!--<div id="vc-feelback-main" data-access-token="18a6bd47eafce4a029139b8c5a2588a8" data-display-type="4"-->
-        <!--data-article-id="ARTICLE ID"></div>-->
-        <!--</md-card-content>-->
-        <!--</md-card>-->
-
-        <!--<script>-->
-        <!--(function () {-->
-        <!--var v = document.createElement('script');-->
-        <!--v.async = true;-->
-        <!--v.src = "http://assets-prod.vicomi.com/vicomi.js";-->
-        <!--var s = document.getElementsByTagName('script')[0];-->
-        <!--s.parentNode.insertBefore(v, s);-->
-        <!--})();-->
-        <!--</script>-->
+        <div align="center">
+            <md-card style="max-width: 500px" ng-show="userIsLoggedIn">
+                <md-card-content>
+                    <form name="commentForm">
+                        <md-input-container class="md-block">
+                            <label>Add a comment.</label>
+                            <textarea ng-model="newComment"></textarea>
+                        </md-input-container>
+                    </form>
+                </md-card-content>
+                <md-card-actions layout layout-align="center center">
+                    <md-button>Submit</md-button>
+                </md-card-actions>
+            </md-card>
+        </div>
     </md-content>
 
 
