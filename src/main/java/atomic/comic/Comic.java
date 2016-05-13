@@ -104,6 +104,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             fromEntity(retrieveEntity());
 
             if(this.frames == null) this.frames = new LinkedList<>();
+            if(this.thumbnails == null) this.thumbnails = new LinkedList<>();
             if(this.tags == null) this.tags = new LinkedList<>();
 
         } catch (EntityNotFoundException ex) {
@@ -177,6 +178,15 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         }
 
+        if (obj.has(JsonProperty.THUMBNAILS.toString())) {
+            JsonArray framesList = obj.get(JsonProperty.THUMBNAILS.toString()).getAsJsonArray();
+
+            for (JsonElement c : framesList) {
+                framesList.add(c.getAsString());
+            }
+
+        }
+
         if (obj.has(JsonProperty.TAGS.toString())) {
 
             JsonArray tagsList = obj.get(JsonProperty.TAGS.toString()).getAsJsonArray();
@@ -228,6 +238,13 @@ public class Comic extends DatastoreEntity implements Jsonable {
             obj.add(JsonProperty.FRAMES.toString(), framesList);
         }
 
+        if (thumbnails != null) {
+            JsonArray framesList = new JsonArray();
+            for (Text f : thumbnails)
+                framesList.add(f.toString());
+            obj.add(JsonProperty.THUMBNAILS.toString(), framesList);
+        }
+
         if (tags != null) {
             JsonArray tagsList = new JsonArray();
             for (String s : tags)
@@ -272,6 +289,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
         entity.setProperty(JsonProperty.TITLE.toString(), this.title);
         entity.setProperty(JsonProperty.STATE.toString(), this.state.toString());
         entity.setProperty(JsonProperty.FRAMES.toString(), this.frames);
+        entity.setProperty(JsonProperty.THUMBNAILS.toString(), this.thumbnails);
         entity.setProperty(JsonProperty.GLOBAL_CAPTION.toString(), this.globalCaption);
         entity.setProperty(JsonProperty.DATE_CREATED.toString(), this.dateCreated);
         entity.setProperty(JsonProperty.DATE_MODIFIED.toString(), this.dateModified);
@@ -296,6 +314,12 @@ public class Comic extends DatastoreEntity implements Jsonable {
             this.frames = (List<Text>) entity.getProperty(JsonProperty.FRAMES.toString());
         } else {
             this.frames = new LinkedList<>();
+        }
+
+        if (entity.hasProperty(JsonProperty.THUMBNAILS.toString())) {
+            this.thumbnails = (List<Text>) entity.getProperty(JsonProperty.THUMBNAILS.toString());
+        } else {
+            this.thumbnails = new LinkedList<>();
         }
 
         if (entity.hasProperty(JsonProperty.GLOBAL_CAPTION.toString())) {
@@ -324,6 +348,10 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     public List<Text> getFrames() {
         return frames;
+    }
+
+    public List<Text> getThumbnails() {
+        return thumbnails;
     }
 
     /**

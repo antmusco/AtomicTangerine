@@ -173,13 +173,19 @@ public class ComicCrudServlet extends CrudServlet {
                 throw new IllegalArgumentException("Request must include title");
             }
 
-            // Grab the embedded SVG data.
-            String svgData;
-            if(request.has(JsonProperty.SVG_DATA.toString())) {
-                svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
-            } else {
-                throw new IllegalArgumentException("Request must include svg data");
-            }
+        String thumbnailData;
+        if(request.has(JsonProperty.THUMBNAIL.toString())) {
+            thumbnailData = request.get(JsonProperty.THUMBNAIL.toString()).getAsString();
+        } else {
+            throw new IllegalArgumentException("Request must include thumbnail");
+        }
+
+        int frameIndex;
+        if(request.has(JsonProperty.FRAME_INDEX.toString())) {
+            frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
+        } else {
+            throw new IllegalArgumentException("Request must include svg data");
+        }
 
             // Grab the indicated frame index.
             int frameIndex;
@@ -195,8 +201,10 @@ public class ComicCrudServlet extends CrudServlet {
             // Overwrite or append.
             if(frameIndex == comic.getFrames().size()) {
                 comic.getFrames().add(new Text(svgData));
+                comic.getThumbnails().add(new Text(thumbnailData));
             } else if (frameIndex < comic.getFrames().size()) {
                 comic.getFrames().set(frameIndex, new Text(svgData));
+                comic.getThumbnails().add(new Text(thumbnailData));
             } else {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
             }
@@ -290,6 +298,7 @@ public class ComicCrudServlet extends CrudServlet {
                     comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
                     comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
                     comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                    comicObj.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                     comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
                     comicArray.add(comicObj);
                 }
@@ -360,6 +369,7 @@ public class ComicCrudServlet extends CrudServlet {
                 JsonObject titleAndSvg = new JsonObject();
                 titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
                 titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                titleAndSvg.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                 comicArray.add(titleAndSvg);
 
             }
