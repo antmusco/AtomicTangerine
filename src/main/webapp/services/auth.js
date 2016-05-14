@@ -55,9 +55,9 @@ app.service('auth', function auth(crud, $q) {
     
     authobj.getUserByGmail = function (gmail) {
         var later = $q.defer();
-        crud.retrieve('/user',{REQUEST:'GET_USER_BY_GMAIL', USER_GMAIL: gmail})
-            .then(function yes(data) {
-                later.resolve(data);
+        crud.update('/user',{REQUEST:'GET_USER_BY_GMAIL', USER_GMAIL: gmail})
+            .then(function yes(resp) {
+                later.resolve(resp.data);
             }, function no(resp) {
                 later.reject(resp);
             });

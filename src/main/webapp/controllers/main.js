@@ -64,7 +64,7 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                 };
 
                 $scope.goToProfile = function () {
-                    $location.path('/profile/' + btoa($scope.artist.USER_GMAIL));
+                    $location.path('/profile/' + btoa($scope.artist.GMAIL));
                 };
 
                 $scope.updateComments();
