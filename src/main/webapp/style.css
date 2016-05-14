@@ -60,3 +60,11 @@ nav {
     padding: 30px;
     margin-top: 100px;
 }
+#newcomicdiv{
+    padding-top: 20px;
+
+    font-family: Bangers;
+}
+#newcomic_button{
+    background-color: #ab2323;
+}

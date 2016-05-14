@@ -1,13 +1,27 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
     <div layout="row">
         <form action="/comic" method="post">
-            <md-input-container>
+            <div id="newcomicdiv">
+            <md-input-container ng-show="showt">
                 <label>Comic Title</label>
                 <input ng-model="comicTitle" ng-required="true" ng-trim="true" ng-disabled="comicStarted">
             </md-input-container>
-            <md-button ng-click="startComic()" class="md-fab md-mini" aria-label="new">
-                <md-tooltip>New Comic</md-tooltip>
-                <md-icon class="material-icons">fiber_new</md-icon>
+
+            <md-button  ng-show="showt" ng-click="startComic()" class="md-fab md-mini" aria-label="add">
+                <md-tooltip>Add New Comics</md-tooltip>
+                <md-icon class="material-icons">add</md-icon>
+            </md-button>
+
+                <md-button ng-show="showt" ng-click="closecomic()" class="md-fab md-mini" aria-label="clear">
+                    <md-icon class="material-icons">clear</md-icon>
+                </md-button>
+
+                <md-button id="newcomic_button" class="md-raised md-primary" ng-show="!showt"ng-click="showt=!showt" > NEW
+                    <md-tooltip>New Comic</md-tooltip>
+                    </md-button>
+            </div>
+
+
             </md-button>
         </form>
     </div>

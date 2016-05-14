@@ -12,9 +12,9 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         ctx.font = "30px Bangers, sans-serif";
         ctx.fillStyle = "#ab2323";
         ctx.textAlign = "center";
-        ctx.fillText("Click on NEW to start a comic", canvas.width / 2, canvas.height / 2);
+        ctx.fillText("Click on NEW and Enter a Title to start a comic", canvas.width / 2, canvas.height / 2);
         $scope.startComic = function (ev) {
-            if ($scope.comicTitle == '') {
+            if ($scope.comicTitle == '' || $scope.comicTitle=="PLEASE SET A COMIC TITLE") {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 $scope.comicTitle = "PLEASE SET A COMIC TITLE";
                 return;
@@ -48,6 +48,33 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $scope.canvas = new fabric.Canvas('theCanvas');
             }
         };
+
+        $scope.closecomic = function(ev){
+            if ($scope.comicStarted) {
+                var confirm = $mdDialog.confirm()
+                    .title('Are you sure?')
+                    .textContent('All of you current comic\'s progress will be lost')
+                    .ariaLabel('Comic Loss warning')
+                    .targetEvent(ev)
+                    .ok('Clean the slate!')
+                    .cancel('Oh no! go back!');
+                $mdDialog.show(confirm).then(function yes() {
+                    $scope.canvas.clear();
+                    $scope.comicStarted = true;
+                    $http.get()
+                        .then(function s() {
+
+                        })
+                });
+            } else {
+                $scope.comicStarted = true;
+                $scope.canvas = new fabric.Canvas('theCanvas');
+             
+
+            }
+        };
+
+
         ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
         $('#comicFrame').on('change', function (e) {
             var reader = new FileReader();
