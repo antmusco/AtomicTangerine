@@ -183,17 +183,15 @@ public class ComicCrudServlet extends CrudServlet {
         if(request.has(JsonProperty.FRAME_INDEX.toString())) {
             frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
         } else {
-            throw new IllegalArgumentException("Request must include svg data");
+            throw new IllegalArgumentException("Request must include frame index");
         }
 
-            // Grab the indicated frame index.
-            int frameIndex;
-            if(request.has(JsonProperty.FRAME_INDEX.toString())) {
-                frameIndex = request.get(JsonProperty.FRAME_INDEX.toString()).getAsInt();
-            } else {
+            String svgData;
+            if(request.has(JsonProperty.SVG_DATA.toString())){
+                svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
+            }else{
                 throw new IllegalArgumentException("Request must include svg data");
             }
-
             // Retrieve the comic using the gmail of the current user and the title.
             Comic comic = Comic.retrieveComic(currentUser.getGmail(), title);
 

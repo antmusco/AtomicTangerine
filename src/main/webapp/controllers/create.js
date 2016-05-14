@@ -62,9 +62,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                     $scope.canvas.clear();
                     $scope.comicStarted = true;
                     $http.get()
-                        .then(function s() {
-
-                        })
+                        .then(function s() {})
                 });
             } else {
                 $scope.comicStarted = true;
@@ -96,25 +94,6 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             };
             reader.readAsDataURL(e.target.files[0]);
 
-
-
-            // if ($(this).get(0).files.length > 0) {
-            //     var file = $(this).get(0).files[0];
-            //     var reader = new FileReader();
-            //     reader.onload = function (readerEvt) {
-            //         $("#submissionType").val("COMIC_FRAME");
-            //         $("#redirectAddress").val("/#/create");
-            //         if ($scope.comicTitle == '') {
-            //             $scope.comicTitle = 'NO TITLE!!!';
-            //             return;
-            //         }
-            //         $("#comicTitle").val($scope.comicTitle);
-            //         // We don't touch the comic Frame input as it contains the file
-            //         $("#comicFrameForm").submit();
-            //         return $scope.getUpload();
-            //     };
-            //     reader.readAsBinaryString(file);
-            // }
         });
         $scope.getUpload = function () {
             $http.get("/comic/frames")
@@ -142,7 +121,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 USER_GMAIL: auth.getUser().GMAIL,
                 TITLE: $scope.comicTitle,
                 FRAME_INDEX: 0,
-                SVG_DATA: $scope.canvas.toSVG({suppressPreamble: true}),
+                JSON_DATA: $scope.canvas.toJSON(),
                 THUMBNAIL: $scope.canvas.toDataURL("image/png")
             };
 
@@ -158,7 +137,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         $scope.openTemplateSideBar = function () {
             crud.update('/comic', {REQUEST:'GET_USER_COMICS'})
                 .then(function (resp) {
-                    $scope.drafts = resp.data.DRAFTS;
+                    $scope.drafts = resp.data.COMICS;
                     $mdSidenav('right').toggle()
                         .then(function () {
                             $log.debug("toggle " + 'right' + " is done");
@@ -167,6 +146,20 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                     $scope.drafts = [];
                 }
             );
+        };
+
+        $scope.loadComic = function (indx) {
+            $scope.canvas.clear();
+            var comic = JSON.parse($scope.drafts[indx].JSON_DATA);
+            fabric.util.enlivenObjects(comic, function (objects) {
+                var origRenderOnAddRemove = canvas.renderOnAddRemove;
+                $scope.canvas.renderOnAddRemove = false;
+                objects.forEach(function (o) {
+                    $scope.canvas.add(o);
+                });
+                $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;
+                $scope.canvas.renderAll();
+            });
         };
 
         $scope.publish = function () {

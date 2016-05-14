@@ -30,6 +30,7 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
 
                 $scope.comics = resp.data.COMICS;
                 $scope.message = "Main Ctrl Active ----- !";
+                if($scope.comics == undefined) return;
                 $scope.counter = $scope.comics.length - 1;
                 $scope.currentComic = $scope.comics[$scope.counter];
                 $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);

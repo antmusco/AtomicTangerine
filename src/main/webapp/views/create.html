@@ -147,12 +147,14 @@
     </div>
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
         <md-toolbar class="md-theme-light">
-            <h1 class="md-toolbar-tools">Sidenav Right</h1>
+            <h1 class="md-toolbar-tools">Templates</h1>
         </md-toolbar>
         <md-content ng-controller="RightCtrl" layout-padding>
             <div ng-repeat="comic in drafts">
-                <img src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
-                <label>{{comic.TITLE}}</label>
+                    <img ng-src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
+                <md-button ng-click="loadComic($index)">
+                    <label>{{comic.TITLE}}</label>
+                </md-button>
             </div>
         </md-content>
     </md-sidenav>
