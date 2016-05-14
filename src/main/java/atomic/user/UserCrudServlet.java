@@ -3,8 +3,10 @@ package atomic.user;
 import atomic.comic.ComicRequest;
 import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
+import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
+import com.google.appengine.api.datastore.Query;
 import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -89,6 +91,11 @@ public class UserCrudServlet extends CrudServlet {
 
                     processGetSubscriptionListRequest(request, response);
 
+                } else if (req.equals(UserRequest.GET_USER_BY_GMAIL.toString())) {
+
+                    processGetUserByGmailRequest(request, response);
+                    return response;
+
                 }
 
             } else {
@@ -109,6 +116,7 @@ public class UserCrudServlet extends CrudServlet {
         }
 
     }
+
 
     @Override
     protected JsonElement delete(JsonElement json) {
@@ -168,6 +176,21 @@ public class UserCrudServlet extends CrudServlet {
 
             processGeneralException(response, e);
 
+        }
+
+    }
+
+    private void processGetUserByGmailRequest(JsonObject request, JsonObject response) {
+
+        if(request.has(JsonProperty.USER_GMAIL.toString())) {
+            String gmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            try {
+                User user = new User(gmail);
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+                response.add(JsonProperty.USER.toString(), user.toJson());
+            } catch (NoUniqueKeyException e){
+                processGeneralException(response, e);
+            }
         }
 
     }
