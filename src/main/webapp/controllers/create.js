@@ -129,8 +129,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         };
 
         $scope.openTemplateSideBar = function () {
-            $scope.drafts = crud.update('/comic', {REQUEST:'GET_USER_COMICS'}).
-                then(function (resp) {
+            crud.update('/comic', {REQUEST:'GET_USER_COMICS'})
+                .then(function (resp) {
                     $scope.drafts = resp.data.DRAFTS;
                     $mdSidenav('right').toggle()
                         .then(function () {

@@ -137,7 +137,7 @@
         </md-toolbar>
         <md-content ng-controller="RightCtrl" layout-padding>
             <div ng-repeat="comic in drafts">
-                <img ng-src="comic.THUMBNAIL" width="300px" height="150px"/>
+                <img src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
                 <label>{{comic.TITLE}}</label>
             </div>
         </md-content>
