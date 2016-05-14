@@ -1,75 +1,66 @@
-app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth', 'crud', '$sce',
-    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud, $sce) {
+app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$log', 'auth', 'crud', '$mdToast',
+    function ($scope, $http, $mdDialog, $mdSidenav, $log, auth, crud, $mdToast) {
         'use strict';
 
         var used_color = '';
         var entering = true;
-        
         $scope.comicTitle = '';
-        $scope.comicStarted = false;
-        var canvas = document.getElementById("theCanvas");
-        var ctx = canvas.getContext("2d");
-        ctx.font = "30px Bangers, sans-serif";
-        ctx.fillStyle = "#ab2323";
-        ctx.textAlign = "center";
-        ctx.fillText("Click on NEW and Enter a Title to start a comic", canvas.width / 2, canvas.height / 2);
+
+        $scope.disableControls = true;
+        $scope.canvas = new fabric.Canvas('theCanvas');
+        var prompt = new fabric.Text('Draw for fun or Press NEW to start comic', {fontFamily: 'Bangers', fill: '#ab2323'});
+        $scope.canvas.add(prompt);
+        prompt.center();
+
         $scope.startComic = function (ev) {
-            if ($scope.comicTitle == '' || $scope.comicTitle=="PLEASE SET A COMIC TITLE") {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                $scope.comicTitle = "PLEASE SET A COMIC TITLE";
+            if($scope.comicTitle === ''){
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Set a title to create comic')
+                        .position('top right')
+                        .hideDelay(3000)
+                        .theme('toast-error')
+                );
                 return;
             }
-            if ($scope.comicStarted) {
-                var confirm = $mdDialog.confirm()
-                    .title('Are you sure?')
-                    .textContent('All of you current comic\'s progress will be lost')
-                    .ariaLabel('Comic Loss warning')
-                    .targetEvent(ev)
-                    .ok('Clean the slate!')
-                    .cancel('Oh no! go back!');
-                $mdDialog.show(confirm).then(function yes() {
-                    $scope.canvas.clear();
-                    $scope.comicStarted = true;
-
+            $scope.canvas.remove(prompt);
+            var data = {
+                REQUEST:'COMIC_CREATE',
+                USER_GMAIL:auth.getUser().GMAIL,
+                TITLE: $scope.comicTitle
+            };
+            crud.create('/comic', data)
+                .then(function yes(resp) {
+                    $log.info('comic created ' + resp.data.RESULT);
+                    $scope.save();
+                }, function no(resp) {
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('This title is already taken')
+                            .position('top right')
+                            .hideDelay(3000)
+                            .theme('toast-error')
+                    );
+                    $scope.disableControls = true;
+                    $log.error('comic failed to create ' + resp.data.RESULT);
+                    $scope.disableControls = true;
                 });
-            } else {
-                $scope.comicStarted = true;
-                var data = {
-                    REQUEST:'COMIC_CREATE',
-                    USER_GMAIL:auth.getUser().GMAIL,
-                    TITLE: $scope.comicTitle
-                };
-                crud.create('/comic', data)
-                    .then(function yes() {
-                        $log.info('comic created');
-                    }, function no() {
-                        $log.error('comic failed to create');
-                    });
-                $scope.canvas = new fabric.Canvas('theCanvas');
-            }
+            $scope.disableControls = false;
         };
 
         $scope.closecomic = function(ev){
-            if ($scope.comicStarted) {
-                var confirm = $mdDialog.confirm()
-                    .title('Are you sure?')
-                    .textContent('All of you current comic\'s progress will be lost')
-                    .ariaLabel('Comic Loss warning')
-                    .targetEvent(ev)
-                    .ok('Clean the slate!')
-                    .cancel('Oh no! go back!');
-                $mdDialog.show(confirm).then(function yes() {
-                    $scope.canvas.clear();
-                    $scope.comicStarted = true;
-                    $http.get()
-                        .then(function s() {})
-                });
-            } else {
-                $scope.comicStarted = true;
-                $scope.canvas = new fabric.Canvas('theCanvas');
-             
-
-            }
+            var confirm = $mdDialog.confirm()
+                .title('Are you sure?')
+                .textContent('All of you current comic\'s progress will be lost')
+                .ariaLabel('Comic Loss warning')
+                .targetEvent(ev)
+                .ok('Clean the slate!')
+                .cancel('Oh no! go back!');
+            $mdDialog.show(confirm).then(function yes() {
+                $scope.canvas.clear();
+                $scope.canvas.add(prompt);
+            });
+            $scope.comicTitle = '';
         };
 
 
@@ -114,7 +105,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             fileInput.click();
         };
         $scope.save = function () {
-            
+
 
             var data = {
                 REQUEST: "UPLOAD_FRAME",
@@ -126,9 +117,9 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             };
 
             crud.update('/comic', data).then(function success(resp) {
-                $log.info('Saved comic! \n\n' + resp.data.RESP + '\n\n');
+                $log.info('Saved comic! \n\n' + resp.data.RESULT + '\n\n');
             }, function error(resp) {
-                $log.error('Did not save comic :( \n\n' + resp.data.RESP + '\n\n');
+                $log.error('Did not save comic :( \n\n' + resp.data.RESULT + '\n\n');
             });
 
 
@@ -137,22 +128,22 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
         $scope.openTemplateSideBar = function () {
             crud.update('/comic', {REQUEST:'GET_USER_COMICS'})
                 .then(function (resp) {
-                    $scope.drafts = resp.data.COMICS;
-                    $mdSidenav('right').toggle()
-                        .then(function () {
-                            $log.debug("toggle " + 'right' + " is done");
-                        });
-                }, function () {
-                    $scope.drafts = [];
-                }
-            );
+                        $scope.drafts = resp.data.COMICS;
+                        $mdSidenav('right').toggle()
+                            .then(function () {
+                                $log.debug("toggle " + 'right' + " is done");
+                            });
+                    }, function () {
+                        $scope.drafts = [];
+                    }
+                );
         };
 
         $scope.loadComic = function (indx) {
             $scope.canvas.clear();
             var comic = JSON.parse($scope.drafts[indx].JSON_DATA);
-            fabric.util.enlivenObjects(comic, function (objects) {
-                var origRenderOnAddRemove = canvas.renderOnAddRemove;
+            fabric.util.enlivenObjects(comic.objects, function (objects) {
+                var origRenderOnAddRemove = $scope.canvas.renderOnAddRemove;
                 $scope.canvas.renderOnAddRemove = false;
                 objects.forEach(function (o) {
                     $scope.canvas.add(o);
@@ -160,12 +151,14 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
                 $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;
                 $scope.canvas.renderAll();
             });
+            $scope.comicTitle = $scope.drafts[indx].TITLE;
+            $scope.disableControls = false;
         };
 
         $scope.publish = function () {
             $log.info('publish clicked');
         };
-        
+
 ////////////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
 
 ////////////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
@@ -207,11 +200,11 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             if ($scope.canvas.getActiveObject() != null) {
 
-                 $scope.canvas.getActiveObject().remove();
-             }else{
+                $scope.canvas.getActiveObject().remove();
+            }else{
                 var group = new fabric.Group();
-                 $scope.canvas.getActiveGroup().forEachObject(function(elem) {
-                     $scope.canvas.remove(elem);
+                $scope.canvas.getActiveGroup().forEachObject(function(elem) {
+                    $scope.canvas.remove(elem);
 
 
 
@@ -301,6 +294,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
         $scope.addSignature = function () {
             var sign = JSON.parse(auth.getUser().SIGNATURE);
+            if (sign.objects === undefined) return;
             sign.objects.forEach(function (currentValue, index, arr) {
                 currentValue.top += 450;
                 currentValue.left += 400;
@@ -309,7 +303,8 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             var newCanvas = curCanvas.objects.concat(sign.objects);
             $scope.canvas.clear();
             fabric.util.enlivenObjects(newCanvas, function (objects) {
-                var origRenderOnAddRemove = canvas.renderOnAddRemove;
+                if (objects === undefined) return;
+                var origRenderOnAddRemove = $scope.canvas.renderOnAddRemove;
                 $scope.canvas.renderOnAddRemove = false;
                 objects.forEach(function (o) {
                     $scope.canvas.add(o);

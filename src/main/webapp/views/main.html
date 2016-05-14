@@ -11,7 +11,15 @@
                         <span class="md-headline">{{currentComic.TITLE}}</span>
                     </md-card-title-text>
                 </md-card-title>
-                <md-card-actions layout="row" layout-align="start center">
+                <md-card-actions layout="column" layout-align="start center">
+                    <div>
+                        <md-contact-chip
+                                ng-model="artist"
+                                md-contact-name="HANDLE"
+                                md-contact-image="PROFILE_PIC_URL">
+                        </md-contact-chip>
+                    </div>
+                    <div layout="row">
                     <md-card-icon-actions>
                         <md-button class="md-icon-button" aria-label="Favorite">
                             <md-icon class="material-icons">favorite_border</md-icon>
@@ -20,6 +28,7 @@
                             <md-icon class="material-icons">share</md-icon>
                         </md-button>
                     </md-card-icon-actions>
+                    </div>
                 </md-card-actions>
                 <md-card-content>
                     <p>
@@ -38,7 +47,7 @@
                 <md-card-content>
                     <form name="commentForm">
                         <md-input-container class="md-block">
-                            <label>Add a comment.</label>
+                            <label>Add a comment</label>
                             <textarea ng-model="newComment"></textarea>
                         </md-input-container>
                     </form>

@@ -1,44 +1,36 @@
 <div ng-controller="createCtrl" layout="column" layout-align="center center">
     <div layout="row">
-        <form action="/comic" method="post">
-            <div id="newcomicdiv">
+        <div id="newcomicdiv">
             <md-input-container ng-show="showt">
                 <label>Comic Title</label>
-                <input ng-model="comicTitle" ng-required="true" ng-trim="true" ng-disabled="comicStarted">
+                <input ng-model="comicTitle" ng-required="true" ng-trim="true" ng-disable="!disableControls">
             </md-input-container>
-
             <md-button  ng-show="showt" ng-click="startComic()" class="md-fab md-mini" aria-label="add">
                 <md-tooltip>Add New Comics</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
-
-                <md-button ng-show="showt" ng-click="closecomic()" class="md-fab md-mini" aria-label="clear">
-                    <md-icon class="material-icons">clear</md-icon>
-                </md-button>
-
-                <md-button id="newcomic_button" class="md-raised md-primary" ng-show="!showt"ng-click="showt=!showt" > NEW
-                    <md-tooltip>New Comic</md-tooltip>
-                    </md-button>
-            </div>
-
-
+            <md-button ng-show="showt" ng-click="closecomic()" class="md-fab md-mini" aria-label="clear">
+                <md-icon class="material-icons">clear</md-icon>
             </md-button>
-        </form>
+            <md-button id="newcomic_button" class="md-raised md-primary" ng-show="!showt" ng-click="showt=!showt" > NEW
+                <md-tooltip>New Comic</md-tooltip>
+            </md-button>
+        </div>
     </div>
     <div layout="row">
         <div>
             <canvas width="900" height="550" id="theCanvas"></canvas>
         </div>
         <div layout="column" id="geometry" layout-align="center center">
-            <md-button class="md-fab md-mini" aria-label="change_history" ng-click="drawshape('tri')">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" aria-label="change_history" ng-click="drawshape('tri')">
                 <md-tooltip>Triangle</md-tooltip>
                 <md-icon class="material-icons">change_history</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" aria-label="crop_landscape" ng-click="drawshape('rect')">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" aria-label="crop_landscape" ng-click="drawshape('rect')">
                 <md-tooltip>Rectangle</md-tooltip>
                 <md-icon class="material-icons">crop_landscape</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" aria-label="panorama_fish_eye" ng-click="drawshape('cir')">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" aria-label="panorama_fish_eye" ng-click="drawshape('cir')">
                 <md-tooltip>Circle</md-tooltip>
                 <md-icon class="material-icons">panorama_fish_eye</md-icon>
             </md-button>
@@ -46,7 +38,7 @@
     </div>
     <div id="controls">
         <div layout="row" layout-align="center center">
-            <md-button ng-style="buttonStyle" ng-click="draw()" class="md-fab md-mini" aria-label="brush">
+            <md-button ng-disable="disableControls" ng-style="buttonStyle" ng-click="draw()" class="md-fab md-mini" aria-label="brush">
                 <md-tooltip>Brush</md-tooltip>
                 <md-icon class="material-icons">brush</md-icon>
             </md-button>
@@ -54,31 +46,31 @@
                 <label>Width</label>
                 <input ng-model="canvas.freeDrawingBrush.width" type="number" max="40" min="1" placeholder="1">
             </md-input-container>
-            <md-button class="md-fab md-mini" ng-click="delete()" aria-label="Delete">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="delete()" aria-label="Delete">
                 <md-tooltip>Delete</md-tooltip>
                 <md-icon class="material-icons">delete</md-icon>
             </md-button>
-            <md-button ng-click="Paint()" ng-style="paintStyle" class="md-fab md-mini" aria-label="format_color_fill">
+            <md-button ng-disable="disableControls" ng-click="Paint()" ng-style="paintStyle" class="md-fab md-mini" aria-label="format_color_fill">
                 <md-tooltip>Paint Bucket</md-tooltip>
                 <md-icon class="material-icons">format_color_fill</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" ng-click="addSignature()" aria-label="fingerprint">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="addSignature()" aria-label="fingerprint">
                 <md-tooltip>Signature</md-tooltip>
                 <md-icon class="material-icons">fingerprint</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" ng-click="openTemplateSideBar()" aria-label="add">
-                <md-tooltip> Templates</md-tooltip>
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="openTemplateSideBar()" aria-label="add">
+                <md-tooltip>Drafts</md-tooltip>
                 <md-icon class="material-icons">add</md-icon>
             </md-button>
             <md-input-container ng-show="show">
                 <label>Input Text</label>
                 <input id="addtext" type="text">
             </md-input-container>
-            <md-button class="md-fab md-mini" aria-label="text_format" ng-click="addTexts(); show=!show">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" aria-label="text_format" ng-click="addTexts(); show=!show">
                 <md-tooltip> Add Text</md-tooltip>
                 <md-icon class="material-icons">text_format</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" ng-click="save()" aria-label="save">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="save()" aria-label="save">
                 <md-tooltip>Save</md-tooltip>
                 <md-icon class="material-icons">save</md-icon>
             </md-button>
@@ -90,11 +82,11 @@
                 <input id="comicFrame" type="file" name="FILES" class="ng-hide">
                 <input id="frameIndex" type="hidden" name="FRAME_INDEX" class="ng-hide">
             </form>
-            <md-button class="md-fab md-mini" ng-click="upload()" aria-label="upload">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="upload()" aria-label="upload">
                 <md-tooltip>Upload</md-tooltip>
                 <md-icon class="material-icons">file_upload</md-icon>
             </md-button>
-            <md-button class="md-fab md-mini" ng-click="publish()" aria-label="public">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="publish()" aria-label="public">
                 <md-tooltip>Publish Comic</md-tooltip>
                 <md-icon class="material-icons">public</md-icon>
             </md-button>
@@ -107,39 +99,39 @@
             <div>
                 <input id="pickColor" type="color" value="#A8D8B9">
             </div>
-            <md-button class="md-fab md-mini" aria-label="done" ng-click="colorPickerHelper()">
+            <md-button ng-disable="disableControls" class="md-fab md-mini" aria-label="done" ng-click="colorPickerHelper()">
                 <md-tooltip> Pick This Color</md-tooltip>
                 <md-icon class="material-icons">done</md-icon>
             </md-button>
-            <md-button style="background: red" ng-click="pickColor('red')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: red" ng-click="pickColor('red')" class="md-fab md-mini"
                        aria-label="red">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: orange" ng-click="pickColor('orange')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: orange" ng-click="pickColor('orange')" class="md-fab md-mini"
                        aria-label="orange">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: yellow" ng-click="pickColor('yellow')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: yellow" ng-click="pickColor('yellow')" class="md-fab md-mini"
                        aria-label="yellow">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: green" ng-click="pickColor('green')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: green" ng-click="pickColor('green')" class="md-fab md-mini"
                        aria-label="green">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: blue" ng-click="pickColor('blue')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: blue" ng-click="pickColor('blue')" class="md-fab md-mini"
                        aria-label="blue">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: indigo" ng-click="pickColor('indigo')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: indigo" ng-click="pickColor('indigo')" class="md-fab md-mini"
                        aria-label="indigo">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: violet" ng-click="pickColor('violet')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: violet" ng-click="pickColor('violet')" class="md-fab md-mini"
                        aria-label="violet">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
-            <md-button style="background: black" ng-click="pickColor('black')" class="md-fab md-mini"
+            <md-button ng-disable="disableControls" style="background: black" ng-click="pickColor('black')" class="md-fab md-mini"
                        aria-label="black">
                 <md-icon class="material-icons"></md-icon>
             </md-button>
@@ -147,11 +139,11 @@
     </div>
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
         <md-toolbar class="md-theme-light">
-            <h1 class="md-toolbar-tools">Templates</h1>
+            <h1 class="md-toolbar-tools">Drafts & Templates</h1>
         </md-toolbar>
         <md-content ng-controller="RightCtrl" layout-padding>
             <div ng-repeat="comic in drafts">
-                    <img ng-src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
+                <img ng-src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
                 <md-button ng-click="loadComic($index)">
                     <label>{{comic.TITLE}}</label>
                 </md-button>
