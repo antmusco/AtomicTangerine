@@ -311,16 +311,16 @@ public class Comment extends DatastoreEntity implements Jsonable {
             comment = obj.get(JsonProperty.COMMENT.toString()).getAsString();
         }
 
+        upvoters = new LinkedList<>();
         if (obj.has(JsonProperty.UPVOTERS.toString())) {
-            upvoters = new LinkedList<>();
             JsonArray upvoterArray = obj.get(JsonProperty.UPVOTERS.toString()).getAsJsonArray();
             for(JsonElement e : upvoterArray) {
                 upvoters.add(e.getAsString());
             }
         }
 
+        downvoters = new LinkedList<>();
         if (obj.has(JsonProperty.DOWNVOTERS.toString())) {
-            downvoters = new LinkedList<>();
             JsonArray downvoterArray = obj.get(JsonProperty.DOWNVOTERS.toString()).getAsJsonArray();
             for(JsonElement e : downvoterArray) {
                 downvoters.add(e.getAsString());
@@ -373,7 +373,9 @@ public class Comment extends DatastoreEntity implements Jsonable {
         this.datePosted = (Date) entity.getProperty(JsonProperty.DATE_POSTED.toString());
         this.comment = (String) entity.getProperty(JsonProperty.COMMENT.toString());
         this.upvoters = (List<String>) entity.getProperty(JsonProperty.UPVOTERS.toString());
+        if(this.upvoters == null) this.upvoters = new LinkedList<>();
         this.downvoters = (List<String>) entity.getProperty(JsonProperty.DOWNVOTERS.toString());
+        if(this.downvoters == null) this.downvoters = new LinkedList<>();
 
     }
 
