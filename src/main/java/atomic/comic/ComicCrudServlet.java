@@ -186,21 +186,21 @@ public class ComicCrudServlet extends CrudServlet {
             throw new IllegalArgumentException("Request must include frame index");
         }
 
-            String svgData;
-            if(request.has(JsonProperty.SVG_DATA.toString())){
-                svgData = request.get(JsonProperty.SVG_DATA.toString()).getAsString();
+            String jsonData;
+            if(request.has(JsonProperty.JSON_DATA.toString())){
+                jsonData = request.get(JsonProperty.JSON_DATA.toString()).getAsJsonObject().toString();
             }else{
-                throw new IllegalArgumentException("Request must include svg data");
+                throw new IllegalArgumentException("Request must include json data");
             }
             // Retrieve the comic using the gmail of the current user and the title.
             Comic comic = Comic.retrieveComic(currentUser.getGmail(), title);
 
             // Overwrite or append.
             if(frameIndex == comic.getFrames().size()) {
-                comic.getFrames().add(new Text(svgData));
+                comic.getFrames().add(new Text(jsonData));
                 comic.getThumbnails().add(new Text(thumbnailData));
             } else if (frameIndex < comic.getFrames().size()) {
-                comic.getFrames().set(frameIndex, new Text(svgData));
+                comic.getFrames().set(frameIndex, new Text(jsonData));
                 comic.getThumbnails().add(new Text(thumbnailData));
             } else {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
@@ -261,12 +261,14 @@ public class ComicCrudServlet extends CrudServlet {
                 long timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsLong();
                 Date lastDateCreated = new Date(timestamp);
 
+                /*
                 // Only look at published comics.
                 Query.Filter publishedFilter = new Query.FilterPredicate(
                         JsonProperty.STATE.toString(),
                         Query.FilterOperator.EQUAL,
-                        ComicState.PUBLISHED
+                        ComicState.PUBLISHED.toString()
                 );
+                */
 
                 // Generate the filter.
                 Query.Filter dateFilter = new Query.FilterPredicate(
@@ -275,11 +277,11 @@ public class ComicCrudServlet extends CrudServlet {
                         lastDateCreated                            // last date created.
                 );
 
-                Query.Filter comicFilter = Query.CompositeFilterOperator.and(publishedFilter, dateFilter);
+                //Query.Filter comicFilter = Query.CompositeFilterOperator.and(publishedFilter, dateFilter);
 
                 // Construct the query.
                 q = new Query(EntityKind.COMIC.toString())
-                        .setFilter(comicFilter)
+                        .setFilter(dateFilter)
                         .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
                 // Generation criteria - User gmail.
@@ -333,7 +335,7 @@ public class ComicCrudServlet extends CrudServlet {
                     JsonObject comicObj = new JsonObject();
                     comicObj.addProperty(JsonProperty.USER_GMAIL.toString(), gmail);
                     comicObj.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
-                    comicObj.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                    comicObj.addProperty(JsonProperty.JSON_DATA.toString(), c.getFrames().get(0).getValue());
                     comicObj.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                     comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
                     comicArray.add(comicObj);
@@ -405,7 +407,7 @@ public class ComicCrudServlet extends CrudServlet {
 
                 JsonObject titleAndSvg = new JsonObject();
                 titleAndSvg.addProperty(JsonProperty.TITLE.toString(), c.getTitle());
-                titleAndSvg.addProperty(JsonProperty.SVG_DATA.toString(), c.getFrames().get(0).getValue());
+                titleAndSvg.addProperty(JsonProperty.JSON_DATA.toString(), c.getFrames().get(0).getValue());
                 titleAndSvg.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                 comicArray.add(titleAndSvg);
 

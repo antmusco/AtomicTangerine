@@ -33,11 +33,11 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                 if($scope.comics == undefined) return;
                 $scope.counter = $scope.comics.length - 1;
                 $scope.currentComic = $scope.comics[$scope.counter];
-                $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
+                $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.JSON_DATA);
                 $scope.next = function () {
                     $scope.counter = ($scope.counter + 1) % $scope.comics.length;
                     $scope.currentComic = $scope.comics[$scope.counter];
-                    $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
+                    $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.JSON_DATA);
                     $scope.updateComments();
                 };
 
@@ -48,7 +48,6 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                         $scope.counter = $scope.comics.length - 1;
                     }
                     $scope.currentComic = $scope.comics[$scope.counter];
-                    $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.SVG_DATA);
                     $scope.updateComments();
                 };
                 $scope.updateComments();
