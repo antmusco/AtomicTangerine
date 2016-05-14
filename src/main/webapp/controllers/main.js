@@ -1,18 +1,15 @@
-app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth',
-    function ($scope, $timeout, $http, $log, $sce, auth) {
+app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 'auth',
+    function ($scope, $timeout, $http, $log, $location, auth) {
         'use strict';
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
 
         });
-
         $scope.loginAjax.promise.then(function() {
             $scope.user = auth.getUser();
             $scope.userIsLoggedIn = ($scope.user !== undefined && $scope.user !== null);
         });
-
         $scope.commentList = [];
-
         $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', DATE_CREATED: (new Date()).getTime() })
             .then(function (resp) {
 
@@ -29,15 +26,24 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                 };
 
                 $scope.comics = resp.data.COMICS;
-                $scope.message = "Main Ctrl Active ----- !";
                 if($scope.comics == undefined) return;
                 $scope.counter = $scope.comics.length - 1;
                 $scope.currentComic = $scope.comics[$scope.counter];
-                $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.JSON_DATA);
+                auth.getUserByGmail($scope.currentComic.USER_GMAIL)
+                    .then(function (user) {
+                        $scope.artist = user.USER;
+                    }, function (resp) {
+                        $scope.artist = 'no ' + resp;
+                    });
                 $scope.next = function () {
                     $scope.counter = ($scope.counter + 1) % $scope.comics.length;
                     $scope.currentComic = $scope.comics[$scope.counter];
-                    $scope.currentComicSvg = $sce.trustAsHtml($scope.currentComic.JSON_DATA);
+                    auth.getUserByGmail($scope.currentComic.USER_GMAIL)
+                        .then(function (user) {
+                            $scope.artist = user.USER;
+                        }, function (resp) {
+                            $scope.artist = 'no ' + resp;
+                        });
                     $scope.updateComments();
                 };
 
@@ -48,11 +54,20 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$sce', 'auth
                         $scope.counter = $scope.comics.length - 1;
                     }
                     $scope.currentComic = $scope.comics[$scope.counter];
+                    auth.getUserByGmail($scope.currentComic.USER_GMAIL)
+                        .then(function (user) {
+                            $scope.artist = user.USER;
+                        }, function (resp) {
+                            $scope.artist = 'no ' + resp;
+                        });
                     $scope.updateComments();
                 };
+
+                $scope.goToProfile = function () {
+                    $location.path('/profile/' + btoa($scope.artist.USER_GMAIL));
+                };
+
                 $scope.updateComments();
-
-
                 $log.info(resp);
             }, function (resp) {
                 $log.info(resp);

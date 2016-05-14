@@ -52,6 +52,17 @@ app.service('auth', function auth(crud, $q) {
             });
         return later.promise;
     };
+    
+    authobj.getUserByGmail = function (gmail) {
+        var later = $q.defer();
+        crud.retrieve('/user',{REQUEST:'GET_USER_BY_GMAIL', USER_GMAIL: gmail})
+            .then(function yes(data) {
+                later.resolve(data);
+            }, function no(resp) {
+                later.reject(resp);
+            });
+        return later.promise;
+    };
 
     return authobj;
 

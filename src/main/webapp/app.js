@@ -12,7 +12,7 @@ app.config(['$routeProvider', '$mdThemingProvider', '$locationProvider', functio
     }).when('/create', {
         templateUrl: 'views/create.html'
         //controller: 'createCtrl'
-    }).when('/profile', {
+    }).when('/profile/:artistName', {
         templateUrl: 'views/profile.html'
         //controller: 'profileCtrl'
     }).when('/team', {

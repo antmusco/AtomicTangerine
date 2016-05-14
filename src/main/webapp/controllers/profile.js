@@ -1,6 +1,6 @@
 app.controller('profileCtrl', ['$scope', '$route', 'auth',
-    '$http', '$log', '$location', '$mdToast',
-    function ($scope, $route, auth, $http, $log, $location, $mdToast) {
+    '$http', '$log', '$location', '$mdToast', '$routeParams',
+    function ($scope, $route, auth, $http, $log, $location, $mdToast, $routeParams) {
         'use strict';
 
         $scope.status = '  ';
@@ -11,16 +11,25 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
         };
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
-            $scope.user = auth.getUser();
-            if ($scope.user === undefined || $scope.user == null) {
-                $location.path(current.$$route.originalPath);
-                $mdToast.show(
-                    $mdToast.simple()
-                        .textContent('You must log in to view your profile')
-                        .action('OK')
-                        .position('top right')
-                        .hideDelay(3000)
-                );
+            if($routeParams.artistName === undefined){
+                $scope.user = auth.getUser();
+                if ($scope.user === undefined || $scope.user == null) {
+                    $location.path(current.$$route.originalPath);
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('You must log in to view your profile')
+                            .action('OK')
+                            .position('top right')
+                            .hideDelay(3000)
+                    );
+                }
+            }else{
+                auth.getUserByGmail(atob($routeParams.artistName))
+                    .then(function (user) {
+                        $scope.user = user.USER;
+                    }, function (resp) {
+                        $scope.user = 'no ' + resp;
+                    });
             }
         });
 

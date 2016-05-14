@@ -12,12 +12,11 @@
                     </md-card-title-text>
                 </md-card-title>
                 <md-card-actions layout="column" layout-align="start center">
-                    <div>
-                        <md-contact-chip
-                                ng-model="artist"
-                                md-contact-name="HANDLE"
-                                md-contact-image="PROFILE_PIC_URL">
-                        </md-contact-chip>
+                    <div layout="row">
+                        <md-button ng-click="goToProfile()">
+                            <img id="artistpic" ng-src="{{artist.PROFILE_PIC_URL}}" width="40px" height="40px"/>
+                            <label>{{artist.HANDLE}}</label>
+                        </md-button>
                     </div>
                     <div layout="row">
                     <md-card-icon-actions>

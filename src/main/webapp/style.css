@@ -60,6 +60,13 @@ nav {
     padding: 30px;
     margin-top: 100px;
 }
+
+#artistpic {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+}
+
 #newcomicdiv{
     padding-top: 20px;
 
