@@ -173,6 +173,15 @@ public abstract class CrudServlet extends HttpServlet {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
+        if(json.isJsonObject()){
+            JsonObject jsonObject = json.getAsJsonObject();
+            if (jsonObject.has(JsonProperty.RESULT.toString())) {
+                String result = jsonObject.get(JsonProperty.RESULT.toString()).getAsString();
+                if(result.equals(CrudResult.FAILURE.toString())) {
+                    response.setStatus(500);
+                }
+            }
+        }
         response.getWriter().write(json.toString());
 
     }

@@ -7,9 +7,9 @@ package atomic.crud;
  */
 public enum CrudResult {
 
-    SUCCESS("success"),
-    FAILURE("failure"),
-    UNSUPPORTED("unsupported");
+    SUCCESS("SUCCESS"),
+    FAILURE("FAILURE"),
+    UNSUPPORTED("UNSUPPORTED");
 
     private String result;
 
