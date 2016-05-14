@@ -201,7 +201,7 @@ public class ComicCrudServlet extends CrudServlet {
                 comic.getThumbnails().add(new Text(thumbnailData));
             } else if (frameIndex < comic.getFrames().size()) {
                 comic.getFrames().set(frameIndex, new Text(jsonData));
-                comic.getThumbnails().add(new Text(thumbnailData));
+                comic.getThumbnails().set(frameIndex, new Text(thumbnailData));
             } else {
                 throw new IllegalArgumentException("Frame index " + frameIndex + "out of bounds!");
             }

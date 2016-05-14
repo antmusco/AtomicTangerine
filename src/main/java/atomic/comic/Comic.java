@@ -171,20 +171,19 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
         if (obj.has(JsonProperty.FRAMES.toString())) {
             JsonArray framesList = obj.get(JsonProperty.FRAMES.toString()).getAsJsonArray();
-
+            if(frames == null) frames = new LinkedList<>();
             for (JsonElement c : framesList) {
-                framesList.add(c.getAsString());
+                frames.add(new Text(c.getAsString()));
             }
 
         }
 
         if (obj.has(JsonProperty.THUMBNAILS.toString())) {
-            JsonArray framesList = obj.get(JsonProperty.THUMBNAILS.toString()).getAsJsonArray();
-
-            for (JsonElement c : framesList) {
-                framesList.add(c.getAsString());
+            JsonArray thumbnailList = obj.get(JsonProperty.THUMBNAILS.toString()).getAsJsonArray();
+            if(thumbnails == null) thumbnails = new LinkedList<>();
+            for (JsonElement c : thumbnailList) {
+                thumbnails.add(new Text(c.getAsString()));
             }
-
         }
 
         if (obj.has(JsonProperty.TAGS.toString())) {
