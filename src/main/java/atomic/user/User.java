@@ -163,12 +163,13 @@ public class User extends DatastoreEntity implements Jsonable {
         }
 
         if (obj.has(JsonProperty.PREFERENCES.toString())) {
-            //JsonObject prefObj = obj.get(JsonProperty.PREFERENCES.toString()).getAsJsonObject();
-
-            //preferences = new Preferences(prefObj);
             preferences = new Preferences(this.gmail);
-
         }
+
+        if (obj.has(JsonProperty.PROFILE_PIC_URL.toString())) {
+            profilePicUrl = obj.get(JsonProperty.PROFILE_PIC_URL.toString()).getAsString();
+        }
+
         if (obj.has(JsonProperty.CREATED_COMICS.toString())) {
             JsonArray comicsList = obj.get(JsonProperty.CREATED_COMICS.toString()).getAsJsonArray();
 
@@ -235,6 +236,8 @@ public class User extends DatastoreEntity implements Jsonable {
 
         if (profilePicUrl != null)
             obj.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), profilePicUrl);
+        else
+            obj.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), DEFAULT_PROFILE_PIC_URL);
 
         // The preferences property will be a JsonObject in itself.
         if (preferences != null)
@@ -343,6 +346,7 @@ public class User extends DatastoreEntity implements Jsonable {
         this.birthday = (Date) entity.getProperty(JsonProperty.BIRTHDAY.toString());
         this.createdComics = (List<String>) entity.getProperty(JsonProperty.CREATED_COMICS.toString());
         this.profilePicUrl = (String) entity.getProperty(JsonProperty.PROFILE_PIC_URL.toString());
+        if(this.profilePicUrl == null) this.profilePicUrl = DEFAULT_PROFILE_PIC_URL;
         this.signature = (Text) entity.getProperty(JsonProperty.SIGNATURE.toString());
         this.upvotedComics = (List<String>) entity.getProperty(JsonProperty.UPVOTED_COMICS.toString());
         this.downvotedComics = (List<String>) entity.getProperty(JsonProperty.DOWNVOTED_COMICS.toString());
