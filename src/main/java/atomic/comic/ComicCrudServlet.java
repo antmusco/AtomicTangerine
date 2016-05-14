@@ -10,6 +10,7 @@ import atomic.user.User;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Text;
+import com.google.appengine.repackaged.com.google.api.client.json.Json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -88,8 +89,7 @@ public class ComicCrudServlet extends CrudServlet {
 
                 } else if (req.equals(ComicRequest.UPDATE_COMIC.toString())) {
 
-                    // Instantiate and save entity.
-                    new Comic(request.getAsJsonObject(JsonProperty.COMIC.toString()));
+                    processUpdateComicRequest(request, response);
 
                     // Request to retrieve a list of comics.
                 } else if (req.equals(ComicRequest.GET_COMIC_LIST_DEFAULT.toString())) {
@@ -106,7 +106,6 @@ public class ComicCrudServlet extends CrudServlet {
 
                     processSingleComicRequest(request, response);
 
-                    // Request is unsupported
                 } else if (req.equals(ComicRequest.GET_USER_COMICS.toString())) {
 
                     processUserComicsRequest(request, response);
@@ -212,6 +211,35 @@ public class ComicCrudServlet extends CrudServlet {
         }
     }
 
+    private void processUpdateComicRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            // Make sure the request hasn't included a user already. This prevents
+            // unauthorized users from altering other user's comics.
+            if(request.has(JsonProperty.USER_GMAIL.toString()))
+                throw new IllegalArgumentException("Cannot include User Gmail on update "
+                        + "comic request");
+
+            // Add the user gmail to the request.
+            User currentUser = User.getCurrentUser();
+            request.addProperty(JsonProperty.USER_GMAIL.toString(), currentUser.getGmail());
+
+            // Instantiate and save entity.
+            new Comic(request.getAsJsonObject(JsonProperty.COMIC.toString()));
+
+            // Add success result.
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
+
+    }
+
     protected void processDefaultComicListRequest(JsonObject request, JsonObject response) {
 
         try {
@@ -227,6 +255,13 @@ public class ComicCrudServlet extends CrudServlet {
                 long timestamp = request.get(JsonProperty.DATE_CREATED.toString()).getAsLong();
                 Date lastDateCreated = new Date(timestamp);
 
+                // Only look at published comics.
+                Query.Filter publishedFilter = new Query.FilterPredicate(
+                        JsonProperty.STATE.toString(),
+                        Query.FilterOperator.EQUAL,
+                        ComicState.PUBLISHED
+                );
+
                 // Generate the filter.
                 Query.Filter dateFilter = new Query.FilterPredicate(
                         JsonProperty.DATE_CREATED.toString(),      // Comics which were created...
@@ -234,9 +269,11 @@ public class ComicCrudServlet extends CrudServlet {
                         lastDateCreated                            // last date created.
                 );
 
+                Query.Filter comicFilter = Query.CompositeFilterOperator.and(publishedFilter, dateFilter);
+
                 // Construct the query.
                 q = new Query(EntityKind.COMIC.toString())
-                        .setFilter(dateFilter)
+                        .setFilter(comicFilter)
                         .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING); // latest first.
 
                 // Generation criteria - User gmail.
@@ -269,6 +306,7 @@ public class ComicCrudServlet extends CrudServlet {
                 // Add field indicating the end of the date ranges.
                 Entity lastEntity = results.get(results.size() - 1);
                 Date dateOfLast = (Date) lastEntity.getProperty(JsonProperty.DATE_CREATED.toString());
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
                 response.addProperty(JsonProperty.DATE_CREATED.toString(), dateOfLast.getTime());
 
                 // Add the list of comic keys to the JSON response.
@@ -354,6 +392,7 @@ public class ComicCrudServlet extends CrudServlet {
             User currentUser = User.getCurrentUser();
             List<Comic> comics = Comic.retrieveUserComics(currentUser.getGmail());
 
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
             JsonArray comicArray = new JsonArray();
             for(Comic c : comics) {
 
@@ -363,7 +402,7 @@ public class ComicCrudServlet extends CrudServlet {
                 comicArray.add(titleAndSvg);
 
             }
-            response.add(JsonProperty.DRAFTS.toString(), comicArray);
+            response.add(JsonProperty.COMICS.toString(), comicArray);
 
 
         } catch (Exception e) {
@@ -415,6 +454,7 @@ public class ComicCrudServlet extends CrudServlet {
                     // Do nothing, comic already upvoted.
                     case UPVOTE:
                         response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+                        response.addProperty(JsonProperty.SCORE.toString(), comicToUpvote.getScore());
                         return;
                     // Remove vote from upvoted list and add it to downvoted list (double decrement).
                     case DOWNVOTE:
@@ -441,6 +481,7 @@ public class ComicCrudServlet extends CrudServlet {
                     // Do nothing, comic already downvoted.
                     case DOWNVOTE:
                         response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+                        response.addProperty(JsonProperty.SCORE.toString(), comicToUpvote.getScore());
                         return;
                     default:
                         throw new IllegalArgumentException("Unsuppoted vote type.");

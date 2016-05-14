@@ -1,0 +1,74 @@
+// Create new comment.
+PUT /comment
+{
+    "USER_GMAIL" : "{comic creators gmail}",
+    "TITLE" : "{comics title}",
+    "COMMENTORS_GMAIL" : "{gmail of commentor}",
+    "COMMENT" : "{comment}"
+}
+
+
+
+// Get comments for a comic.
+POST /comment
+{
+    "REQUEST" : "GET_COMMENTS_FOR_COMIC",
+    "USER_GMAIL" : "{comic creators gmail}",
+    "TITLE" : "{title of comic}"
+}
+RETURNS
+{
+    "RESULT" : "SUCCESS",
+    "COMMENTS" : [
+        {
+            "COMMENTOR_GMAIL" : "{commentor's gmail}",
+            "DATE_POSTED" : "{timestamp of date posted}",
+            "COMMENT" : "{comment}",
+            "SCORE" : "{score of comment}"
+        }, ...
+    ]
+}
+
+
+
+// Get comments for a user.
+POST /comment
+{
+    "REQUEST" : "GET_COMMENTS_FOR_COMIC",
+    "USER_GMAIL" : "{commentors gmail}"
+}
+RETURNS
+{
+    "RESULT" : "SUCCESS",
+    "COMMENTS" : [
+        {
+            "COMMENTOR_GMAIL" : "{commentor's gmail}",
+            "DATE_POSTED" : "{timestamp of date posted}",
+            "COMMENT" : "{comment}",
+            "SCORE" : "{score of comment}"
+        }, ...
+    ]
+}
+
+
+
+// Vote on a comic.
+POST /comment
+{
+    "REQUEST" : "VOTE",
+    "COMMENTOR_GMAIL" : "{commentors gmail}",
+    "USER_GMAIL" : "{comic creators gmail}",
+    "TITLE" : "{comics title}",
+    "DATE_POSTED" : "{timestamp of date comment was posted}",
+    "VOTE" : "{UPVOTE/DOWNVOTE}"
+}
+RETURNS
+{
+    "RESULT" : "SUCCESS",
+    "COMMENT" : {
+        "COMMENTOR_GMAIL" : "{commentor's gmail}",
+        "DATE_POSTED" : "{timestamp of date posted}",
+        "COMMENT" : "{comment}",
+        "SCORE" : "{score of comment}"
+    }
+}

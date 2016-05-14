@@ -98,6 +98,7 @@ public class CommentCrudServlet extends CrudServlet {
                 } else if (req.equals(CommentRequest.GET_COMMENTS_FOR_USER.toString())) {
 
                     processCommentsForUserRequest(request, response);
+
                 } else if (req.equals(CommentRequest.VOTE.toString())) {
 
                     processVoteRequest(request, response);
@@ -182,7 +183,7 @@ public class CommentCrudServlet extends CrudServlet {
         for(Comment c : comments) {
 
             // Create the Comment Json object.
-            JsonObject commentObj = c.toJson();
+            JsonObject commentObj = c.toAbreviatedJson();
 
             // Add the Comment to the array.
             commentArray.add(commentObj);
@@ -226,7 +227,7 @@ public class CommentCrudServlet extends CrudServlet {
 
             // Retrieve the date posted.
             Date datePosted;
-            if(request.has(JsonProperty.TITLE.toString())) {
+            if(request.has(JsonProperty.DATE_POSTED.toString())) {
                 datePosted = new Date(request.get(JsonProperty.DATE_POSTED.toString()).getAsLong());
             } else {
                 throw new NoUniqueKeyException("Comment - datePosted");

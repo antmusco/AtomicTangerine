@@ -257,7 +257,23 @@ public class Comment extends DatastoreEntity implements Jsonable {
         for(String g : downvoters) downvotersArray.add(g);
         obj.add(JsonProperty.DOWNVOTERS.toString(), downvotersArray);
 
-        obj.addProperty(JsonProperty.SCORE.toString(), (upvoters.size() - downvoters.size()));
+        obj.addProperty(JsonProperty.SCORE.toString(), getScore());
+
+        // Return the JsonObject.
+        return obj;
+
+    }
+
+    public JsonObject toAbreviatedJson() {
+
+        // Create a new JsonObject.
+        JsonObject obj = new JsonObject();
+
+        // Add all the straightforward values.
+        obj.addProperty(JsonProperty.COMMENTOR_GMAIL.toString(), commentorUserGmail);
+        obj.addProperty(JsonProperty.DATE_POSTED.toString(), datePosted.getTime());
+        obj.addProperty(JsonProperty.COMMENT.toString(), comment);
+        obj.addProperty(JsonProperty.SCORE.toString(), getScore());
 
         // Return the JsonObject.
         return obj;
@@ -399,6 +415,8 @@ public class Comment extends DatastoreEntity implements Jsonable {
         }
 
     }
+
+    public long getScore() { return upvoters.size() - downvoters.size();}
 
     public String getCommentorUserGmail() {
         return commentorUserGmail;

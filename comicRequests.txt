@@ -1,0 +1,159 @@
+// Create new comic.
+PUT /comic
+{
+    "USER_GMAIL" : "{comic creators gmail}", // this should be removed evenutally.
+    "TITLE" : "{comics title}"
+}
+RETURNS
+{
+    "RESULT" : "{SUCCESS/FAILURE}"
+}
+
+
+
+// Save/overwrite a frame.
+POST /comic
+{
+	"REQUEST" : "UPLOAD_FRAME".
+	"TITLE" : "{comic title}",
+	"SVG_DATA" : "{canvas svg data}",
+	"FRAME_INDEX" : 0 // Only support single frame comics so far.
+}
+RETURNS
+{
+	"RESULT" : "{SUCCESS/FAILURE}"
+}
+
+
+
+
+// Save/update a comic.
+POST /comic
+{
+	"REQUEST" : "UPDATE_COMIC",
+	// No UserGmail required (determined on back end).
+	"TITLE" : "{comics title}",
+	... {all properties you wish to update}
+}
+RETURNS
+{
+	"RESULT" : "{SUCCESS/FAILURE}"
+}
+
+
+
+
+// Get the default comic list (by most recent).
+POST /comic
+{
+	"REQUEST" : "GET_COMIC_LIST_DEFAULT",
+	"DATE_CREATED" : "{timestamp of latest comic}"
+}
+RETURNS
+{
+	"RESULT" : "SUCCESS",
+	"DATE_CREATED" : "{date of last comic in list}",
+	"COMICS" : [ 
+		{
+			"USER_GMAIL" : "{creators gmail}",
+			"TITLE" : "{comic title}",
+			"SVG_DATA" : "{svg data of first frame of comic}",
+			"COMIC_ID_STRING", "{comics ID string}"
+		}, {
+			...		
+		}, ...
+	]
+}
+
+
+
+
+// Get the default comic list (by creator).
+POST /comic
+{
+	"REQUEST" : "GET_COMIC_LIST_DEFAULT",
+	"USER_GMAIL" : "{gmail of creator}"
+}
+RETURNS
+{
+	"RESULT" : "SUCCESS",
+	"DATE_CREATED" : "{date of last comic in list}",
+	"COMICS" : [ 
+		{
+			"USER_GMAIL" : "{creators gmail}",
+			"TITLE" : "{comic title}",
+			"SVG_DATA" : "{svg data of first frame of comic}",
+			"COMIC_ID_STRING", "{comics ID string}"
+		}, {
+			...		
+		}, ...
+	]
+}
+
+
+
+// Get a single comic.
+POST /comic
+{
+	"REQUEST" : "GET_SINGLE_COMIC",
+	"USER_GMAIL" : "{gmail of creator}",
+	"TITLE" : "{title of comic}"
+}
+RETURNS
+{
+	"RESULT" : "SUCCESS",
+	"COMIC" : {
+		"USER_GMAIL" : "{creators gmail}",
+		"TITLE" : "{comic title}",
+		... {comic properties}
+	}
+}
+
+
+
+// Get user comics (drafts and published).
+POST /comic
+{
+	"REQUEST" : "GET_USER_COMICS"
+}
+RETURNS
+{
+	"RESULT" : "SUCCESS",
+	"COMICS" : [
+		{
+			"TITLE" : {comics title},
+			"SVG_DATA" : {svg data of first frame of comic}
+		}, {
+			...
+		}, ...
+	]
+}
+
+
+
+// Vote on a comic.
+POST /comic
+{
+	"REQUEST" : "VOTE_FOR_COMIC",
+	"USER_GMAIL" : "{comic creators gmail}",
+	"TITLE" : "{comic title}",
+	"VOTE" : "{UPVOTE/DOWNVOTE}"
+}
+RETURNS
+{
+	"RESULT" : "{SUCCESS/FAILURE}",
+	"SCORE" : "{score of comic}"
+}
+
+
+
+// Publish comic.
+POST /comic
+{
+	"REQUEST" : "PUBLISH_COMIC",
+	"TITLE" : "{comics title}"
+}
+RETURNS
+{
+	"RESULT" : "{SUCCESS/FAILURE}"
+}
