@@ -53,14 +53,14 @@ RETURNS
 {
 	"RESULT" : "SUCCESS",
 	"DATE_CREATED" : "{date of last comic in list}",
-	"COMICS" : [ 
+	"COMICS" : [
 		{
 			"USER_GMAIL" : "{creators gmail}",
 			"TITLE" : "{comic title}",
 			"SVG_DATA" : "{svg data of first frame of comic}",
 			"COMIC_ID_STRING", "{comics ID string}"
 		}, {
-			...		
+			...
 		}, ...
 	]
 }
@@ -78,14 +78,14 @@ RETURNS
 {
 	"RESULT" : "SUCCESS",
 	"DATE_CREATED" : "{date of last comic in list}",
-	"COMICS" : [ 
+	"COMICS" : [
 		{
 			"USER_GMAIL" : "{creators gmail}",
 			"TITLE" : "{comic title}",
 			"SVG_DATA" : "{svg data of first frame of comic}",
 			"COMIC_ID_STRING", "{comics ID string}"
 		}, {
-			...		
+			...
 		}, ...
 	]
 }

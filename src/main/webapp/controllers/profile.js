@@ -27,6 +27,7 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                 auth.getUserByGmail(atob($routeParams.artistName))
                     .then(function (user) {
                         $scope.user = user.USER;
+                        $scope.me = false;
                     }, function (resp) {
                         $scope.user = 'no ' + resp;
                     });
@@ -53,6 +54,10 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
             }
         });
 
+
+        $scope.subscribe = function () {
+            
+        };
 
         $scope.upload = function () {
             var fileInput = angular.element(document.querySelector('#profilePic'));

@@ -8,7 +8,7 @@
         <div layout="row" layout-padding layout-align="center center">
             <div layout="column">
                 <img src="{{user.PROFILE_PIC_URL}}" height="300" width="300" layout-padding>
-                <div layout="row" layout-align="end center">
+                <div layout="row" layout-align="end center" ng-hide="me">
                     <md-button ng-href="#/settings" class="md-fab md-mini" aria-label="settings">
                         <md-tooltip> Edit Profile</md-tooltip>
                         <md-icon class="material-icons">settings</md-icon>
@@ -24,6 +24,11 @@
                         <md-icon class="material-icons">file_upload</md-icon>
                     </md-button>
                     <p>{{msg}}</p>
+                </div>
+                <div layout="row" layout-align="end center" ng-hide="!me">
+                    <md-button ng-click="subscribe()" class="newcomic_button">
+                        Subscribe
+                    </md-button>
                 </div>
             </div>
 

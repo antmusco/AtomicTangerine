@@ -69,9 +69,10 @@ nav {
 
 #newcomicdiv{
     padding-top: 20px;
-
-    font-family: Bangers;
+    font-family: Bangers, sans-serif;
 }
+
 #newcomic_button{
     background-color: #ab2323;
+    font-family: Bangers, sans-serif;
 }
