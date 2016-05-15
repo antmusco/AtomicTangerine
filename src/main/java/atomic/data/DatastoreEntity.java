@@ -98,6 +98,13 @@ public abstract class DatastoreEntity {
 
     }
 
+    public void deleteEntity() {
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        ds.delete(generateKey());
+
+    }
+
     /**
      * Static function which executes a query on behalf of the Datastore.
      *
