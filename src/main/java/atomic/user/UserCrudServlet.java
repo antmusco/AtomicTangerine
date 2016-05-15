@@ -112,8 +112,7 @@ public class UserCrudServlet extends CrudServlet {
 
             }
 
-            // Successful update.
-            return successfulRequest();
+            return response;
 
         } catch (NoUniqueKeyException nuke) {
 
