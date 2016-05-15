@@ -147,9 +147,15 @@
         <md-content ng-controller="RightCtrl" layout-padding>
             <div ng-repeat="comic in drafts">
                 <img ng-src="{{comic.THUMBNAIL}}" width="300px" height="150px"/>
-                <md-button ng-click="loadComic($index)">
-                    <label>{{comic.TITLE}}</label>
-                </md-button>
+                <h6>{{comic.TITLE}}</h6>
+                <div layout="row">
+                    <md-button style="font-family: Bangers, sans-serif" ng-click="loadComic($index)">
+                        <label>Load Draft</label>
+                    </md-button>
+                    <md-button style="font-family: Bangers, sans-serif" ng-click="loadComicTemp($index)">
+                        <label>Load Template</label>
+                    </md-button>
+                </div>
             </div>
         </md-content>
     </md-sidenav>

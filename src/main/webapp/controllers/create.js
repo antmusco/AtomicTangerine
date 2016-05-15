@@ -155,7 +155,22 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             $scope.disableControls = false;
         };
 
-        $scope.descripViewable = false;
+        $scope.loadComicTemp = function (indx) {
+            var curCanvas = $scope.canvas.toJSON();
+            var comic = curCanvas.objects.concat(JSON.parse($scope.drafts[indx].JSON_DATA).objects);
+            fabric.util.enlivenObjects(comic, function (objects) {
+                var origRenderOnAddRemove = $scope.canvas.renderOnAddRemove;
+                $scope.canvas.renderOnAddRemove = false;
+                objects.forEach(function (o) {
+                    $scope.canvas.add(o);
+                });
+                $scope.canvas.renderOnAddRemove = origRenderOnAddRemove;
+                $scope.canvas.renderAll();
+            });
+            $scope.disableControls = false;
+        };
+
+        $scope.descripViewable = true;
         $scope.publish = function () {
             if($scope.descripViewable){
                 $log.info('DESCRIP: ' + $scope.description);
