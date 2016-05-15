@@ -22,12 +22,14 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                             .position('top right')
                             .hideDelay(3000)
                     );
+                    return;
                 }
+                $scope.me = true;
             }else{
                 auth.getUserByGmail(atob($routeParams.artistName))
                     .then(function (user) {
                         $scope.user = user.USER;
-                        $scope.me = false;
+                        $scope.me = (auth.getUser().GMAIL ===  $scope.user.GMAIL);
                     }, function (resp) {
                         $scope.user = 'no ' + resp;
                     });
