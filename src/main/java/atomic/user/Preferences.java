@@ -60,8 +60,10 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     }
 
     public void removeSubscribtion(String userGmail) {
+
         subscriptions.remove(userGmail);
         saveEntity();
+
     }
 
     @Override

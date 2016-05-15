@@ -87,7 +87,7 @@ public class UserCrudServlet extends CrudServlet {
                 if (req.equals(UserRequest.SUBSCRIBE.toString()) ||
                         req.equals(UserRequest.UNSUBSCRIBE.toString())) {
 
-                    processSubscribeRequest(request, response, UserRequest.fromString(req));
+                    processSubscribeRequest(request, response, req);
 
                 } else if (req.equals(UserRequest.GET_SUBSCRIPTION_LIST.toString())) {
 
@@ -131,7 +131,7 @@ public class UserCrudServlet extends CrudServlet {
 
     }
 
-    private void processSubscribeRequest(JsonObject request, JsonObject response, UserRequest which) {
+    private void processSubscribeRequest(JsonObject request, JsonObject response, String which) {
 
         try {
 
@@ -144,7 +144,7 @@ public class UserCrudServlet extends CrudServlet {
                 throw new IllegalArgumentException("Request must include user gmail.");
             }
 
-            if(which == UserRequest.SUBSCRIBE) {
+            if(UserRequest.SUBSCRIBE.toString().equals(which)) {
                 currentUser.subscribeTo(userGmail);
             } else {
                 currentUser.unsubscribeFrom(userGmail);
