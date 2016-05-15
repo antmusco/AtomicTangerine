@@ -338,6 +338,7 @@ public class ComicCrudServlet extends CrudServlet {
                     comicObj.addProperty(JsonProperty.JSON_DATA.toString(), c.getFrames().get(0).getValue());
                     comicObj.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
                     comicObj.addProperty(JsonProperty.COMIC_ID_STRING.toString(), c.generateKeyString());
+                    comicObj.addProperty(JsonProperty.SCORE.toString(), c.getScore());
                     comicArray.add(comicObj);
                 }
 

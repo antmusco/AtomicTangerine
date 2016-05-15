@@ -127,6 +127,14 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                     ).then( function() { $scope.updateComments(); });
                 };
 
+                $scope.upVoteComic = function () {
+
+                };
+
+                $scope.downVoteComic = function () {
+
+                };
+
                 $scope.updateComments();
                 $log.info(resp);
             }, function (resp) {

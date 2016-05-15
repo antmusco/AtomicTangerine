@@ -11,6 +11,9 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
         };
 
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
+            if(current === null){
+                $location.path('/main');
+            }
             if($routeParams.artistName === "self"){
                 $scope.user = auth.getUser();
                 crud.update('/comic', {REQUEST:'GET_COMIC_LIST_DEFAULT', USER_GMAIL:$scope.user.GMAIL})
@@ -53,10 +56,10 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                             );
                         crud.update('/user', {REQUEST: 'IS_USER_SUBSCRIBED', USER_GMAIL:$scope.user.GMAIL})
                             .then(
-                                function yes() {
+                                function yes(resp) {
                                     $scope.subText = 'Unsubscribe';
                                 },
-                                function no() {
+                                function no(resp) {
                                     $scope.subText = 'Subscribe';
                                 }
                             )
