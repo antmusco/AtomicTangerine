@@ -64,7 +64,7 @@ public class Comment extends DatastoreEntity implements Jsonable {
      */
     private Comment() {
 
-        super(EntityKind.COMIC);
+        super(EntityKind.COMMENT);
 
         this.commentorUserGmail = null;
         this.comicUserGmail = null;
