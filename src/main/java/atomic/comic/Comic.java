@@ -504,7 +504,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             JsonObject comicInfo = new JsonObject();
             comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), c.userGmail);
             comicInfo.addProperty(JsonProperty.TITLE.toString(), c.title);
-            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), c.getFrames().get(0).getValue());
+            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
 
             resultList.add(comicInfo);
 

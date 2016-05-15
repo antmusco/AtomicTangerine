@@ -34,11 +34,21 @@
                                 <label style="padding-left: 5px">{{artist.HANDLE}}</label>
                             </div>
                         </md-button>
+                        <md-button ng-click="upVoteComic()" class="md-icon-button" aria-label="thumb_up">
+                            <md-icon class="material-icons">thumb_up</md-icon>
+                        </md-button>
+                        {{comic.SCORE}}
+                        <md-button ng-click="downVoteComic()" class="md-icon-button" aria-label="thumb_down">
+                            <md-icon class="material-icons">thumb_down</md-icon>
+                        </md-button>
                     </div>
                     <div layout="row">
                     <md-card-icon-actions>
                         <md-button class="md-icon-button" aria-label="Share">
                             <md-icon class="material-icons">share</md-icon>
+                        </md-button>
+                        <md-button ng-click="" class="md-icon-button" aria-label="Share">
+                            <md-icon class="material-icons">{{favIcon}}</md-icon>
                         </md-button>
                     </md-card-icon-actions>
                     </div>
