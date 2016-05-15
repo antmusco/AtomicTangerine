@@ -118,6 +118,10 @@ public class ComicCrudServlet extends CrudServlet {
 
                     processPublishComicRequest(request, response);
 
+                } else if (req.equals(ComicRequest.DELETE_COMIC.toString())) {
+
+                    processDeleteComicRequest(request, response);
+
                 } else {
 
                     System.err.println("Unsupported request: " + req);
@@ -554,6 +558,32 @@ public class ComicCrudServlet extends CrudServlet {
 
             // Property is set during the `processUploadNewFrameRequest()`
             //response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
+
+    }
+
+    private void processDeleteComicRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            User currentUser = User.getCurrentUser();
+
+            // Retrieve the comic title from the request.
+            String title;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include comic's title.");
+            }
+
+            // Retrieve the comic and delete the entity.
+            Comic comicToDelete = Comic.retrieveComic(currentUser.getGmail(), title);
+            comicToDelete.deleteEntity();
 
         } catch (Exception e) {
 

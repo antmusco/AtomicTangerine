@@ -93,6 +93,10 @@
             <!--<md-input-container ng-hide="descripViewable">-->
                 <!--<input ng-model="description" type="text" placeholder="Description">-->
             <!--</md-input-container>-->
+            <md-button ng-disable="disableControls" class="md-fab md-mini" ng-click="deleteForever()" aria-label="delete_forever">
+                <md-tooltip>Delete Forever</md-tooltip>
+                <md-icon>delete_forever</md-icon>
+            </md-button>
         </div>
         <div layout="row" layout-align="center center" id="colors">
             <div>

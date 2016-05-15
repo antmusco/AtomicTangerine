@@ -63,6 +63,37 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             $scope.comicTitle = '';
         };
 
+        $scope.deleteForever = function (ev) {
+            var confirm = $mdDialog.confirm()
+                .title('Delete Comic Forever.')
+                .textContent('Are you sure?')
+                .ariaLabel('Comic Loss warning')
+                .targetEvent(ev)
+                .ok("It wasn't all that great")
+                .cancel("No! my creation! take me back!");
+            $mdDialog.show(confirm).then(function yes() {
+                crud.update('/comic', {REQUEST:'DELETE_COMIC', TITLE: $scope.comicTitle})
+                    .then(function yes() {
+                        $scope.canvas.clear();
+                        $scope.comicTitle = '';
+                        $scope.canvas.add(prompt);
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Comic Deleted')
+                                .position('bottom right')
+                                .hideDelay(3000)
+                        );
+                    }, function no() {
+                        $mdToast.show(
+                            $mdToast.simple()
+                                .textContent('Unable to delete comic')
+                                .position('bottom right')
+                                .hideDelay(3000)
+                        );
+                    });
+            });
+
+        };
 
         ////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
         $('#comicFrame').on('change', function (e) {
