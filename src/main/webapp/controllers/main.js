@@ -1,6 +1,29 @@
-app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 'auth',
-    function ($scope, $timeout, $http, $log, $location, auth) {
+app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 'auth', '$q',
+    function ($scope, $timeout, $http, $log, $location, auth, $q) {
         'use strict';
+
+        var self = this;
+        $scope.selectedItem;
+        self.items = [];
+        self.query = query;
+
+        function query(q) {
+            var deferred = $q.defer();
+            $http.post('/search', {})
+                .then(
+                    function yes(resp) {
+                        var data = resp.data;
+                        $log.info(data);
+                        $q.resolve();
+                    },
+                    function no(resp) {
+                        var data = resp.data;
+                        $log.error(data);
+                        $q.reject();
+                    }
+                );
+            return deferred.promise;
+        }
 
         $scope.favIcon = 'favorite_border';
         $scope.n = true;
