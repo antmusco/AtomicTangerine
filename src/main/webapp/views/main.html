@@ -70,7 +70,7 @@
             <div ng-repeat="comment in commentList">
                 <md-card style="max-width: 500px" ng-show="userIsLoggedIn">
                     <md-card-title>
-                        {{comment.COMMENTOR_GMAIL}}
+                        {{comment.COMMENTOR_GMAIL}} - {{comment.DATE_POSTED.toLocaleString()}}
                     </md-card-title>
                     <md-card-content>
                         {{comment.COMMENT}}
