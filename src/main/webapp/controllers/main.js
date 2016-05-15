@@ -28,6 +28,7 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         $scope.favIcon = 'favorite_border';
         $scope.n = true;
 
+
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
 
         });
@@ -93,14 +94,33 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                     $location.path('/profile/' + btoa($scope.artist.GMAIL));
                 };
 
-                $scope.upVote = function () {
-                    $scope.n = !$scope.n;
-                    if($scope.n){
-                        $scope.favIcon = 'favorite_border';
-                    }else{
-                        $scope.favIcon = 'favorite';
-                    }
+                $scope.upVoteComment = function(comment) {
+                    $http.post('/comment',
+                        {
+                            REQUEST: "VOTE",
+                            USER_GMAIL: $scope.currentComic.USER_GMAIL,
+                            COMMENTOR_GMAIL: comment.COMMENTOR_GMAIL,
+                            TITLE: $scope.currentComic.TITLE,
+                            DATE_POSTED: comment.DATE_POSTED,
+                            VOTE: "UPVOTE"
+                        }
+                    ).then( function() { $scope.updateComments(); });
                 };
+
+
+                $scope.downVoteComment = function(comment) {
+                    $http.post('/comment',
+                        {
+                            REQUEST: "VOTE",
+                            USER_GMAIL: $scope.currentComic.USER_GMAIL,
+                            COMMENTOR_GMAIL: comment.COMMENTOR_GMAIL,
+                            TITLE: $scope.currentComic.TITLE,
+                            DATE_POSTED: comment.DATE_POSTED,
+                            VOTE: "DOWNVOTE"
+                        }
+                    ).then( function() { $scope.updateComments(); });
+                };
+
                 $scope.updateComments();
                 $log.info(resp);
             }, function (resp) {

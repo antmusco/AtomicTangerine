@@ -35,9 +35,6 @@
                     </div>
                     <div layout="row">
                     <md-card-icon-actions>
-                        <md-button ng-click="upVote()" class="md-icon-button" aria-label="Favorite">
-                            <md-icon class="material-icons">{{favIcon}}</md-icon>
-                        </md-button>
                         <md-button class="md-icon-button" aria-label="Share">
                             <md-icon class="material-icons">share</md-icon>
                         </md-button>
@@ -79,8 +76,13 @@
                         {{comment.COMMENT}}
                     </md-card-content>
                     <md-card-actions layout="row" layout-align="center center">
-                        <md-button>Up Vote</md-button>
-                        <md-button>Down Vote</md-button>
+                        <md-button ng-click="upVoteComment(comment)" class="md-icon-button" aria-label="thumb_up">
+                            <md-icon class="material-icons">thumb_up</md-icon>
+                        </md-button>
+                        {{comment.SCORE}}
+                        <md-button ng-click="downVoteComment(comment)" class="md-icon-button" aria-label="thumb_down">
+                            <md-icon class="material-icons">thumb_down</md-icon>
+                        </md-button>
                     </md-card-actions>
                 </md-card>
             </div>
