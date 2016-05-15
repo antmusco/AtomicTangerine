@@ -155,5 +155,29 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
             );
         });
 
+
+        $scope.onKeyDownHandler = function (ev) {
+            var key;
+            if(window.event){
+                key = window.event.keyCode;
+            }
+            else{
+                key = event.keyCode;
+            }
+            switch(key){
+                case 39: //right
+                    event.preventDefault();
+                    $scope.next();
+                    break;
+                case 37: //left
+                    event.preventDefault();
+                    $scope.prev();
+                    break;
+                default:
+                    break;
+            }
+        };
+        document.onkeydown = $scope.onKeyDownHandler;
+
     }
 ]);

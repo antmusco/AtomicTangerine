@@ -118,8 +118,20 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
 
             crud.update('/comic', data).then(function success(resp) {
                 $log.info('Saved comic! \n\n' + resp.data.RESULT + '\n\n');
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Comic Saved!')
+                        .position('bottom right')
+                        .hideDelay(3000)
+                );
             }, function error(resp) {
                 $log.error('Did not save comic :( \n\n' + resp.data.RESULT + '\n\n');
+                $mdToast.show(
+                    $mdToast.simple()
+                        .textContent('Comic Not Saved!')
+                        .position('bottom right')
+                        .hideDelay(3000)
+                );
             });
 
 
