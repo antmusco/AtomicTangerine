@@ -434,4 +434,32 @@ public class User extends DatastoreEntity implements Jsonable {
 
     }
 
+    /**
+     * Static function which retireves a user based on a unique gmail. If the user could not be found, returns null.
+     * @param gmail Unique gmail for the user.
+     * @return The User if it could be constructed, otherwise null.
+     */
+    public static User retrieveUser(String gmail) {
+        try {
+            return new User(gmail);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public String getHandle() {
+        return handle;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public List<String> getSubscriptions() {
+        if(preferences != null)
+            return preferences.getSubscriptions();
+        else
+            return null;
+    }
 }

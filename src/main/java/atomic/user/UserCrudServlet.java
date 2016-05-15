@@ -12,6 +12,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.List;
+
 /**
  * CrudServlet implementation which will be used to create, retrieve, update, and delete User data.
  *
@@ -96,6 +98,10 @@ public class UserCrudServlet extends CrudServlet {
                     processGetUserByGmailRequest(request, response);
                     return response;
 
+                } else if (req.equals(UserRequest.IS_USER_SUBSCRIBED.toString())) {
+
+                    processIsUserSubscribedRequest(request, response);
+
                 }
 
             } else {
@@ -116,7 +122,6 @@ public class UserCrudServlet extends CrudServlet {
         }
 
     }
-
 
     @Override
     protected JsonElement delete(JsonElement json) {
@@ -165,7 +170,18 @@ public class UserCrudServlet extends CrudServlet {
             JsonArray subscriptionList = new JsonArray();
             for(String s : currentUserPreferences.getSubscriptions()) {
 
-                subscriptionList.add(s);
+                JsonObject subscription = new JsonObject();
+                User u = User.retrieveUser(s);
+                if(u == null) {
+                    System.err.println("No User with gmail " + s);
+                    continue;
+                }
+
+                // Add all the properties to the subscription object.
+                subscription.addProperty(JsonProperty.GMAIL.toString(), u.getGmail());
+                subscription.addProperty(JsonProperty.HANDLE.toString(), u.getHandle());
+                subscription.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), u.getProfilePicUrl());
+                subscriptionList.add(subscription);
 
             }
 
@@ -191,6 +207,41 @@ public class UserCrudServlet extends CrudServlet {
             } catch (NoUniqueKeyException e){
                 processGeneralException(response, e);
             }
+        }
+
+    }
+
+    private void processIsUserSubscribedRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            // Get the current user.
+            User currentUser = User.getCurrentUser();
+
+            // Make sure the request is valid.
+            if (request.has(JsonProperty.USER_GMAIL.toString())) {
+
+                // Grab the queried gmail, as well as the list of subscriptions for the current user.
+                String userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+                List<String> subscriptions = currentUser.getSubscriptions();
+
+                // If the subsriptions exist and contain the user gmail, return success.
+                if(subscriptions != null && subscriptions.contains(userGmail)) {
+                    response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+                    return;
+                }
+
+            }
+
+            // In all other cases, return failure.
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+
+
+        } catch (Exception e) {
+
+            // Returns failure.
+            processGeneralException(response, e);
+
         }
 
     }

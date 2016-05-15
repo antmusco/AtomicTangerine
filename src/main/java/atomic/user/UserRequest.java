@@ -13,7 +13,8 @@ public enum UserRequest {
     SUBSCRIBE("SUBSCRIBE"),
     UNSUBSCRIBE("UNSUBSCRIBE"),
     GET_SUBSCRIPTION_LIST("GET_SUBSCRIPTION_LIST"),
-    GET_USER_BY_GMAIL("GET_USER_BY_GMAIL");
+    GET_USER_BY_GMAIL("GET_USER_BY_GMAIL"),
+    IS_USER_SUBSCRIBED("IS_USER_SUBSCRIBED");
 
     private String request;
     private static Map<String, UserRequest> requestMap = new TreeMap<>();
