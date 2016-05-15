@@ -13,6 +13,13 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
             if($routeParams.artistName === "self"){
                 $scope.user = auth.getUser();
+                crud.update('/comic', {REQUEST:'GET_COMIC_LIST_DEFAULT', USER_GMAIL:$scope.user.GMAIL})
+                    .then(function (resp) {
+                            $scope.comics = resp.data.COMICS;
+                        }, function () {
+                            $scope.comics = [];
+                        }
+                    );
                 if ($scope.user === undefined || $scope.user === null) {
                     $location.path(current.$$route.originalPath);
                     $mdToast.show(
@@ -30,18 +37,19 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                     .then(function (user) {
                         $scope.user = user.USER;
                         $scope.me = (auth.getUser().GMAIL ===  $scope.user.GMAIL);
+                        crud.update('/comic', {REQUEST:'GET_COMIC_LIST_DEFAULT', USER_GMAIL:$scope.user.GMAIL})
+                            .then(function (resp) {
+                                    $scope.comics = resp.data.COMICS;
+                                }, function () {
+                                    $scope.comics = [];
+                                }
+                            );
                     }, function (resp) {
                         $scope.user = 'no ' + resp;
                     });
             }
 
-            crud.update('/comic', {REQUEST:'GET_USER_COMICS'})
-                .then(function (resp) {
-                        $scope.comics = resp.data.COMICS;
-                    }, function () {
-                        $scope.comics = [];
-                    }
-                );
+
         });
 
         $http.get("/assets")
