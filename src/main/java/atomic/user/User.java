@@ -354,9 +354,11 @@ public class User extends DatastoreEntity implements Jsonable {
         // Extract the Preferences entity.
         try {
             this.preferences = Preferences.fromEmbeddedEntity((EmbeddedEntity) entity.getProperty(JsonProperty.PREFERENCES.toString()));
-        } catch (NoUniqueKeyException n) {
+        } catch (Exception n) {
             this.preferences = new Preferences(this.gmail);
         }
+
+        preferences.fix();
 
     }
 

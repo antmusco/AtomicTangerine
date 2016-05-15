@@ -40,6 +40,8 @@ public class Preferences extends DatastoreEntity implements Jsonable {
             dislikeTags = new LinkedList<>();
             favoriteComics = new LinkedList<>();
 
+            saveEntity();
+
         }
 
     }
@@ -151,4 +153,20 @@ public class Preferences extends DatastoreEntity implements Jsonable {
     public List<String> getSubscriptions() {
         return subscriptions;
     }
+
+    public void fix() {
+
+        if(subscriptions == null)
+            subscriptions = new LinkedList<>();
+        if(likeTags == null)
+            likeTags = new LinkedList<>();
+        if(dislikeTags == null)
+            dislikeTags = new LinkedList<>();
+        if(favoriteComics == null)
+            favoriteComics = new LinkedList<>();
+
+        saveEntity();
+
+    }
+
 }
