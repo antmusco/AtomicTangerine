@@ -49,6 +49,9 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                         })
                         .then(function(resp) {
                             $scope.commentList = resp.data.COMMENTS;
+                            $scope.commentList.sort(function(lhs, rhs) {
+                                return rhs.SCORE - lhs.SCORE;
+                            });
                         });
                 };
 
