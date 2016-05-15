@@ -413,7 +413,6 @@ public class Comic extends DatastoreEntity implements Jsonable {
         Query.Filter comicFilter = Query.CompositeFilterOperator.and(userFilter, titleFilter);
 
         // Execute query to ensure comic exist with the specified key.
-        List<Entity> allResults = DatastoreEntity.executeQuery(new Query(EntityKind.COMIC.toString()));
         Query q = new Query(EntityKind.COMIC.toString()).setFilter(comicFilter);
         List<Entity> result = DatastoreEntity.executeQuery(q);
         if (result.isEmpty())
@@ -461,6 +460,49 @@ public class Comic extends DatastoreEntity implements Jsonable {
         // Return the list of comics.
         return comics;
 
+    }
+
+    public static JsonArray searchPublishedComicsByTitle(String searchKey) {
+
+        // Make filter to locate a comic with the indicated title.
+        Query.Filter titleFilter = new Query.FilterPredicate(
+                JsonProperty.TITLE.toString(),
+                Query.FilterOperator.EQUAL,
+                searchKey
+        );
+
+        Query.Filter publishedFilter = new Query.FilterPredicate(
+                JsonProperty.STATE.toString(),
+                Query.FilterOperator.EQUAL,
+                ComicState.PUBLISHED.toString()
+        );
+
+        // Combine both filters in to one.
+        Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
+
+        // Sort matches by recent comics first.
+        Query q = new Query(EntityKind.COMIC.toString())
+                .setFilter(comicFilter)
+                .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING);
+
+        // Execute the query and copy all results over to a JsonArray.
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+        JsonArray resultList = new JsonArray();
+
+        // Add all of the comics found.
+        for(Entity e : result) {
+
+            JsonObject comicInfo = new JsonObject();
+            comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), (String) e.getProperty(JsonProperty.USER_GMAIL.toString()));
+            comicInfo.addProperty(JsonProperty.TITLE.toString(), (String) e.getProperty(JsonProperty.TITLE.toString()));
+            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), (String) e.getProperty(JsonProperty.THUMBNAIL.toString()));
+
+            resultList.add(comicInfo);
+
+        }
+
+        // Create the comic and return in.
+        return resultList;
     }
 
     public String getTitle() {

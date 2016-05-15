@@ -389,4 +389,49 @@ public class User extends DatastoreEntity implements Jsonable {
     public Preferences getPreferences() {
         return preferences;
     }
+
+    public static JsonArray searchUsersByHandleOrGmail(String searchKey) {
+
+        // Filter by user handle.
+        Query.Filter handleFilter = new Query.FilterPredicate(
+                JsonProperty.HANDLE.toString(),
+                Query.FilterOperator.EQUAL,
+                searchKey
+        );
+
+        // Filter by user gmail.
+        Query.Filter gmailFilter = new Query.FilterPredicate(
+                JsonProperty.GMAIL.toString(),
+                Query.FilterOperator.EQUAL,
+                searchKey
+        );
+
+        // Combine filters into an 'Or'.
+        Query.Filter userGilter = Query.CompositeFilterOperator.or(handleFilter, gmailFilter);
+
+        // Sort matches by first joined users first.
+        Query q = new Query(EntityKind.COMIC.toString())
+                .setFilter(userGilter)
+                .addSort(JsonProperty.DATE_JOINED.toString(), Query.SortDirection.ASCENDING);
+
+        // Execute the query and copy all results over to a JsonArray.
+        List<Entity> result = DatastoreEntity.executeQuery(q);
+        JsonArray resultList = new JsonArray();
+
+        // Add all of the comics found.
+        for(Entity e : result) {
+
+            JsonObject userInfo = new JsonObject();
+            userInfo.addProperty(JsonProperty.GMAIL.toString(), (String) e.getProperty(JsonProperty.GMAIL.toString()));
+            userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) e.getProperty(JsonProperty.HANDLE.toString()));
+            userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) e.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
+            resultList.add(userInfo);
+
+        }
+
+        // Create the comic and return in.
+        return resultList;
+
+    }
+
 }

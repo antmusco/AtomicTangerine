@@ -24,6 +24,7 @@ public enum JsonProperty {
 
     // User Servlet.
     USER("USER"),
+    USERS("USERS"),
     GMAIL("GMAIL"),
     HANDLE("HANDLE"),
     FIRST_NAME("FIRSTNAME"),
@@ -86,7 +87,10 @@ public enum JsonProperty {
     // Comic State
     DRAFT("DRAFT"),
     DRAFTS("DRAFTS"),
-    PUBLISHED("PUBLISHED");
+    PUBLISHED("PUBLISHED"),
+
+    // Search
+    SEARCH_KEY("SEARCH_KEY");
 
     private String property;
     public static final DateFormat dateFormat = new SimpleDateFormat("mm/dd/yyyy");

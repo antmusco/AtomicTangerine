@@ -194,7 +194,8 @@ public abstract class CrudServlet extends HttpServlet {
     protected JsonElement unsupportedRequest() {
 
         JsonObject response = new JsonObject();
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.UNSUPPORTED.toString());
+        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        response.addProperty(JsonProperty.REASON.toString(), CrudResult.UNSUPPORTED.toString());
         return response;
 
     }
@@ -228,7 +229,7 @@ public abstract class CrudServlet extends HttpServlet {
     protected void processGeneralException(JsonObject response, Exception e) {
 
         response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
-        response.addProperty(JsonProperty.RESULT.toString(), e.getMessage());
+        response.addProperty(JsonProperty.REASON.toString(), e.getMessage());
         System.err.println(e.getMessage());
 
     }
