@@ -1,6 +1,6 @@
 app.controller('profileCtrl', ['$scope', '$route', 'auth',
-    '$http', '$log', '$location', '$mdToast', '$routeParams',
-    function ($scope, $route, auth, $http, $log, $location, $mdToast, $routeParams) {
+    '$http', '$log', '$location', '$mdToast', '$routeParams', 'crud',
+    function ($scope, $route, auth, $http, $log, $location, $mdToast, $routeParams, crud) {
         'use strict';
 
         $scope.status = '  ';
@@ -34,6 +34,14 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                         $scope.user = 'no ' + resp;
                     });
             }
+
+            crud.update('/comic', {REQUEST:'GET_USER_COMICS'})
+                .then(function (resp) {
+                        $scope.comics = resp.data.COMICS;
+                    }, function () {
+                        $scope.comics = [];
+                    }
+                );
         });
 
         $http.get("/assets")
@@ -65,6 +73,8 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
             var fileInput = angular.element(document.querySelector('#profilePic'));
             fileInput.click();
         };
+
+
 
     }]);
 

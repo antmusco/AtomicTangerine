@@ -90,6 +90,9 @@
                 <md-tooltip>Publish Comic</md-tooltip>
                 <md-icon class="material-icons">public</md-icon>
             </md-button>
+            <md-input-container ng-hide="descripViewable">
+                <input ng-model="description" type="text" placeholder="Description">
+            </md-input-container>
         </div>
         <div layout="row" layout-align="center center" id="colors">
             <div>

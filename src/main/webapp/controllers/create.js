@@ -155,8 +155,14 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             $scope.disableControls = false;
         };
 
+        $scope.descripViewable = false;
         $scope.publish = function () {
-            $log.info('publish clicked');
+            if($scope.descripViewable){
+                $log.info('DESCRIP: ' + $scope.description);
+                $scope.descripViewable = false;
+            }else{
+                $scope.descripViewable = true;
+            }
         };
 
 ////////////////////////////////////////////////////////////////////////////////////////////// Upload Stuff
