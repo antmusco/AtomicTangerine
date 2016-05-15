@@ -99,11 +99,14 @@ public class SearchCrudServlet extends CrudServlet {
         JsonArray comicArray = Comic.searchPublishedComicsByTitle(searchKey);
         JsonArray userArray = User.searchUsersByHandleOrGmail(searchKey);
 
-        // Add success as well as the other properties.
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-        response.add(JsonProperty.COMICS.toString(), comicArray);
-        response.add(JsonProperty.USERS.toString(), userArray);
-
+        if((comicArray.size() + userArray.size()) > 0) {
+            // Add success as well as the other properties.
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.COMICS.toString(), comicArray);
+            response.add(JsonProperty.USERS.toString(), userArray);
+        } else {
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        }
     }
 
     private void processSearchUsersRequest(JsonObject request, JsonObject response) {
@@ -115,8 +118,12 @@ public class SearchCrudServlet extends CrudServlet {
         JsonArray userArray = User.searchUsersByHandleOrGmail(searchKey);
 
         // Add success as well as the other properties.
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-        response.add(JsonProperty.USERS.toString(), userArray);
+        if(userArray.size() > 0) {
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.USERS.toString(), userArray);
+        } else {
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        }
 
     }
 
@@ -129,8 +136,12 @@ public class SearchCrudServlet extends CrudServlet {
         JsonArray comicArray = Comic.searchPublishedComicsByTitle(searchKey);
 
         // Add success as well as the other properties.
-        response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
-        response.add(JsonProperty.COMICS.toString(), comicArray);
+        if(comicArray.size() > 0) {
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+            response.add(JsonProperty.COMICS.toString(), comicArray);
+        } else {
+            response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+        }
 
     }
 
