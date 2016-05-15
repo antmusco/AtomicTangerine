@@ -142,6 +142,13 @@ public class Comic extends DatastoreEntity implements Jsonable {
 
     }
 
+    public Comic(Entity e) {
+
+        super(EntityKind.COMIC);
+        fromEntity(e);
+
+    }
+
     /*******************************************************************************************************************
      * Jsonable Methods
      ******************************************************************************************************************/
@@ -492,10 +499,12 @@ public class Comic extends DatastoreEntity implements Jsonable {
         // Add all of the comics found.
         for(Entity e : result) {
 
+            Comic c = new Comic(e);
+
             JsonObject comicInfo = new JsonObject();
-            comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), (String) e.getProperty(JsonProperty.USER_GMAIL.toString()));
-            comicInfo.addProperty(JsonProperty.TITLE.toString(), (String) e.getProperty(JsonProperty.TITLE.toString()));
-            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), (String) e.getProperty(JsonProperty.THUMBNAIL.toString()));
+            comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), c.userGmail);
+            comicInfo.addProperty(JsonProperty.TITLE.toString(), c.title);
+            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), c.getFrames().get(0).getValue());
 
             resultList.add(comicInfo);
 
