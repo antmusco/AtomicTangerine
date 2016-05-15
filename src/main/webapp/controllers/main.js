@@ -7,9 +7,9 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         self.items = [];
         self.query = query;
 
-        function query(q) {
+        function query(searchQuery) {
             var deferred = $q.defer();
-            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: ''})
+            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: searchQuery})
                 .then(
                     function yes(resp) {
                         var data = resp.data;

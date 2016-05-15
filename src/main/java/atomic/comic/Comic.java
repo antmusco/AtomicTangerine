@@ -471,18 +471,22 @@ public class Comic extends DatastoreEntity implements Jsonable {
                 searchKey
         );
 
+        /*
         Query.Filter publishedFilter = new Query.FilterPredicate(
                 JsonProperty.STATE.toString(),
                 Query.FilterOperator.EQUAL,
                 ComicState.PUBLISHED.toString()
         );
+        */
 
+        /*
         // Combine both filters in to one.
         Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
+        */
 
         // Sort matches by recent comics first.
         Query q = new Query(EntityKind.COMIC.toString())
-                .setFilter(comicFilter)
+                .setFilter(titleFilter)
                 .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING);
 
         // Execute the query and copy all results over to a JsonArray.
@@ -495,7 +499,7 @@ public class Comic extends DatastoreEntity implements Jsonable {
             JsonObject comicInfo = new JsonObject();
             comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), (String) e.getProperty(JsonProperty.USER_GMAIL.toString()));
             comicInfo.addProperty(JsonProperty.TITLE.toString(), (String) e.getProperty(JsonProperty.TITLE.toString()));
-            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), (String) e.getProperty(JsonProperty.THUMBNAIL.toString()));
+            comicInfo.addProperty(JsonProperty.THUMBNAILS.toString(), ((List<Text>) e.getProperty(JsonProperty.THUMBNAILS.toString())).get(0).getValue());
 
             resultList.add(comicInfo);
 

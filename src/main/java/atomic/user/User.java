@@ -407,11 +407,11 @@ public class User extends DatastoreEntity implements Jsonable {
         );
 
         // Combine filters into an 'Or'.
-        Query.Filter userGilter = Query.CompositeFilterOperator.or(handleFilter, gmailFilter);
+        Query.Filter userFilter = Query.CompositeFilterOperator.or(handleFilter, gmailFilter);
 
         // Sort matches by first joined users first.
-        Query q = new Query(EntityKind.COMIC.toString())
-                .setFilter(userGilter)
+        Query q = new Query(EntityKind.USER.toString())
+                .setFilter(userFilter)
                 .addSort(JsonProperty.DATE_JOINED.toString(), Query.SortDirection.ASCENDING);
 
         // Execute the query and copy all results over to a JsonArray.
@@ -422,7 +422,7 @@ public class User extends DatastoreEntity implements Jsonable {
         for(Entity e : result) {
 
             JsonObject userInfo = new JsonObject();
-            userInfo.addProperty(JsonProperty.GMAIL.toString(), (String) e.getProperty(JsonProperty.GMAIL.toString()));
+            userInfo.addProperty(JsonProperty.GMAIL.toString(), e.getKey().getName());
             userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) e.getProperty(JsonProperty.HANDLE.toString()));
             userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) e.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
             resultList.add(userInfo);
