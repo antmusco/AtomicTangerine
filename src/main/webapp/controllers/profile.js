@@ -2,7 +2,7 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
     '$http', '$log', '$location', '$mdToast', '$routeParams', 'crud',
     function ($scope, $route, auth, $http, $log, $location, $mdToast, $routeParams, crud) {
         'use strict';
-
+        $scope.subText = 'Subscribe';
         $scope.status = '  ';
         $scope.message = "Profile Ctrl Active";
         $scope.user = null;
@@ -18,6 +18,13 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                             $scope.comics = resp.data.COMICS;
                         }, function () {
                             $scope.comics = [];
+                        }
+                    );
+                crud.update('/comic', {REQUEST:'GET_SUBSCRIPTION_LIST'})
+                    .then(function (resp) {
+                            $scope.subs = resp.data.SUBSCRIPTIONS;
+                        }, function () {
+                            $scope.subs = [];
                         }
                     );
                 if ($scope.user === undefined || $scope.user === null) {
@@ -44,6 +51,15 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
                                     $scope.comics = [];
                                 }
                             );
+                        crud.update('/user', {REQUEST: 'IS_USER_SUBSCRIBED', USER_GMAIL:$scope.user.GMAIL})
+                            .then(
+                                function yes() {
+                                    $scope.subText = 'Unsubscribe';
+                                },
+                                function no() {
+                                    $scope.subText = 'Subscribe';
+                                }
+                            )
                     }, function (resp) {
                         $scope.user = 'no ' + resp;
                     });
@@ -74,7 +90,39 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
 
 
         $scope.subscribe = function () {
-            
+            if($scope.subText === 'Subscribe'){
+                crud.update('/user', {REQUEST: 'SUBSCRIBE', USER_GMAIL:$scope.user.GMAIL})
+                    .then(
+                        function yes() {
+                            $scope.subText = 'Unsubscribe';
+                        },
+                        function no() {
+                            $scope.subText = 'Subscribe';
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Unable to subscribe')
+                                    .action('OK')
+                                    .position('top right')
+                                    .hideDelay(3000)
+                            )
+                        });
+            }else{
+                crud.update('/user', {REQUEST: 'UNSUBSCRIBE', USER_GMAIL:$scope.user.GMAIL})
+                    .then(
+                        function yes() {
+                            $scope.subText = 'Subscribe';
+                        },
+                        function no() {
+                            $scope.subText = 'Unsubscribe';
+                            $mdToast.show(
+                                $mdToast.simple()
+                                    .textContent('Unable to unsubscribe')
+                                    .action('OK')
+                                    .position('top right')
+                                    .hideDelay(3000)
+                            )
+                        });
+            }
         };
 
         $scope.upload = function () {

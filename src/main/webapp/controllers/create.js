@@ -320,6 +320,76 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             });
         };
 
+
+
+
+        $scope.onKeyDownHandler = function(event) {
+            var key;
+            if(window.event){
+                key = window.event.keyCode;
+            }
+            else{
+                key = event.keyCode;
+            }
+            switch(key){
+                case 67: // Ctrl+C
+                    if(event.ctrlKey){
+                        event.preventDefault();
+                        copy();
+                    }
+                    break;
+                // Paste (Ctrl+V)
+                case 86: // Ctrl+V
+                    if(event.ctrlKey){
+                        event.preventDefault();
+                        paste();
+                    }
+                    break;
+                case 8:
+                case 46:
+                    $scope.delete();
+                    event.preventDefault();
+                    break;
+                default:
+                    break;
+            }
+        };
+        document.onkeydown = $scope.onKeyDownHandler;
+
+        var copiedObject;
+        var copiedObjects = [];
+        function copy(){
+            if($scope.canvas.getActiveGroup()){
+                for(var i in canvas.getActiveGroup().objects){
+                    var object = fabric.util.object.clone($scope.canvas.getActiveGroup().objects[i]);
+                    object.set("top", object.top+5);
+                    object.set("left", object.left+5);
+                    copiedObjects[i] = object;
+                }
+            }
+            else if($scope.canvas.getActiveObject()){
+                var object = fabric.util.object.clone($scope.canvas.getActiveObject());
+                object.set("top", object.top+5);
+                object.set("left", object.left+5);
+                copiedObject = object;
+                copiedObjects = [];
+            }
+        }
+
+        function paste(){
+            if(copiedObjects.length > 0){
+                for(var i in copiedObjects){
+                    $scope.canvas.add(copiedObjects[i]);
+                }
+            }
+            else if(copiedObject){
+                $scope.canvas.add(copiedObject);
+            }
+            $scope.canvas.renderAll();
+        }
+
+
+
         ////////////////////////////////////////////////////////////////////////////////////// Canvas Stuff
 
     }]);

@@ -27,7 +27,7 @@
                 </div>
                 <div layout="row" layout-align="end center" ng-hide="me">
                     <md-button ng-click="subscribe()" class="md-raised md-primary" style="font-family: Bangers, sans-serif">
-                        Subscribe
+                        {{subText}}
                     </md-button>
                 </div>
             </div>
@@ -87,5 +87,8 @@
         <img ng-src="{{usercomic.THUMBNAIL}}" width="300px" height="150px"/>
         <label>{{usercomic.TITLE}}</label>
     </div>
-
+    <div ng-repeat="sub in subs">
+        <img ng-src="{{sub.THUMBNAIL}}" width="100px" height="100px"/>
+        <label>{{sub.HANDLE}}</label>
+    </div>
 </div>

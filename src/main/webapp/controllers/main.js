@@ -9,17 +9,17 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
 
         function query(q) {
             var deferred = $q.defer();
-            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: ''})
+            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: q})
                 .then(
                     function yes(resp) {
                         var data = resp.data;
                         $log.info(data);
-                        $q.resolve();
+                        $q.resolve(data);
                     },
                     function no(resp) {
                         var data = resp.data;
                         $log.error(data);
-                        $q.reject();
+                        $q.reject(data);
                     }
                 );
             return deferred.promise;

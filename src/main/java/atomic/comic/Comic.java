@@ -471,18 +471,18 @@ public class Comic extends DatastoreEntity implements Jsonable {
                 searchKey
         );
 
-        Query.Filter publishedFilter = new Query.FilterPredicate(
-                JsonProperty.STATE.toString(),
-                Query.FilterOperator.EQUAL,
-                ComicState.PUBLISHED.toString()
-        );
+//        Query.Filter publishedFilter = new Query.FilterPredicate(
+//                JsonProperty.STATE.toString(),
+//                Query.FilterOperator.EQUAL,
+//                ComicState.PUBLISHED.toString()
+//        );
 
         // Combine both filters in to one.
-        Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
+//        Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
 
         // Sort matches by recent comics first.
         Query q = new Query(EntityKind.COMIC.toString())
-                .setFilter(comicFilter)
+                .setFilter(titleFilter)
                 .addSort(JsonProperty.DATE_CREATED.toString(), Query.SortDirection.DESCENDING);
 
         // Execute the query and copy all results over to a JsonArray.

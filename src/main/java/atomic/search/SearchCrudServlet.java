@@ -93,6 +93,7 @@ public class SearchCrudServlet extends CrudServlet {
 
         // Extract the search key.
         String searchKey = request.get(JsonProperty.SEARCH_KEY.toString()).getAsString();
+        System.out.println(searchKey);
 
         // Get results from users (handle and gmail) and comics (tags).
         JsonArray comicArray = Comic.searchPublishedComicsByTitle(searchKey);

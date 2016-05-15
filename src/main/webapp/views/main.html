@@ -29,8 +29,10 @@
                 <md-card-actions layout="column" layout-align="start center">
                     <div layout="row">
                         <md-button ng-click="goToProfile()">
-                            <img id="artistpic" ng-src="{{artist.PROFILE_PIC_URL}}" width="40px" height="40px"/>
-                            <label>{{artist.HANDLE}}</label>
+                            <div layout="row">
+                                <img id="artistpic" ng-src="{{artist.PROFILE_PIC_URL}}" width="40px" height="40px"/>
+                                <label style="padding-left: 5px">{{artist.HANDLE}}</label>
+                            </div>
                         </md-button>
                     </div>
                     <div layout="row">
@@ -44,13 +46,13 @@
                     </md-card-icon-actions>
                     </div>
                 </md-card-actions>
-                <md-card-content>
-                    <p>
-                        Phyllis Peng starts her career in Art here on Atomic Comics.
-                        The enterprise online comics creator tool everyone's talking about is where Phyllis got started.
-                        On here you can too!
-                    </p>
-                </md-card-content>
+                <!--<md-card-content>-->
+                    <!--<p>-->
+                        <!--Phyllis Peng starts her career in Art here on Atomic Comics.-->
+                        <!--The enterprise online comics creator tool everyone's talking about is where Phyllis got started.-->
+                        <!--On here you can too!-->
+                    <!--</p>-->
+                <!--</md-card-content>-->
             </md-card>
             <md-button ng-click="next()" class="md-icon-button" aria-label="arrow_forward">
                 <md-icon class="material-icons">arrow_forward</md-icon>
