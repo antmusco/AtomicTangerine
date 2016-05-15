@@ -2,6 +2,9 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
     function ($scope, $timeout, $http, $log, $location, auth) {
         'use strict';
 
+        $scope.favIcon = 'favorite_border';
+        $scope.n = true;
+
         $scope.$on('$routeChangeSuccess', function (scope, next, current) {
 
         });
@@ -67,6 +70,14 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                     $location.path('/profile/' + btoa($scope.artist.GMAIL));
                 };
 
+                $scope.upVote = function () {
+                    $scope.n = !$scope.n;
+                    if($scope.n){
+                        $scope.favIcon = 'favorite_border';
+                    }else{
+                        $scope.favIcon = 'favorite';
+                    }
+                };
                 $scope.updateComments();
                 $log.info(resp);
             }, function (resp) {
