@@ -401,40 +401,50 @@ public class User extends DatastoreEntity implements Jsonable {
                 searchKey
         );
 
-        // Filter by user gmail.
-        Query.Filter gmailFilter = new Query.FilterPredicate(
-                JsonProperty.GMAIL.toString(),
-                Query.FilterOperator.EQUAL,
-                searchKey
-        );
-
-        // Combine filters into an 'Or'.
-        Query.Filter userFilter = Query.CompositeFilterOperator.or(handleFilter, gmailFilter);
-
         // Sort matches by first joined users first.
         Query q = new Query(EntityKind.USER.toString())
-                .setFilter(userFilter)
+                .setFilter(handleFilter)
                 .addSort(JsonProperty.DATE_JOINED.toString(), Query.SortDirection.ASCENDING);
 
         // Execute the query and copy all results over to a JsonArray.
         List<Entity> result = DatastoreEntity.executeQuery(q);
+
+        // Low level DatastoreService code. Must retrieve Entity if it exists but we don't want to create a new one
+        // so we shouldn't use the User constructor.
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        Key userKey = KeyFactory.createKey(JsonProperty.USER.toString(), searchKey);
+        Entity userRetrievedByGmail;
+        try {
+            userRetrievedByGmail = ds.get(userKey);
+        } catch (EntityNotFoundException e) {
+            // Do nothing.
+            userRetrievedByGmail = null;
+        }
+
+        // Add all of the users found.
         JsonArray resultList = new JsonArray();
 
-        // Add all of the comics found.
+        if(userRetrievedByGmail != null) {
+            addUserToSearchResultsHelper(userRetrievedByGmail, resultList);
+        }
+
         for(Entity e : result) {
-
-            JsonObject userInfo = new JsonObject();
-            userInfo.addProperty(JsonProperty.GMAIL.toString(), (String) e.getProperty(JsonProperty.GMAIL.toString()));
-            userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) e.getProperty(JsonProperty.HANDLE.toString()));
-            userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) e.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
-            resultList.add(userInfo);
-
+            addUserToSearchResultsHelper(e, resultList);
         }
 
         // Create the comic and return in.
         return resultList;
 
     }
+
+    private static void addUserToSearchResultsHelper(Entity user, JsonArray array) {
+        JsonObject userInfo = new JsonObject();
+        userInfo.addProperty(JsonProperty.GMAIL.toString(), user.getKey().getName());
+        userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) user.getProperty(JsonProperty.HANDLE.toString()));
+        userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) user.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
+        array.add(userInfo);
+    }
+
 
     /**
      * Static function which retireves a user based on a unique gmail. If the user could not be found, returns null.

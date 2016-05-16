@@ -478,14 +478,18 @@ public class Comic extends DatastoreEntity implements Jsonable {
                 searchKey
         );
 
-//        Query.Filter publishedFilter = new Query.FilterPredicate(
-//                JsonProperty.STATE.toString(),
-//                Query.FilterOperator.EQUAL,
-//                ComicState.PUBLISHED.toString()
-//        );
+        /*
+        Query.Filter publishedFilter = new Query.FilterPredicate(
+                JsonProperty.STATE.toString(),
+                Query.FilterOperator.EQUAL,
+                ComicState.PUBLISHED.toString()
+        );
+        */
 
+        /*
         // Combine both filters in to one.
-//        Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
+        Query.Filter comicFilter = Query.CompositeFilterOperator.and(titleFilter, publishedFilter);
+        */
 
         // Sort matches by recent comics first.
         Query q = new Query(EntityKind.COMIC.toString())
@@ -502,9 +506,21 @@ public class Comic extends DatastoreEntity implements Jsonable {
             Comic c = new Comic(e);
 
             JsonObject comicInfo = new JsonObject();
-            comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), c.userGmail);
-            comicInfo.addProperty(JsonProperty.TITLE.toString(), c.title);
-            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), c.getThumbnails().get(0).getValue());
+            String userGmail = (String) e.getProperty(JsonProperty.USER_GMAIL.toString());
+            String title = (String) e.getProperty(JsonProperty.TITLE.toString());
+
+            Comic comic;
+            try {
+                comic = new Comic(userGmail, title);
+            } catch (NoUniqueKeyException n) {
+                continue;
+            }
+
+            comicInfo.addProperty(JsonProperty.USER_GMAIL.toString(), comic.userGmail);
+            comicInfo.addProperty(JsonProperty.TITLE.toString(), comic.getTitle());
+            comicInfo.addProperty(JsonProperty.JSON_DATA.toString(), comic.getFrames().get(0).getValue());
+            comicInfo.addProperty(JsonProperty.THUMBNAIL.toString(), comic.getThumbnails().get(0).getValue());
+            comicInfo.addProperty(JsonProperty.COMIC_ID_STRING.toString(), comic.generateKeyString());
 
             resultList.add(comicInfo);
 

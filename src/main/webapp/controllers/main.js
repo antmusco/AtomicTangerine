@@ -7,22 +7,56 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         self.items = [];
         self.query = query;
 
-        function query(q) {
-            var deferred = $q.defer();
-            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: q})
+        function query(searchQuery) {
+            var later = $q.defer();
+            $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: searchQuery})
                 .then(
                     function yes(resp) {
                         var data = resp.data;
-                        $log.info(data);
-                        $q.resolve(data);
+                        var comicArray = data.COMICS;
+                        var userArray = data.USERS;
+
+                        var searchResults = [];
+
+                        for (var i = 0; i < comicArray.length; i++){
+                            var comic = comicArray[i];
+                            comic.resultType = "COMIC";
+                            comic.mainText = comic.TITLE;
+                            comic.subText = '';
+                            searchResults.push(comic);
+                        }
+
+                        for (var i = 0; i < userArray.length; i++){
+                            var user = userArray[i];
+                            user.resultType = "USER";
+                            user.mainText = user.HANDLE;
+                            searchResults.push(user);
+                        }
+
+                        later.resolve(searchResults);
                     },
                     function no(resp) {
                         var data = resp.data;
                         $log.error(data);
-                        $q.reject(data);
+                        later.reject();
                     }
                 );
-            return deferred.promise;
+            return later.promise;
+        }
+
+        self.evaluateSearchSelection = evaluateSearchSelection;
+
+        function evaluateSearchSelection(selection) {
+            if(selection === undefined || selection === null) return;
+            if(selection.resultType === "USER") {
+                if(selection.GMAIL === $scope.user.GMAIL) {
+                    $location.path('/profile/self');
+                } else {
+                    $location.path('/profile/' + btoa(selection.GMAIL));
+                }
+            } else if (selection.resultType === "COMIC") {
+                $scope.currentComic = selection;
+            }
         }
 
         $scope.favIcon = 'favorite_border';

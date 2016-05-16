@@ -5,11 +5,15 @@
                 md-selected-item="ctrl.selectedItem"
                 md-search-text="ctrl.searchText"
                 md-items="item in ctrl.query(ctrl.searchText)"
-                md-item-text="item.display"
-                md-min-length="0"
+                md-item-text="item.mainText"
+                md-min-length="1"
+                md-selected-item-change="ctrl.evaluateSearchSelection(item)"
                 placeholder="Search for Artists or comics!">
             <md-item-template>
-                <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.display}}</span>
+                <span md-highlight-text="item.resultType" md-highlight-flags="^i">{{item.resultType}}</span>
+                <md-icon ng-if="item.resultType === 'USER'" class="material-icons">account_circle</md-icon>
+                <md-icon ng-if="item.resultType === 'COMIC'" class="material-icons">view_carousel</md-icon>
+                <span>{{item.mainText}}</span>
             </md-item-template>
             <md-not-found>
                 No artists or comics matching "{{ctrl.searchText}}" were found.
