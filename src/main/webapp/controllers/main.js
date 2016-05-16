@@ -32,10 +32,6 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                             searchResults.push(user);
                         }
 
-                        $log.info(searchResults);
-
-
-
                         later.resolve(searchResults);
                     },
                     function no(resp) {
