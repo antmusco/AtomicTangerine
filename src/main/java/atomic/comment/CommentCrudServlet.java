@@ -262,7 +262,6 @@ public class CommentCrudServlet extends CrudServlet {
             // Save the entity.
             commentToVote.saveEntity();
 
-
             response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
             response.add(JsonProperty.COMMENT.toString(), commentToVote.toJson());
 

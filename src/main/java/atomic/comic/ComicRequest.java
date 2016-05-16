@@ -18,7 +18,8 @@ public enum ComicRequest {
     GET_SINGLE_COMIC("GET_SINGLE_COMIC"),
     VOTE_FOR_COMIC("VOTE_FOR_COMIC"),
     PUBLISH_COMIC("PUBLISH_COMIC"),
-    DELETE_COMIC("DELETE_COMIC");
+    DELETE_COMIC("DELETE_COMIC"),
+    GET_USER_VOTE("GET_USER_VOTE");
 
     private String request;
     private static Map<String, ComicRequest> requestMap = new TreeMap<>();

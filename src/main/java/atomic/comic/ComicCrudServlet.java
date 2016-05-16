@@ -122,6 +122,10 @@ public class ComicCrudServlet extends CrudServlet {
 
                     processDeleteComicRequest(request, response);
 
+                } else if (req.equals(ComicRequest.GET_USER_VOTE.toString())) {
+
+                    processGetUserVoteRequest(request, response);
+
                 } else {
 
                     System.err.println("Unsupported request: " + req);
@@ -585,6 +589,59 @@ public class ComicCrudServlet extends CrudServlet {
             // Retrieve the comic and delete the entity.
             Comic comicToDelete = Comic.retrieveComic(currentUser.getGmail(), title);
             comicToDelete.deleteEntity();
+
+        } catch (Exception e) {
+
+            processGeneralException(response, e);
+
+        }
+
+    }
+
+    private void processGetUserVoteRequest(JsonObject request, JsonObject response) {
+
+        try {
+
+            User currentUser = User.getCurrentUser();
+
+            String userGmail;
+            if(request.has(JsonProperty.USER_GMAIL.toString())) {
+                userGmail = request.get(JsonProperty.USER_GMAIL.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include comic creators gmail.");
+            }
+
+            String title;
+            if(request.has(JsonProperty.TITLE.toString())) {
+                title = request.get(JsonProperty.TITLE.toString()).getAsString();
+            } else {
+                throw new IllegalArgumentException("Vote request must include comic's title.");
+            }
+
+            // Retrieve comic from datastore.
+            Comic c = Comic.retrieveComic(userGmail, title);
+
+            String comicKeyString = c.generateKeyString();
+
+            List<String> upvoted = currentUser.getUpvotedComics();
+            List<String> downvoted = currentUser.getDownvotedComics();
+
+            if(upvoted.contains(comicKeyString)) {
+
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+                response.addProperty(JsonProperty.VOTE.toString(), ComicVote.UPVOTE.toString());
+
+            } else if (downvoted.contains(comicKeyString)) {
+
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
+                response.addProperty(JsonProperty.VOTE.toString(), ComicVote.DOWNVOTE.toString());
+
+            } else {
+
+                response.addProperty(JsonProperty.RESULT.toString(), CrudResult.FAILURE.toString());
+
+            }
+            
 
         } catch (Exception e) {
 
