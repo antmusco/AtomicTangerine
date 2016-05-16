@@ -8,21 +8,43 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         self.query = query;
 
         function query(searchQuery) {
-            var deferred = $q.defer();
+            var later = $q.defer();
             $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: searchQuery})
                 .then(
                     function yes(resp) {
                         var data = resp.data;
-                        $log.info(data);
-                        $q.resolve();
+                        var comicArray = data.COMICS;
+                        var userArray = data.USERS;
+
+                        var searchResults = [];
+
+                        for (var i = 0; i < comicArray.length; i++){
+                            var comic = comicArray[i];
+                            comic.RESULT_TYPE = "COMIC";
+                            comic.display = comic.TITLE;
+                            searchResults.push(comic);
+                        }
+
+                        for (var i = 0; i < userArray.length; i++){
+                            var user = userArray[i];
+                            user.RESULT_TYPE = "USER";
+                            user.display = user.GMAIL;
+                            searchResults.push(user);
+                        }
+
+                        $log.info(searchResults);
+
+
+
+                        later.resolve(searchResults);
                     },
                     function no(resp) {
                         var data = resp.data;
                         $log.error(data);
-                        $q.reject();
+                        later.reject();
                     }
                 );
-            return deferred.promise;
+            return later.promise;
         }
 
         $scope.favIcon = 'favorite_border';
