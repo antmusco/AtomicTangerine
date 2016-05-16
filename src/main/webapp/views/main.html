@@ -24,7 +24,8 @@
                 <md-icon class="material-icons">arrow_back</md-icon>
             </md-button>
             <md-card style="max-width: 1000px;" align="center">
-                <img ng-src="{{currentComic.THUMBNAIL}}" alt="{{currentComic.TITLE}}">
+                <md-progress-circular md-mode="indeterminate" ng-hide="imgLoaded"></md-progress-circular>
+                <img ng-src="{{currentComic.THUMBNAIL}}" alt="{{currentComic.TITLE}}" ng-hide="!imgLoaded">
                 <md-card-title>
                     <md-card-title-text>
                         <span class="md-headline">{{currentComic.TITLE}}</span>

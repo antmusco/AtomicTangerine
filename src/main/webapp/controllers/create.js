@@ -136,7 +136,7 @@ app.controller('createCtrl', ['$scope', '$http', '$mdDialog', '$mdSidenav', '$lo
             fileInput.click();
         };
         $scope.save = function () {
-
+        $scope.canvas.deactivateAll();
 
             var data = {
                 REQUEST: "UPLOAD_FRAME",

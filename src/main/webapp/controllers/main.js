@@ -7,6 +7,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         self.items = [];
         self.query = query;
 
+        $scope.imgLoaded = false;
+
         function query(searchQuery) {
             var later = $q.defer();
             $http.post('/search', {REQUEST: 'SEARCH_ALL', SEARCH_KEY: searchQuery})
@@ -73,7 +75,7 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
         $scope.commentList = [];
         $http.post('/comic', {REQUEST: 'GET_COMIC_LIST_DEFAULT', DATE_CREATED: (new Date()).getTime() })
             .then(function (resp) {
-
+                $scope.imgLoaded = true;
                 $scope.updateComments = function() {
                     $http.post('/comment',
                         {

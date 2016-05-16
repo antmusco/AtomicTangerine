@@ -16,6 +16,10 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
             }
             if($routeParams.artistName === "self"){
                 $scope.user = auth.getUser();
+                if($scope.user === undefined) {
+                    $location.path('/main'); // essentially... panic
+                    return;
+                }
                 crud.update('/comic', {REQUEST:'GET_COMIC_LIST_DEFAULT', USER_GMAIL:$scope.user.GMAIL})
                     .then(function (resp) {
                             $scope.comics = resp.data.COMICS;
