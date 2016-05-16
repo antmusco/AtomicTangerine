@@ -87,6 +87,9 @@ public class User extends DatastoreEntity implements Jsonable {
             fromEntity(retrieveEntity());
             if (createdComics == null) createdComics = new LinkedList<>();
             if (signature == null) signature = new Text("{}");
+            if (upvotedComics == null) upvotedComics = new LinkedList<>();
+            if (downvotedComics == null) downvotedComics = new LinkedList<>();
+            saveEntity();
 
         } catch (EntityNotFoundException ex) {
 
@@ -98,6 +101,8 @@ public class User extends DatastoreEntity implements Jsonable {
             this.createdComics = new LinkedList<>();
             this.profilePicUrl = DEFAULT_PROFILE_PIC_URL;
             this.signature = new Text("{}");
+            this.upvotedComics = new LinkedList<>();
+            this.downvotedComics = new LinkedList<>();
 
             // Put the entity in the datastore.
             saveEntity();

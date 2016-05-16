@@ -468,7 +468,11 @@ public class ComicCrudServlet extends CrudServlet {
             String comicKeyString = comicToUpvote.generateKeyString();
 
             // Check to see if the comic was previously upvoted by this user.
-            if(user.getUpvotedComics().contains(comicKeyString)) {
+            List<String> upvotes = user.getUpvotedComics();
+            List<String> downvotes = user.getDownvotedComics();
+            if(upvotes == null) throw new IllegalArgumentException("Upvotes is null!");
+            if(downvotes == null) throw new IllegalArgumentException("Downvotes is null!");
+            if(upvotes.contains(comicKeyString)) {
 
                 switch (vote) {
                     // Do nothing, comic already upvoted.
