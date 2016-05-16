@@ -20,15 +20,16 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
 
                         for (var i = 0; i < comicArray.length; i++){
                             var comic = comicArray[i];
-                            comic.RESULT_TYPE = "COMIC";
-                            comic.display = comic.TITLE;
+                            comic.resultType = "COMIC";
+                            comic.mainText = comic.TITLE;
+                            comic.subText = '';
                             searchResults.push(comic);
                         }
 
                         for (var i = 0; i < userArray.length; i++){
                             var user = userArray[i];
-                            user.RESULT_TYPE = "USER";
-                            user.display = user.GMAIL;
+                            user.resultType = "USER";
+                            user.mainText = user.HANDLE;
                             searchResults.push(user);
                         }
 
@@ -41,6 +42,21 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                     }
                 );
             return later.promise;
+        }
+
+        self.evaluateSearchSelection = evaluateSearchSelection;
+
+        function evaluateSearchSelection(selection) {
+            if(selection === undefined || selection === null) return;
+            if(selection.resultType === "USER") {
+                if(selection.GMAIL === $scope.user.GMAIL) {
+                    $location.path('/profile/self');
+                } else {
+                    $location.path('/profile/' + btoa(selection.GMAIL));
+                }
+            } else if (selection.resultType === "COMIC") {
+                $scope.currentComic = selection;
+            }
         }
 
         $scope.favIcon = 'favorite_border';

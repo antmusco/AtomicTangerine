@@ -423,26 +423,25 @@ public class User extends DatastoreEntity implements Jsonable {
         JsonArray resultList = new JsonArray();
 
         if(userRetrievedByGmail != null) {
-            JsonObject userInfo = new JsonObject();
-            userInfo.addProperty(JsonProperty.GMAIL.toString(), userRetrievedByGmail.getKey().getName());
-            userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) userRetrievedByGmail.getProperty(JsonProperty.HANDLE.toString()));
-            userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) userRetrievedByGmail.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
-            resultList.add(userInfo);
+            addUserToSearchResultsHelper(userRetrievedByGmail, resultList);
         }
 
         for(Entity e : result) {
-
-            JsonObject userInfo = new JsonObject();
-            userInfo.addProperty(JsonProperty.GMAIL.toString(), e.getKey().getName());
-            userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) e.getProperty(JsonProperty.HANDLE.toString()));
-            userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) e.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
-            resultList.add(userInfo);
-
+            addUserToSearchResultsHelper(e, resultList);
         }
 
         // Create the comic and return in.
         return resultList;
 
     }
+
+    private static void addUserToSearchResultsHelper(Entity user, JsonArray array) {
+        JsonObject userInfo = new JsonObject();
+        userInfo.addProperty(JsonProperty.GMAIL.toString(), user.getKey().getName());
+        userInfo.addProperty(JsonProperty.HANDLE.toString(), (String) user.getProperty(JsonProperty.HANDLE.toString()));
+        userInfo.addProperty(JsonProperty.PROFILE_PIC_URL.toString(), (String) user.getProperty(JsonProperty.PROFILE_PIC_URL.toString()));
+        array.add(userInfo);
+    }
+
 
 }
