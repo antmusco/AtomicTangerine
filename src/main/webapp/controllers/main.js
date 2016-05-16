@@ -97,10 +97,32 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                         });
                 };
 
+
+
                 $scope.comics = resp.data.COMICS;
                 if($scope.comics == undefined) return;
                 $scope.counter = $scope.comics.length - 1;
                 $scope.currentComic = $scope.comics[$scope.counter];
+
+                $scope.upthumbStyle = {};
+                $scope.downthumbStyle = {};
+                $http.post('/comic',
+                    {REQUEST: 'GET_USER_VOTE',
+                        TITLE: $scope.currentComic.TITLE,
+                        USER_GMAIL: $scope.currentComic.USER_GMAIL}
+                )
+                    .then(function yes(resp) {
+                        $scope.upthumbStyle = {};
+                        $scope.downthumbStyle = {};
+                        if(resp.data.VOTE === 'UPVOTE'){
+                            $scope.upthumbStyle = {background: '#ab2323'};
+                        }else if(resp.data.VOTE === 'DOWNVOTE'){
+                            $scope.downthumbStyle = {background: '#ab2323'};
+                        }
+                    }, function no(resp) {
+                        $log.error("Couldn't get voting, maybe they haven't voted yet. . .")
+                    });
+
                 auth.getUserByGmail($scope.currentComic.USER_GMAIL)
                     .then(function (user) {
                         $scope.artist = user.USER;
@@ -108,6 +130,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                         $scope.artist = 'no ' + resp;
                     });
                 $scope.next = function () {
+                    $scope.upthumbStyle = {};
+                    $scope.downthumbStyle = {};
                     $scope.counter = ($scope.counter + 1) % $scope.comics.length;
                     $scope.currentComic = $scope.comics[$scope.counter];
                     auth.getUserByGmail($scope.currentComic.USER_GMAIL)
@@ -123,6 +147,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                     )
                         .then(function yes(resp) {
                             if(resp.data.VOTE === 'UPVOTE'){
+                                $scope.upthumbStyle = {};
+                                $scope.downthumbStyle = {};
                                 $scope.upthumbStyle = {background: '#ab2323'};
                             }else if(resp.data.VOTE === 'DOWNVOTE'){
                                 $scope.downthumbStyle = {background: '#ab2323'};
@@ -134,6 +160,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                 };
 
                 $scope.prev = function () {
+                    $scope.upthumbStyle = {};
+                    $scope.downthumbStyle = {};
                     if($scope.counter > 0) {
                         $scope.counter = ($scope.counter - 1) % $scope.comics.length;
                     } else {
@@ -152,6 +180,8 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                         USER_GMAIL: $scope.currentComic.USER_GMAIL}
                     )
                         .then(function yes(resp) {
+                            $scope.upthumbStyle = {};
+                            $scope.downthumbStyle = {};
                             if(resp.data.VOTE === 'UPVOTE'){
                                 $scope.upthumbStyle = {background: '#ab2323'};
                             }else if(resp.data.VOTE === 'DOWNVOTE'){
@@ -202,18 +232,64 @@ app.controller('mainCtrl', ['$scope', '$timeout', '$http', '$log', '$location', 
                             TITLE: $scope.currentComic.TITLE,
                             VOTE: "UPVOTE"
                         }
-                    ).then( function() { $scope.updateComments(); });
+                    ).then( 
+                        function yes(resp) {
+                            $scope.currentComic.SCORE = resp.data.SCORE;
+                            $http.post('/comic',
+                                {REQUEST: 'GET_USER_VOTE',
+                                    TITLE: $scope.currentComic.TITLE,
+                                    USER_GMAIL: $scope.currentComic.USER_GMAIL}
+                            )
+                                .then(function yes(resp) {
+                                    $scope.upthumbStyle = {};
+                                    $scope.downthumbStyle = {};
+                                    if(resp.data.VOTE === 'UPVOTE'){
+                                        $scope.upthumbStyle = {background: '#ab2323'};
+                                    }else if(resp.data.VOTE === 'DOWNVOTE'){
+                                        $scope.downthumbStyle = {background: '#ab2323'};
+                                    }
+                                }, function no(resp) {
+                                    $log.error("Couldn't get voting, maybe they haven't voted yet. . .")
+                                });
+
+                        },
+                    function no(resp) {
+                        $log.error('bad vote');
+                    });
                 };
 
                 $scope.downVoteComic = function () {
-                    $http.post('/comment',
+                    $http.post('/comic',
                         {
                             REQUEST: "VOTE_FOR_COMIC",
                             USER_GMAIL: $scope.currentComic.USER_GMAIL,
                             TITLE: $scope.currentComic.TITLE,
                             VOTE: "DOWNVOTE"
                         }
-                    ).then( function() { $scope.updateComments(); });
+                    ).then( function(resp) {
+                        $scope.currentComic.SCORE = resp.data.SCORE;
+
+                            $http.post('/comic',
+                                {REQUEST: 'GET_USER_VOTE',
+                                    TITLE: $scope.currentComic.TITLE,
+                                    USER_GMAIL: $scope.currentComic.USER_GMAIL}
+                            )
+                                .then(function yes(resp) {
+                                    $scope.upthumbStyle = {};
+                                    $scope.downthumbStyle = {};
+                                    if(resp.data.VOTE === 'UPVOTE'){
+                                        $scope.upthumbStyle = {background: '#ab2323'};
+                                    }else if(resp.data.VOTE === 'DOWNVOTE'){
+                                        $scope.downthumbStyle = {background: '#ab2323'};
+                                    }
+                                }, function no(resp) {
+                                    $log.error("Couldn't get voting, maybe they haven't voted yet. . .")
+                                });
+
+                    },
+                        function no(resp) {
+                            $log.error('bad vote');
+                        });
                 };
 
                 $scope.updateComments();
