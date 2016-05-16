@@ -82,11 +82,19 @@
         </div>
 
     </div>
-
-    <div ng-repeat="usercomic in comics">
-        <img ng-src="{{usercomic.THUMBNAIL}}" width="300px" height="150px"/>
-        <label>{{usercomic.TITLE}}</label>
+    <div id="gallerybanner">
+        Gallery
     </div>
+<div layout="column" layout-align="center center" style="padding-top:20px">
+
+    <div ng-repeat="usercomic in comics"  >
+        <div layout="column" layout-align="center center">
+        <img id="mycomic" ng-src="{{usercomic.THUMBNAIL}}" width="70%" height="70%"/>
+        <label id="comiclabel" style="alignment: center">{{usercomic.TITLE}}</label>
+        </div>
+    </div>
+
+</div>
     <div ng-repeat="sub in subs">
         <img ng-src="{{sub.THUMBNAIL}}" width="100px" height="100px"/>
         <label>{{sub.HANDLE}}</label>

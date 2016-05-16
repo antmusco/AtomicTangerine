@@ -84,3 +84,20 @@ nav {
     font-family:  Bangers;
     font-size: 20px;
 }
+#mycomic{
+
+    border: 5px #808080 inset;
+}
+#comiclabel{
+    font-family: Bangers;
+    font-size: 25px;
+
+}
+#gallerybanner{
+    background-image: url("img/banner_red.png");
+    font-family: Bangers;
+    font-size: 40px;
+    color: #ffffff;
+    text-align: center;
+
+}
