@@ -5,6 +5,7 @@ import atomic.data.EntityKind;
 import atomic.json.JsonProperty;
 import atomic.json.Jsonable;
 import atomic.json.NoUniqueKeyException;
+import atomic.user.User;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Query;
@@ -269,8 +270,12 @@ public class Comment extends DatastoreEntity implements Jsonable {
         // Create a new JsonObject.
         JsonObject obj = new JsonObject();
 
+        User commentor = User.retrieveUser(commentorUserGmail);
+        String handle = (commentor == null) ? "" : commentor.getHandle();
+
         // Add all the straightforward values.
         obj.addProperty(JsonProperty.COMMENTOR_GMAIL.toString(), commentorUserGmail);
+        obj.addProperty(JsonProperty.HANDLE.toString(), handle);
         obj.addProperty(JsonProperty.DATE_POSTED.toString(), datePosted.getTime());
         obj.addProperty(JsonProperty.COMMENT.toString(), comment);
         obj.addProperty(JsonProperty.SCORE.toString(), getScore());
