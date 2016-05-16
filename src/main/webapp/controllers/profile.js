@@ -16,8 +16,15 @@ app.controller('profileCtrl', ['$scope', '$route', 'auth',
             }
             if($routeParams.artistName === "self"){
                 $scope.user = auth.getUser();
-                if($scope.user === undefined) {
+                if($scope.user === undefined || $scope.user === null) {
                     $location.path('/main'); // essentially... panic
+                    $mdToast.show(
+                        $mdToast.simple()
+                            .textContent('You must log in to view your profile')
+                            .action('OK')
+                            .position('top right')
+                            .hideDelay(3000)
+                    );
                     return;
                 }
                 crud.update('/comic', {REQUEST:'GET_COMIC_LIST_DEFAULT', USER_GMAIL:$scope.user.GMAIL})
