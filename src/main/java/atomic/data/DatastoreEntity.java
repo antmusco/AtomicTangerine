@@ -120,4 +120,11 @@ public abstract class DatastoreEntity {
 
     }
 
+    public static Transaction beginTransaction() {
+
+        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+        return ds.beginTransaction();
+
+    }
+
 }

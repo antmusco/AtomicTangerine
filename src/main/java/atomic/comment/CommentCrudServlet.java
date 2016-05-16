@@ -2,9 +2,11 @@ package atomic.comment;
 
 import atomic.crud.CrudResult;
 import atomic.crud.CrudServlet;
+import atomic.data.DatastoreEntity;
 import atomic.json.JsonProperty;
 import atomic.json.NoUniqueKeyException;
 import atomic.user.User;
+import com.google.appengine.api.datastore.Transaction;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -245,6 +247,7 @@ public class CommentCrudServlet extends CrudServlet {
             Comment commentToVote = Comment.retrieveComment(commentorUserGmail, comicUserGmail, comicTitle,
                     datePosted);
 
+            Transaction tx = DatastoreEntity.beginTransaction();
             // Apply the vote.
             switch(vote) {
                 case UPVOTE:
@@ -254,9 +257,12 @@ public class CommentCrudServlet extends CrudServlet {
                     commentToVote.downvote(currentUser.getGmail());
                     break;
             }
+            tx.commit();
 
             // Save the entity.
             commentToVote.saveEntity();
+
+
             response.addProperty(JsonProperty.RESULT.toString(), CrudResult.SUCCESS.toString());
             response.add(JsonProperty.COMMENT.toString(), commentToVote.toJson());
 
